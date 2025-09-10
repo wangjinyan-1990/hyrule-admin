@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.sys.role.mapper.RoleUserMapper">
+
+    <!-- 根据角色ID查询用户列表 -->
+    <select id="selectUsersByRoleId" resultType="com.king.sys.user.entity.TSysUser">
+        SELECT 
+            u.USER_ID,
+            u.LOGIN_NAME,
+            u.USER_NAME,
+            u.EMAIL,
+            u.PHONE,
+            u.STATUS,
+            u.SORT_NO
+        FROM t_sys_user u
+        INNER JOIN t_sys_role_user ru ON u.USER_ID = ru.USER_ID
+        WHERE ru.ROLE_ID = #{roleId}
+        <if test="userName != null and userName != ''">
+            AND u.USER_NAME LIKE CONCAT('%', #{userName}, '%')
+        </if>
+        ORDER BY u.SORT_NO ASC, u.USER_ID ASC
+    </select>
+
+    <!-- 查询未拥有指定角色的用户列表 -->
+    <select id="selectAvailableUsersByRoleId" resultType="com.king.sys.user.entity.TSysUser">
+        SELECT 
+            u.USER_ID,
+            u.LOGIN_NAME,
+            u.USER_NAME,
+            u.EMAIL,
+            u.PHONE,
+            u.STATUS,
+            u.SORT_NO
+        FROM t_sys_user u
+        WHERE u.USER_ID NOT IN (
+            SELECT ru.USER_ID 
+            FROM t_sys_role_user ru 
+            WHERE ru.ROLE_ID = #{roleId}
+        )
+        <if test="userName != null and userName != ''">
+            AND u.USER_NAME LIKE CONCAT('%', #{userName}, '%')
+        </if>
+        ORDER BY u.SORT_NO ASC, u.USER_ID ASC
+    </select>
+
+</mapper>
