@@ -13,11 +13,14 @@ public class MyCorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-//      config.addAllowedOrigin("*");    //允许所有人访问，不安全不推荐
-        config.addAllowedOrigin("http://localhost:7777/");   //这里写允许访问的前端服务器
+        // 允许前端来源（开发环境可放开为通配符，生产请精确配置）
+        config.addAllowedOriginPattern("*");
         config.setAllowCredentials(true);    //传递cookie
         config.addAllowedMethod("*");    //允许哪些方法访问(*是全部方法)
         config.addAllowedHeader("*");   //允许的头信息
+        // 暴露自定义头给前端（使前端能读取到 Authorization / X-Token）
+        config.addExposedHeader("Authorization");
+        config.addExposedHeader("X-Token");
 
         //过滤资源
         UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();

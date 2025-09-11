@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.sys.menu.mapper.SysMenuMapper">
+    <select id="getMenusByUserId" parameterType="String" resultType="com.king.sys.menu.entity.SysMenu">
+        SELECT DISTINCT m.* FROM t_sys_menu m
+        LEFT JOIN t_sys_role_menu rm ON m.MENU_ID = rm.MENU_ID
+        LEFT JOIN t_sys_role_user ur ON rm.ROLE_ID = ur.ROLE_ID
+        WHERE ur.USER_ID = #{userId} AND m.HIDDEN = 0
+        ORDER BY m.PARENT_ID, m.MENU_ID
+    </select>
+    <select id="getAllVisibleMenus" resultType="com.king.sys.menu.entity.SysMenu">
+        SELECT m.* FROM t_sys_menu m
+        WHERE m.HIDDEN = 0
+        ORDER BY m.PARENT_ID, m.MENU_ID
+    </select>
+</mapper>

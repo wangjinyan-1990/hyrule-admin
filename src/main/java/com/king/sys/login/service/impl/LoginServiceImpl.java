@@ -3,6 +3,7 @@ package com.king.sys.login.service.impl;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.king.common.utils.JwtUtil;
 import com.king.common.utils.Md5Utils;
 import com.king.sys.login.dto.LoginResult;
 import com.king.sys.login.service.ILoginervice;
@@ -26,6 +27,9 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, TSysUser> implemen
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Override
     public LoginResult login(TSysUser user) {
@@ -58,10 +62,18 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, TSysUser> implemen
             return LoginResult.passwordError();
         }
         
-        // 登录成功，生成token
-        String key = "user:" + UUID.randomUUID();
+        // 登录成功，生成JWT，并可选存入Redis（会话缓存）
+        String jwtToken = jwtUtil.generateToken(loginUser.getUserId());
+        String sessionKey = "user:" + UUID.randomUUID();
         loginUser.setPassword(null);
-        redisTemplate.opsForValue().set(key, loginUser, 30, TimeUnit.MINUTES);
+        // Redis会话过期时间与JWT一致（毫秒 -> 分钟/秒采用 TimeUnit.MILLISECONDS）
+        Long ttlMillis = jwtUtil.getExpirationTime();
+        if (ttlMillis != null && ttlMillis > 0) {
+            redisTemplate.opsForValue().set(sessionKey, loginUser, ttlMillis, TimeUnit.MILLISECONDS);
+        } else {
+            // 兜底：默认30分钟
+            redisTemplate.opsForValue().set(sessionKey, loginUser, 30, TimeUnit.MINUTES);
+        }
         
         // 构建用户信息
         Map<String, Object> userInfo = new HashMap<>();
@@ -71,22 +83,36 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, TSysUser> implemen
         userInfo.put("email", loginUser.getEmail());
         userInfo.put("phone", loginUser.getPhone());
         
-        return LoginResult.success(key, userInfo);
+        // 将JWT作为对外token返回（与前端/控制器的Bearer解析兼容）
+        return LoginResult.success(jwtToken, userInfo);
     }
 
     @Override
     public Map<String, Object> getUserInfo(String token) {
+        // 先尝试Redis会话token
         Object obj = redisTemplate.opsForValue().get(token);
         if (obj != null) {
             TSysUser loginUser = JSON.parseObject(JSON.toJSONString(obj), TSysUser.class);
-
             Map<String, Object> data = new HashMap<>();
             data.put("name", loginUser.getUserName());
             data.put("phone", loginUser.getPhone());
-
             List<String> roleList = this.baseMapper.getRoleNameByUserId(loginUser.getUserId());
             data.put("roles", roleList);
+            return data;
+        }
 
+        // 再尝试JWT
+        String userId = jwtUtil.getUserIdFromToken(token);
+        if (userId != null) {
+            TSysUser user = this.baseMapper.selectById(userId);
+            if (user == null) {
+                return null;
+            }
+            Map<String, Object> data = new HashMap<>();
+            data.put("name", user.getUserName());
+            data.put("phone", user.getPhone());
+            List<String> roleList = this.baseMapper.getRoleNameByUserId(userId);
+            data.put("roles", roleList);
             return data;
         }
         return null;
@@ -94,7 +120,9 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, TSysUser> implemen
 
     @Override
     public void logout(String token) {
+        // 若是Redis会话token，尝试删除
         redisTemplate.delete(token);
+        // 若是JWT，无状态，无需显式删除
     }
 
 }

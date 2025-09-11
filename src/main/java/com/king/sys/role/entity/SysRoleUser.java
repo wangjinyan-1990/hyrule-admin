@@ -17,7 +17,7 @@ public class SysRoleUser implements java.io.Serializable {
 
 	// Fields
 	@TableId(value = "ID",type = IdType.AUTO)
-	private String id;
+	private Integer id;
 	@TableField("ROLE_ID")
 	private String roleId;// 角色ID
 	@TableField("USER_ID")
@@ -30,17 +30,17 @@ public class SysRoleUser implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public SysRoleUser(String id, String roleId, String userId) {
+	public SysRoleUser(Integer id, String roleId, String userId) {
 		this.id = id;
 		this.roleId = roleId;
 		this.userId = userId;
 	}
 
-	public String getId() {
+	public Integer getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

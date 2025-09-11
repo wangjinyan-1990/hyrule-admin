@@ -17,6 +17,14 @@ spring:
         max-wait: -1ms
         max-idle: 8
         min-idle: 0
+# JWT配置
+jwt:
+  # JWT密钥，建议使用复杂字符串，至少32位
+  secret: hyrule_admin_secret_key_abcdefghijklmn
+  # token过期时间，单位毫秒，这里设置为24小时
+  expiration: 86400000
+  # token在header中的名称
+  header: Authorization
 
 # 打印日志信息
 logging:
