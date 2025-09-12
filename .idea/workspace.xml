@@ -2,47 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3fb9bf1e-559b-4681-844b-159228558448" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_jsonwebtoken_jjwt_0_9_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hyrule-admin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/hyrule-admin.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/common/Result.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/common/Result.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/login/dto/LoginResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/login/dto/LoginResult.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/impl/MenuServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/impl/MenuServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/HyruleAdminApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/common/Result.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/common/constant/Constants.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/common/utils/DateUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/common/utils/Md5Utils.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/config/MpConfig.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/config/MyCorsConfig.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/config/MyRedisConfig.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/login/controller/LoginController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/login/dto/LoginResult.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/login/service/ILoginervice.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/login/service/impl/LoginServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/menu/entity/Menu.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/controller/RoleController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/entity/SysRole.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/entity/SysRoleUser.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/mapper/RoleMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/mapper/RoleUserMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/service/IRoleService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/service/IRoleUserService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/service/impl/RoleServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/service/impl/RoleUserServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/controller/UserController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/entity/Menu.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/entity/TSysUser.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/mapper/UserMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/service/IUserService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/service/impl/UserServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/init.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/RoleUserMapper.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/sys/UserMapper.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/king/HyruleAdminApplicationTests.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/init.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -220,7 +181,7 @@
       <workItem from="1757083598371" duration="5434000" />
       <workItem from="1757163772044" duration="5441000" />
       <workItem from="1757217040409" duration="6452000" />
-      <workItem from="1757637238776" duration="3158000" />
+      <workItem from="1757637238776" duration="3757000" />
     </task>
     <servers />
   </component>

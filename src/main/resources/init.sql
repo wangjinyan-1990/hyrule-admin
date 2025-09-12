@@ -69,47 +69,84 @@ insert  into `t_sys_user`(`USER_ID`,`LOGIN_NAME`,`PASSWORD`,`USER_NAME`,`EMAIL`,
 ('lili','lili','e10adc3949ba59abbe56e057f20f883e','李莉','lili123@189.com','18765342789',1,20250906),
 ('yanke','yanke','e10adc3949ba59abbe56e057f20f883e','严科','yanke920618@163.com',NULL,1,0);
 
-/*Table structure for table `x_menu` */
+/*Table structure for table `t_sys_menu` */
 
-DROP TABLE IF EXISTS `x_menu`;
+DROP TABLE IF EXISTS `t_sys_menu`;
 
-CREATE TABLE `x_menu` (
-  `menu_id` int(11) NOT NULL AUTO_INCREMENT,
-  `component` varchar(100) DEFAULT NULL,
-  `path` varchar(100) DEFAULT NULL,
-  `redirect` varchar(100) DEFAULT NULL,
-  `name` varchar(100) DEFAULT NULL,
-  `title` varchar(100) DEFAULT NULL,
-  `icon` varchar(100) DEFAULT NULL,
-  `parent_id` int(11) DEFAULT NULL,
-  `is_leaf` varchar(1) DEFAULT NULL,
-  `hidden` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`menu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `t_sys_menu` (
+  `MENU_ID` int NOT NULL AUTO_INCREMENT,
+  `COMPONENT` varchar(100) DEFAULT NULL,
+  `PATH` varchar(100) DEFAULT NULL,
+  `REDIRECT` varchar(100) DEFAULT NULL,
+  `NAME` varchar(100) DEFAULT NULL,
+  `TITLE` varchar(100) DEFAULT NULL,
+  `ICON` varchar(100) DEFAULT NULL,
+  `PARENT_ID` int DEFAULT NULL,
+  `IS_LEAF` varchar(1) DEFAULT NULL,
+  `HIDDEN` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`MENU_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4;
 
-/*Data for the table `x_menu` */
+/*Data for the table `t_sys_menu` */
 
-insert  into `x_menu`(`menu_id`,`component`,`path`,`redirect`,`name`,`title`,`icon`,`parent_id`,`is_leaf`,`hidden`) values
-(1,'Layout','/user','/user/list','userManage','用户管理','userManage',0,'N',0),
-(2,'user/user','list',NULL,'userList','用户列表','userList',1,'Y',0),
-(3,'user/role','role',NULL,'roleList','角色列表','role',1,'Y',0),
-(4,'user/permission','permission',NULL,'permissionList','权限列表','permission',1,'Y',0);
+insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`,`ICON`,`PARENT_ID`,`IS_LEAF`,`HIDDEN`) values 
+(1,'Layout','/sys','/sys/user','userManage','系统管理','sys',NULL,'0',0),
+(2,'/sys/user','user',NULL,'user','用户管理','userManage',1,'1',0),
+(3,'/sys/role','role',NULL,'role','角色管理','roleManage',1,'1',0),
+(4,'Layout','/test','/test/test1','test','测试模块','form',NULL,'0',0),
+(5,'/test/test1','test1',NULL,'test1','功能1','el-icon-s-help',4,'1',0),
+(6,'/test/test2','test2',NULL,'test2','功能2','el-icon-s-help',4,'1',0),
+(7,'/test/test3','test3',NULL,'test3','功能3','el-icon-s-help',4,'1',0),
+(8,'Layout','/example','/example/table','Example','Example','el-icon-s-help',NULL,'0',0),
+(9,'/example/table','table',NULL,'Table','Table','table',8,'1',0),
+(10,'/example/tree','tree',NULL,'Tree','Tree','tree',8,'1',0),
+(11,'Layout','/form',NULL,NULL,'Form','form',NULL,'0',0),
+(12,'/form/index','index',NULL,'Form','Form','form',11,'1',0),
+(13,'Layout','/nested','/nested/menu1','Nested','Nested','nested',NULL,'0',0),
+(14,'/nested/menu1/index','menu1',NULL,'Menu1','Menu1',NULL,13,'0',0),
+(15,'/nested/menu1/menu1-1','menu1-1',NULL,'Menu1-1','Menu1-1',NULL,14,'1',0),
+(16,'/nested/menu1/menu1-2','menu1-2',NULL,'Menu1-2','Menu1-2',NULL,14,'0',0),
+(17,'/nested/menu1/menu1-2/menu1-2-1','menu1-2-1',NULL,'Menu1-2-1','Menu1-2-1',NULL,16,'1',0),
+(18,'/nested/menu1/menu1-2/menu1-2-2','menu1-2-2',NULL,'Menu1-2-2','Menu1-2-2',NULL,16,'1',0),
+(19,'/nested/menu1/menu1-3','menu1-3',NULL,'Menu1-3','Menu1-3',NULL,14,'1',0),
+(20,'/nested/menu2/index','menu2',NULL,'Menu2','menu2',NULL,13,'1',0),
+(21,'Layout','external-link',NULL,NULL,'External Link','link',NULL,'0',0),
+(22,NULL,'https://panjiachen.github.io/vue-element-admin-site/#/',NULL,NULL,'External Link','link',21,'1',0),
+(23,'/sys/menu','menu',NULL,'menu','菜单管理','menuManage',1,'1',0);
 
-/*Table structure for table `x_role_menu` */
+/*Table structure for table `t_sys_role_menu` */
 
-DROP TABLE IF EXISTS `x_role_menu`;
+DROP TABLE IF EXISTS `t_sys_role_menu`;
 
-CREATE TABLE `x_role_menu` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `role_id` int(11) DEFAULT NULL,
-  `menu_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `t_sys_role_menu` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `ROLE_ID` varchar(32) DEFAULT NULL,
+  `MENU_ID` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4;
 
-/*Data for the table `x_role_menu` */
+/*Data for the table `t_sys_role_menu` */
 
-insert  into `x_role_menu`(`id`,`role_id`,`menu_id`) values
-(1,1,1),
-(2,1,2),
-(3,1,3),
-(4,1,4);
+insert  into `t_sys_role_menu`(`ID`,`ROLE_ID`,`MENU_ID`) values 
+(1,'0001','1'),
+(2,'0001','2'),
+(3,'0001','3'),
+(4,'0001','4'),
+(5,'0001','5'),
+(6,'0001','6'),
+(7,'0001','7'),
+(8,'0001','8'),
+(9,'0001','9'),
+(10,'0001','10'),
+(11,'0001','11'),
+(12,'0001','12'),
+(13,'0001','13'),
+(14,'0001','14'),
+(15,'0001','15'),
+(16,'0001','16'),
+(17,'0001','17'),
+(18,'0001','18'),
+(19,'0001','19'),
+(20,'0001','20'),
+(21,'0001','21'),
+(22,'0001','22');
