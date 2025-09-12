@@ -36,7 +36,10 @@ public class Result<T> {
         this.data = data;
     }
 
-    public Result(int i, String success, Object o) {
+    public Result(int code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
     }
 
     public static <T> Result<T> success() {

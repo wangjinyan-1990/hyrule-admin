@@ -30,7 +30,13 @@ public class LoginController {
 
     @PostMapping("/login")
     public Result<Map<String, Object>> login(@RequestBody TSysUser user, HttpServletResponse response) {
+        System.out.println("=== 控制器接收登录请求 ===");
+        System.out.println("请求用户: " + user.getLoginName());
+        
         LoginResult loginResult = loginService.login(user);
+        System.out.println("登录结果: " + loginResult.isSuccess());
+        System.out.println("错误信息: " + loginResult.getErrorMessage());
+        
         if (loginResult.isSuccess()) {
             // 登录成功，构建返回数据
             Map<String, Object> data = new java.util.HashMap<>();
@@ -45,9 +51,12 @@ public class LoginController {
             // 将token也写入响应头，方便前端统一从header读取
             response.setHeader("Authorization", "Bearer " + loginResult.getToken());
             response.setHeader("X-Token", loginResult.getToken());
+            
+            System.out.println("返回数据: " + data);
             return Result.success(data);
         } else {
             // 登录失败，返回具体错误信息
+            System.out.println("登录失败: " + loginResult.getErrorMessage());
             return Result.error(0, loginResult.getErrorMessage());
         }
     }
