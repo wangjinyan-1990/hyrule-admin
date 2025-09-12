@@ -12,6 +12,33 @@ public class Result<T> {
     private String message; // 响应信息
     private T data; // 返回的数据
 
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public Result(int i, String success, Object o) {
+    }
+
     public static <T> Result<T> success() {
         return new Result<>(20000, "success", null);
     }

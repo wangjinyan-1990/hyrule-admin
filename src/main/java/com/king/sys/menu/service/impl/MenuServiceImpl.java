@@ -1,7 +1,5 @@
 package com.king.sys.menu.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.sys.menu.entity.SysMenu;
 import com.king.sys.menu.mapper.SysMenuMapper;
@@ -10,9 +8,7 @@ import com.king.sys.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.function.Function;
 
 @Primary
 @Service

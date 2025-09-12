@@ -32,7 +32,48 @@ public class LoginResult {
      * 登录成功时的用户信息
      */
     private Object userInfo;
-    
+
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Object getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(Object userInfo) {
+        this.userInfo = userInfo;
+    }
+
     /**
      * 创建成功结果
      */
@@ -43,7 +84,7 @@ public class LoginResult {
         result.setUserInfo(userInfo);
         return result;
     }
-    
+
     /**
      * 创建失败结果
      */
@@ -54,39 +95,41 @@ public class LoginResult {
         result.setErrorMessage(errorMessage);
         return result;
     }
-    
+
     /**
      * 用户不存在
      */
     public static LoginResult userNotFound() {
         return failure("USER_NOT_FOUND", "用户不存在");
     }
-    
+
     /**
      * 用户已被禁用
      */
     public static LoginResult userDisabled() {
         return failure("USER_DISABLED", "用户已被禁用，请联系管理员");
     }
-    
+
     /**
      * 密码错误
      */
     public static LoginResult passwordError() {
         return failure("PASSWORD_ERROR", "密码错误");
     }
-    
+
     /**
      * 登录名不能为空
      */
     public static LoginResult loginNameEmpty() {
         return failure("LOGIN_NAME_EMPTY", "登录名不能为空");
     }
-    
+
     /**
      * 密码不能为空
      */
     public static LoginResult passwordEmpty() {
         return failure("PASSWORD_EMPTY", "密码不能为空");
     }
+
+
 }

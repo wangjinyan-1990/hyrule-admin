@@ -1,7 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3fb9bf1e-559b-4681-844b-159228558448" name="Default Changelist" comment="" />
+    <list default="true" id="3fb9bf1e-559b-4681-844b-159228558448" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_jsonwebtoken_jjwt_0_9_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hyrule-admin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/hyrule-admin.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/common/Result.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/common/Result.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/login/dto/LoginResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/login/dto/LoginResult.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/impl/MenuServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/impl/MenuServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/HyruleAdminApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/common/Result.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/common/constant/Constants.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/common/utils/DateUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/common/utils/Md5Utils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/config/MpConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/config/MyCorsConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/config/MyRedisConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/login/controller/LoginController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/login/dto/LoginResult.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/login/service/ILoginervice.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/login/service/impl/LoginServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/menu/entity/Menu.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/controller/RoleController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/entity/SysRole.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/entity/SysRoleUser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/mapper/RoleMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/mapper/RoleUserMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/service/IRoleService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/service/IRoleUserService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/service/impl/RoleServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/role/service/impl/RoleUserServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/controller/UserController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/entity/Menu.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/entity/TSysUser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/mapper/UserMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/service/IUserService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/king/sys/user/service/impl/UserServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/init.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/RoleUserMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/sys/UserMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/king/HyruleAdminApplicationTests.class" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +55,9 @@
         <option value="FxmlFile" />
       </list>
     </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
@@ -41,9 +86,10 @@
     <property name="RequestMappingsPanelWidth0" value="75" />
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/com/king/sys/menu" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -53,7 +99,7 @@
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="MavenSettings" />
   </component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
@@ -174,6 +220,7 @@
       <workItem from="1757083598371" duration="5434000" />
       <workItem from="1757163772044" duration="5441000" />
       <workItem from="1757217040409" duration="6452000" />
+      <workItem from="1757637238776" duration="3158000" />
     </task>
     <servers />
   </component>
@@ -185,39 +232,39 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="223" y="67" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1755316292781" />
-    <state x="549" y="54" key="#com.intellij.ide.util.MemberChooser" timestamp="1757076287473">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="488" y="48" key="#com.intellij.ide.util.MemberChooser" timestamp="1757640128672">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="488" y="48" key="#com.intellij.ide.util.MemberChooser/0.0.1366.728@0.0.1366.728" timestamp="1755248023026" />
+    <state x="488" y="48" key="#com.intellij.ide.util.MemberChooser/0.0.1366.728@0.0.1366.728" timestamp="1757640128672" />
     <state x="549" y="54" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1757076287473" />
     <state x="382" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1757125513268">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="382" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1536.824@0.0.1536.824" timestamp="1757125513268" />
-    <state x="504" y="137" key="FileChooserDialogImpl" timestamp="1757217139728">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="448" y="121" key="FileChooserDialogImpl" timestamp="1757637901979">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="448" y="121" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1755240268009" />
+    <state x="448" y="121" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1757637901979" />
     <state x="504" y="137" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1757217139728" />
-    <state width="1493" height="210" key="GridCell.Tab.0.bottom" timestamp="1757230250610">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="863" height="191" key="GridCell.Tab.0.bottom" timestamp="1757640224630">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="241" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1755250220834" />
+    <state width="863" height="191" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1757640224630" />
     <state width="1493" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1757230250610" />
-    <state width="1493" height="210" key="GridCell.Tab.0.center" timestamp="1757230250610">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="863" height="191" key="GridCell.Tab.0.center" timestamp="1757640224630">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="241" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1755250220833" />
+    <state width="863" height="191" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1757640224630" />
     <state width="1493" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1757230250610" />
-    <state width="1493" height="210" key="GridCell.Tab.0.left" timestamp="1757230250610">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="863" height="191" key="GridCell.Tab.0.left" timestamp="1757640224629">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="241" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1755250220833" />
+    <state width="863" height="191" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1757640224629" />
     <state width="1493" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1757230250610" />
-    <state width="1493" height="210" key="GridCell.Tab.0.right" timestamp="1757230250610">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="863" height="191" key="GridCell.Tab.0.right" timestamp="1757640224630">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="241" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1755250220834" />
+    <state width="863" height="191" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1757640224630" />
     <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1757230250610" />
     <state width="1493" height="210" key="GridCell.Tab.1.bottom" timestamp="1757230250610">
       <screen x="0" y="0" width="1536" height="824" />
@@ -255,10 +302,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1493" height="261" key="GridCell.Tab.2.right/0.0.1536.824@0.0.1536.824" timestamp="1757169745396" />
-    <state x="183" y="0" width="1011" height="728" key="SettingsEditor" timestamp="1757163724999">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="163" y="0" width="1011" height="728" key="SettingsEditor" timestamp="1757638066049">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="163" y="0" width="1011" height="728" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1755152816838" />
+    <state x="163" y="0" width="1011" height="728" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1757638066049" />
     <state x="183" y="0" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1757163724999" />
     <state x="368" y="188" key="com.intellij.ide.util.TipDialog" timestamp="1755152734429">
       <screen x="0" y="0" width="1366" height="728" />
