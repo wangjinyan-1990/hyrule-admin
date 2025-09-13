@@ -4,6 +4,28 @@ CREATE DATABASE IF NOT EXISTS hyrule DEFAULT CHARACTER SET utf8mb4;
 USE hyrule;
 
 
+/*Table structure for table `t_sys_counter` */
+
+DROP TABLE IF EXISTS `t_sys_counter`;
+
+CREATE TABLE `t_sys_counter` (
+  `COUNTER_ID` int NOT NULL AUTO_INCREMENT,
+  `COUNTER_NAME` varchar(384) DEFAULT NULL,
+  `CURRENT_NUMBER` int DEFAULT NULL,
+  `PREFIX` varchar(30) DEFAULT NULL,
+  `COUNTER_LENGTH` tinyint DEFAULT NULL,
+  PRIMARY KEY (`COUNTER_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `t_sys_counter` */
+
+insert  into `t_sys_counter`(`COUNTER_ID`,`COUNTER_NAME`,`CURRENT_NUMBER`,`PREFIX`,`COUNTER_LENGTH`) values 
+(1,'sysCode',1,'sys-',3),
+(2,'requireCode',1,'req',5),
+(3,'testcaseCode',1,'tc',5),
+(4,'bugCode',1,'bug',6);
+
+
 DROP TABLE IF EXISTS `t_sys_role`;
 
 CREATE TABLE `t_sys_role` (

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.sys.menu.mapper.SysRoleMenuMapper">
+
+    <select id="selectMenuIdsByRole" parameterType="string" resultType="int">
+        select cast(MENU_ID as signed) as MENU_ID
+        from t_sys_role_menu
+        where ROLE_ID = #{roleId}
+    </select>
+
+    <delete id="deleteByRoleId" parameterType="string">
+        delete from t_sys_role_menu where ROLE_ID = #{roleId}
+    </delete>
+
+    <insert id="insertRoleMenus">
+        insert into t_sys_role_menu(ROLE_ID, MENU_ID)
+        values
+        <foreach collection="menuIds" item="mid" separator=",">
+            (#{roleId}, #{mid})
+        </foreach>
+    </insert>
+
+</mapper>
+
+

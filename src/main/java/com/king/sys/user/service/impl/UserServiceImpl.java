@@ -3,6 +3,7 @@ package com.king.sys.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.common.utils.DateUtil;
+import com.king.common.utils.JwtUtil;
 import com.king.sys.user.entity.TSysUser;
 import com.king.sys.user.mapper.UserMapper;
 import com.king.sys.user.service.IUserService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson2.JSON;
 import com.king.common.utils.Md5Utils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, TSysUser> implement
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Override
     public Map<String, Object> getUserInfo(String token) {
@@ -228,4 +233,45 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, TSysUser> implement
             Assert.isTrue(exist == null, "手机号已被其他用户使用");
         }
     }
+
+    /**
+     * 从请求中获取当前用户ID
+     * @param request
+     * @return
+     */
+    @Override
+    public String getCurrentUserId(HttpServletRequest request) {
+        // 从JWT token中解析用户ID，优先使用配置的header，其次兼容 X-Token 和 请求参数 token
+        String token = request.getHeader(jwtUtil.getHeaderName());
+        if (token == null || token.trim().isEmpty()) {
+            token = request.getHeader("X-Token");
+        }
+        if (token == null || token.trim().isEmpty()) {
+            token = request.getParameter("token");
+        }
+        // 先尝试作为JWT解析
+        String userId = jwtUtil.getUserIdFromToken(token);
+        if (userId != null) {
+            return userId;
+        }
+        // 再尝试作为Redis会话token
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        if (token == null || token.trim().isEmpty()) {
+            return null;
+        }
+        Object obj = redisTemplate.opsForValue().get(token);
+        if (obj == null) {
+            return null;
+        }
+        try {
+            TSysUser loginUser = JSON.parseObject(JSON.toJSONString(obj), TSysUser.class);
+            return loginUser != null ? loginUser.getUserId() : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
 }

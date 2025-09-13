@@ -1,17 +1,17 @@
 package com.king.sys.menu.controller;
 
 import com.king.common.Result;
-import com.alibaba.fastjson2.JSON;
-import com.king.common.utils.JwtUtil;
 import com.king.sys.menu.entity.SysMenu;
 import com.king.sys.menu.service.IMenuService;
-import com.king.sys.user.entity.TSysUser;
+import com.king.sys.menu.service.IRoleMenuService;
+import com.king.sys.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.StringUtils;
+import java.util.Collections;
 
 @CrossOrigin
 @RestController
@@ -22,10 +22,13 @@ public class MenuController {
     private IMenuService menuService;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private IUserService userService;
+
+    @Autowired
+    private IRoleMenuService roleMenuService;
 
     /**
      * 根据用户角色获取菜单列表
@@ -33,7 +36,7 @@ public class MenuController {
     @GetMapping("/getUserMenus")
     public Result getUserMenus(HttpServletRequest request) {
         // 从token或session中获取用户信息
-        String userId = getCurrentUserId(request);
+        String userId = userService.getCurrentUserId(request);
         if (userId == null) {
             return Result.error("用户未登录或token无效");
         }
@@ -58,6 +61,18 @@ public class MenuController {
         if (menu == null) {
             return Result.error("参数不能为空");
         }
+        // 基础必填校验
+        if (!StringUtils.hasText(menu.getTitle())) {
+            return Result.error("菜单名称(title)不能为空");
+        }
+        if (!StringUtils.hasText(menu.getPath())) {
+            return Result.error("路由路径(path)不能为空");
+        }
+
+        // 统一校验（新增：不需要排除自身ID）
+        Result check = validateMenuUniqueness(menu, false);
+        if (check != null) return check;
+
         boolean ok = menuService.save(menu);
         return ok ? Result.success(menu) : Result.error("新增失败");
     }
@@ -70,6 +85,18 @@ public class MenuController {
         if (menu == null || menu.getMenuId() == null) {
             return Result.error("菜单ID不能为空");
         }
+        // 基础必填校验
+        if (!StringUtils.hasText(menu.getTitle())) {
+            return Result.error("菜单名称(title)不能为空");
+        }
+        if (!StringUtils.hasText(menu.getPath())) {
+            return Result.error("路由路径(path)不能为空");
+        }
+
+        // 统一校验（更新：需要排除自身ID）
+        Result check = validateMenuUniqueness(menu, true);
+        if (check != null) return check;
+
         boolean ok = menuService.updateById(menu);
         return ok ? Result.success(menu) : Result.error("更新失败");
     }
@@ -82,8 +109,77 @@ public class MenuController {
         if (menuId == null) {
             return Result.error("菜单ID不能为空");
         }
+        // 存在子菜单则不允许删除
+        boolean hasChildren = menuService.lambdaQuery()
+                .eq(SysMenu::getParentId, menuId)
+                .count() > 0;
+        if (hasChildren) {
+            return Result.error("存在子菜单，无法删除");
+        }
+
         boolean ok = menuService.removeById(menuId);
         return ok ? Result.success() : Result.error("删除失败");
+    }
+
+    /**
+     * 校验菜单在新增/更新时的唯一性规则
+     * - 一级菜单：同为 parentId=null 下，title 唯一
+     * - 子菜单：同 parentId 下，title 唯一
+     * - 所有菜单：path 全局唯一
+     * - 子菜单：component 全局唯一（按当前需求）
+     *
+     * @param menu 待校验的菜单
+     * @param excludeSelf 是否在校验时排除自身（更新时传 true）
+     * @return 若不通过，返回 Result；若通过，返回 null
+     */
+    private Result validateMenuUniqueness(SysMenu menu, boolean excludeSelf) {
+        Integer parentId = menu.getParentId();
+
+        // 1) 同级标题判重
+        if (parentId == null) {
+            // 一级菜单：在所有一级菜单中(title)唯一
+            boolean existsSameTitleOnRoot = menuService.lambdaQuery()
+                    .isNull(SysMenu::getParentId)
+                    .eq(SysMenu::getTitle, menu.getTitle())
+                    .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
+                    .count() > 0;
+            if (existsSameTitleOnRoot) {
+                return Result.error("一级菜单名称已存在");
+            }
+        } else {
+            // 子菜单：同 parentId 下(title)唯一
+            boolean existsSameTitleOnSibling = menuService.lambdaQuery()
+                    .eq(SysMenu::getParentId, parentId)
+                    .eq(SysMenu::getTitle, menu.getTitle())
+                    .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
+                    .count() > 0;
+            if (existsSameTitleOnSibling) {
+                return Result.error("同级(同父)菜单名称已存在");
+            }
+        }
+
+        // 2) path 全局唯一
+        boolean existsSamePath = menuService.lambdaQuery()
+                .eq(SysMenu::getPath, menu.getPath())
+                .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
+                .count() > 0;
+        if (existsSamePath) {
+            return Result.error("路径已存在");
+        }
+
+        // 3) 子菜单的 component 必须唯一
+        if (parentId != null && StringUtils.hasText(menu.getComponent())) {
+            boolean existsSameComponentForChildren = menuService.lambdaQuery()
+                    .isNotNull(SysMenu::getParentId)
+                    .eq(SysMenu::getComponent, menu.getComponent())
+                    .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
+                    .count() > 0;
+            if (existsSameComponentForChildren) {
+                return Result.error("子菜单组件已存在");
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -101,40 +197,38 @@ public class MenuController {
     }
 
     /**
-     * 从请求中获取当前用户ID
-     * @param request
-     * @return
+     * 根据角色获取已分配的菜单ID列表
      */
-    private String getCurrentUserId(HttpServletRequest request) {
-        // 从JWT token中解析用户ID，优先使用配置的header，其次兼容 X-Token 和 请求参数 token
-        String token = request.getHeader(jwtUtil.getHeaderName());
-        if (token == null || token.trim().isEmpty()) {
-            token = request.getHeader("X-Token");
+    @GetMapping("/getMenusByRole")
+    public Result getMenusByRole(@RequestParam("roleId") String roleId) {
+        if (!StringUtils.hasText(roleId)) {
+            return Result.error("角色ID不能为空");
         }
-        if (token == null || token.trim().isEmpty()) {
-            token = request.getParameter("token");
-        }
-        // 先尝试作为JWT解析
-        String userId = jwtUtil.getUserIdFromToken(token);
-        if (userId != null) {
-            return userId;
-        }
-        // 再尝试作为Redis会话token
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-        if (token == null || token.trim().isEmpty()) {
-            return null;
-        }
-        Object obj = redisTemplate.opsForValue().get(token);
-        if (obj == null) {
-            return null;
-        }
-        try {
-            TSysUser loginUser = JSON.parseObject(JSON.toJSONString(obj), TSysUser.class);
-            return loginUser != null ? loginUser.getUserId() : null;
-        } catch (Exception e) {
-            return null;
-        }
+        return Result.success(roleMenuService.getMenuIdsByRole(roleId));
     }
+
+    /**
+     * 保存角色的菜单授权
+     */
+    @PostMapping("/saveRoleMenus")
+    public Result saveRoleMenus(@RequestBody java.util.Map<String, Object> body) {
+        if (body == null) {
+            return Result.error("参数不能为空");
+        }
+        Object rid = body.get("roleId");
+        Object mids = body.get("menuIds");
+        if (rid == null || !StringUtils.hasText(String.valueOf(rid))) {
+            return Result.error("角色ID不能为空");
+        }
+        java.util.List<Integer> menuIds;
+        if (mids instanceof java.util.List) {
+            menuIds = (java.util.List<Integer>) mids;
+        } else {
+            menuIds = Collections.emptyList();
+        }
+        boolean ok = roleMenuService.saveRoleMenus(String.valueOf(rid), menuIds);
+        return ok ? Result.success("保存成功") : Result.error("保存失败");
+    }
+
+
 }
