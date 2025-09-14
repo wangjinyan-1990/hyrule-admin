@@ -1,7 +1,7 @@
 package com.king.common.utils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.king.framework.counter.entity.SysCounter;
+import com.king.framework.counter.entity.TSysCounter;
 import com.king.framework.counter.mapper.SysCounterMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,16 +38,16 @@ public class CounterUtil {
         Assert.hasText(counterName, "参数不能为空");
 
         // 查找计数器定义
-        SysCounter counter = sysCounterMapper.selectOne(new LambdaQueryWrapper<SysCounter>()
-                .eq(SysCounter::getCounterName, counterName));
+        TSysCounter counter = sysCounterMapper.selectOne(new LambdaQueryWrapper<TSysCounter>()
+                .eq(TSysCounter::getCounterName, counterName));
         Assert.notNull(counter, "找不到计数器. counterName: " + counterName);
 
         int nextNumber;
         synchronized (counterName.intern()) {
             // 行级锁，避免并发下重复生成
-            SysCounter locked = jdbcTemplate.queryForObject(
+            TSysCounter locked = jdbcTemplate.queryForObject(
                     "select * from t_sys_counter where COUNTER_ID = ? for update",
-                    new BeanPropertyRowMapper<>(SysCounter.class),
+                    new BeanPropertyRowMapper<>(TSysCounter.class),
                     counter.getCounterId()
             );
             Assert.notNull(locked, "计数器记录不存在, id=" + counter.getCounterId());

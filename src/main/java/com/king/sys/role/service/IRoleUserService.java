@@ -1,11 +1,11 @@
 package com.king.sys.role.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.king.sys.role.entity.SysRoleUser;
+import com.king.sys.role.entity.TSysRoleUser;
 
 import java.util.Map;
 
-public interface IRoleUserService extends IService<SysRoleUser> {
+public interface IRoleUserService extends IService<TSysRoleUser> {
     
     /**
      * 分页查询角色的用户列表

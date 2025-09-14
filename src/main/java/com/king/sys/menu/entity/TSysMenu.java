@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @TableName("t_sys_menu")
-public class SysMenu {
+public class TSysMenu {
     @TableId(value = "MENU_ID",type = IdType.AUTO)
     private Integer menuId;
     @TableField("COMPONENT")

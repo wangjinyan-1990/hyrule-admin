@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @TableName("t_sys_role_menu")
-public class SysRoleMenu {
+public class TSysRoleMenu {
 
     @TableId(value = "ID",type = IdType.AUTO)
     private Integer id;

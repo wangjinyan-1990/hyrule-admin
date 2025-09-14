@@ -2,7 +2,7 @@ package com.king.sys.role.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.king.sys.role.entity.SysRoleUser;
+import com.king.sys.role.entity.TSysRoleUser;
 import com.king.sys.role.mapper.RoleUserMapper;
 import com.king.sys.role.service.IRoleUserService;
 import com.king.sys.user.entity.TSysUser;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Primary
 @Service
-public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, SysRoleUser> implements IRoleUserService {
+public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, TSysRoleUser> implements IRoleUserService {
 
     @Override
     public Map<String, Object> getRoleUsers(String roleId, String userName, Long pageNo, Long pageSize) {
@@ -67,14 +67,14 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, SysRoleUser
         Assert.isTrue(StringUtils.hasText(userId), "用户ID不能为空");
         
         // 检查关联是否已存在
-        LambdaQueryWrapper<SysRoleUser> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysRoleUser::getRoleId, roleId)
-               .eq(SysRoleUser::getUserId, userId);
-        SysRoleUser existing = this.baseMapper.selectOne(wrapper);
+        LambdaQueryWrapper<TSysRoleUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TSysRoleUser::getRoleId, roleId)
+               .eq(TSysRoleUser::getUserId, userId);
+        TSysRoleUser existing = this.baseMapper.selectOne(wrapper);
         Assert.isTrue(existing == null, "用户角色关联已存在");
         
         // 创建新的关联
-        SysRoleUser roleUser = new SysRoleUser();
+        TSysRoleUser roleUser = new TSysRoleUser();
         roleUser.setRoleId(roleId);
         roleUser.setUserId(userId);
         
@@ -87,11 +87,11 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, SysRoleUser
         Assert.isTrue(StringUtils.hasText(userId), "用户ID不能为空");
         
         // 查找并删除关联
-        LambdaQueryWrapper<SysRoleUser> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysRoleUser::getRoleId, roleId)
-               .eq(SysRoleUser::getUserId, userId);
+        LambdaQueryWrapper<TSysRoleUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TSysRoleUser::getRoleId, roleId)
+               .eq(TSysRoleUser::getUserId, userId);
         
-        SysRoleUser existing = this.baseMapper.selectOne(wrapper);
+        TSysRoleUser existing = this.baseMapper.selectOne(wrapper);
         Assert.notNull(existing, "用户角色关联不存在");
         
         this.baseMapper.delete(wrapper);

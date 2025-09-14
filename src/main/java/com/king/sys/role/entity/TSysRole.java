@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @TableName("t_sys_role")
-public class SysRole implements java.io.Serializable {
+public class TSysRole implements java.io.Serializable {
 
 	@TableId(value  = "ROLE_ID")
 	private String roleId;		//角色ID

@@ -1,7 +1,7 @@
 package com.king.sys.menu.controller;
 
 import com.king.common.Result;
-import com.king.sys.menu.entity.SysMenu;
+import com.king.sys.menu.entity.TSysMenu;
 import com.king.sys.menu.service.IMenuService;
 import com.king.sys.menu.service.IRoleMenuService;
 import com.king.sys.user.service.IUserService;
@@ -13,7 +13,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 import java.util.Collections;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/sys/menu")
 public class MenuController {
@@ -40,7 +39,7 @@ public class MenuController {
         if (userId == null) {
             return Result.error("用户未登录或token无效");
         }
-        List<SysMenu> menus = menuService.getMenusByUserId(userId);
+        List<TSysMenu> menus = menuService.getMenusByUserId(userId);
         return Result.success(menus);
     }
 
@@ -49,7 +48,7 @@ public class MenuController {
      */
     @GetMapping("/listAll")
     public Result listAll() {
-        List<SysMenu> menus = menuService.list();
+        List<TSysMenu> menus = menuService.list();
         return Result.success(menus);
     }
 
@@ -57,7 +56,7 @@ public class MenuController {
      * 管理端：新增菜单
      */
     @PostMapping("/create")
-    public Result create(@RequestBody SysMenu menu) {
+    public Result create(@RequestBody TSysMenu menu) {
         if (menu == null) {
             return Result.error("参数不能为空");
         }
@@ -81,7 +80,7 @@ public class MenuController {
      * 管理端：更新菜单
      */
     @PutMapping("/update")
-    public Result update(@RequestBody SysMenu menu) {
+    public Result update(@RequestBody TSysMenu menu) {
         if (menu == null || menu.getMenuId() == null) {
             return Result.error("菜单ID不能为空");
         }
@@ -111,7 +110,7 @@ public class MenuController {
         }
         // 存在子菜单则不允许删除
         boolean hasChildren = menuService.lambdaQuery()
-                .eq(SysMenu::getParentId, menuId)
+                .eq(TSysMenu::getParentId, menuId)
                 .count() > 0;
         if (hasChildren) {
             return Result.error("存在子菜单，无法删除");
@@ -132,15 +131,15 @@ public class MenuController {
      * @param excludeSelf 是否在校验时排除自身（更新时传 true）
      * @return 若不通过，返回 Result；若通过，返回 null
      */
-    private Result validateMenuUniqueness(SysMenu menu, boolean excludeSelf) {
+    private Result validateMenuUniqueness(TSysMenu menu, boolean excludeSelf) {
         Integer parentId = menu.getParentId();
 
         // 1) 同级标题判重
         if (parentId == null) {
             // 一级菜单：在所有一级菜单中(title)唯一
             boolean existsSameTitleOnRoot = menuService.lambdaQuery()
-                    .isNull(SysMenu::getParentId)
-                    .eq(SysMenu::getTitle, menu.getTitle())
+                    .isNull(TSysMenu::getParentId)
+                    .eq(TSysMenu::getTitle, menu.getTitle())
                     .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
                     .count() > 0;
             if (existsSameTitleOnRoot) {
@@ -149,8 +148,8 @@ public class MenuController {
         } else {
             // 子菜单：同 parentId 下(title)唯一
             boolean existsSameTitleOnSibling = menuService.lambdaQuery()
-                    .eq(SysMenu::getParentId, parentId)
-                    .eq(SysMenu::getTitle, menu.getTitle())
+                    .eq(TSysMenu::getParentId, parentId)
+                    .eq(TSysMenu::getTitle, menu.getTitle())
                     .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
                     .count() > 0;
             if (existsSameTitleOnSibling) {
@@ -160,7 +159,7 @@ public class MenuController {
 
         // 2) path 全局唯一
         boolean existsSamePath = menuService.lambdaQuery()
-                .eq(SysMenu::getPath, menu.getPath())
+                .eq(TSysMenu::getPath, menu.getPath())
                 .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
                 .count() > 0;
         if (existsSamePath) {
@@ -170,8 +169,8 @@ public class MenuController {
         // 3) 子菜单的 component 必须唯一
         if (parentId != null && StringUtils.hasText(menu.getComponent())) {
             boolean existsSameComponentForChildren = menuService.lambdaQuery()
-                    .isNotNull(SysMenu::getParentId)
-                    .eq(SysMenu::getComponent, menu.getComponent())
+                    .isNotNull(TSysMenu::getParentId)
+                    .eq(TSysMenu::getComponent, menu.getComponent())
                     .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
                     .count() > 0;
             if (existsSameComponentForChildren) {
@@ -190,8 +189,8 @@ public class MenuController {
         if (parentId == null) {
             return Result.error("父ID不能为空");
         }
-        List<SysMenu> children = menuService.lambdaQuery()
-                .eq(SysMenu::getParentId, parentId)
+        List<TSysMenu> children = menuService.lambdaQuery()
+                .eq(TSysMenu::getParentId, parentId)
                 .list();
         return Result.success(children);
     }

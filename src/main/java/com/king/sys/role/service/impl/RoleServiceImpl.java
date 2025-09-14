@@ -3,7 +3,7 @@ package com.king.sys.role.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.common.utils.DateUtil;
-import com.king.sys.role.entity.SysRole;
+import com.king.sys.role.entity.TSysRole;
 import com.king.sys.role.mapper.RoleMapper;
 import com.king.sys.role.service.IRoleService;
 import org.springframework.util.Assert;
@@ -13,10 +13,10 @@ import org.springframework.context.annotation.Primary;
 
 @Primary
 @Service
-public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements IRoleService {
+public class RoleServiceImpl extends ServiceImpl<RoleMapper, TSysRole> implements IRoleService {
 
     @Override
-    public void createRole(SysRole role) {
+    public void createRole(TSysRole role) {
         Assert.notNull(role, "角色不能为空");
         
         // 校验必填字段
@@ -42,12 +42,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     }
 
     @Override
-    public void updateRole(SysRole role) {
+    public void updateRole(TSysRole role) {
         Assert.notNull(role, "角色不能为空");
         Assert.isTrue(StringUtils.hasText(role.getRoleId()), "角色ID不能为空");
         
         // 检查角色是否存在
-        SysRole existingRole = this.baseMapper.selectById(role.getRoleId());
+        TSysRole existingRole = this.baseMapper.selectById(role.getRoleId());
         Assert.notNull(existingRole, "角色不存在");
         
         // 校验必填字段
@@ -59,7 +59,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
         }
         
         // 构建更新对象，只更新允许的字段（不更新roleId）
-        SysRole toUpdate = new SysRole();
+        TSysRole toUpdate = new TSysRole();
         toUpdate.setRoleId(role.getRoleId()); // 保持原有roleId不变
         toUpdate.setRoleName(role.getRoleName());
         toUpdate.setSortNo(role.getSortNo());
@@ -73,7 +73,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
         Assert.isTrue(StringUtils.hasText(roleId), "角色ID不能为空");
         
         // 检查角色是否存在
-        SysRole existingRole = this.baseMapper.selectById(roleId);
+        TSysRole existingRole = this.baseMapper.selectById(roleId);
         Assert.notNull(existingRole, "角色不存在");
         
         // 检查角色是否被用户使用（这里可以添加业务逻辑检查）
@@ -88,9 +88,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
      */
     private void validateRoleNameUniqueForCreate(String roleName) {
         if (StringUtils.hasText(roleName)) {
-            LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(SysRole::getRoleName, roleName);
-            SysRole exist = this.baseMapper.selectOne(wrapper);
+            LambdaQueryWrapper<TSysRole> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(TSysRole::getRoleName, roleName);
+            TSysRole exist = this.baseMapper.selectOne(wrapper);
             Assert.isTrue(exist == null, "角色名称已存在");
         }
     }
@@ -102,10 +102,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
      */
     private void validateRoleNameUniqueForUpdate(String roleName, String currentRoleId) {
         if (StringUtils.hasText(roleName)) {
-            LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(SysRole::getRoleName, roleName)
-                   .ne(SysRole::getRoleId, currentRoleId);
-            SysRole exist = this.baseMapper.selectOne(wrapper);
+            LambdaQueryWrapper<TSysRole> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(TSysRole::getRoleName, roleName)
+                   .ne(TSysRole::getRoleId, currentRoleId);
+            TSysRole exist = this.baseMapper.selectOne(wrapper);
             Assert.isTrue(exist == null, "角色名称已被其他角色使用");
         }
     }
@@ -115,9 +115,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
      * @return 最大的角色ID，如果没有数据则返回"0000"
      */
     private String getMaxRoleId() {
-        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByDesc(SysRole::getRoleId).last("LIMIT 1");
-        SysRole maxRole = this.baseMapper.selectOne(wrapper);
+        LambdaQueryWrapper<TSysRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(TSysRole::getRoleId).last("LIMIT 1");
+        TSysRole maxRole = this.baseMapper.selectOne(wrapper);
         
         if (maxRole != null && StringUtils.hasText(maxRole.getRoleId())) {
             return maxRole.getRoleId();

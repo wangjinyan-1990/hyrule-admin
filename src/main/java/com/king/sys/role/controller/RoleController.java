@@ -3,7 +3,7 @@ package com.king.sys.role.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.king.common.Result;
-import com.king.sys.role.entity.SysRole;
+import com.king.sys.role.entity.TSysRole;
 import com.king.sys.role.service.IRoleService;
 import com.king.sys.role.service.IRoleUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/sys/role")
 public class RoleController {
@@ -28,8 +27,8 @@ public class RoleController {
      * 获取所有角色
      */
     @GetMapping("/all")
-    public Result<List<SysRole>> getAll() {
-        List<SysRole> roles = roleService.list();
+    public Result<List<TSysRole>> getAll() {
+        List<TSysRole> roles = roleService.list();
         return Result.success(roles);
     }
 
@@ -40,11 +39,11 @@ public class RoleController {
     public Result<Map<String, Object>> getRoleList(@RequestParam(value = "roleName", required = false) String roleName,
                                                    @RequestParam("pageNo") Long pageNo,
                                                    @RequestParam("pageSize") Long pageSize) {
-        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StringUtils.hasLength(roleName), SysRole::getRoleName, roleName);
-        wrapper.orderByAsc(SysRole::getSortNo);
+        LambdaQueryWrapper<TSysRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(StringUtils.hasLength(roleName), TSysRole::getRoleName, roleName);
+        wrapper.orderByAsc(TSysRole::getSortNo);
 
-        Page<SysRole> page = new Page<>(pageNo, pageSize);
+        Page<TSysRole> page = new Page<>(pageNo, pageSize);
         roleService.page(page, wrapper);
 
         Map<String, Object> data = new java.util.HashMap<>();
@@ -58,7 +57,7 @@ public class RoleController {
      * 创建角色
      */
     @PostMapping("/create")
-    public Result<?> createRole(@RequestBody SysRole role) {
+    public Result<?> createRole(@RequestBody TSysRole role) {
         try {
             roleService.createRole(role);
             return Result.success("角色创建成功");
@@ -73,7 +72,7 @@ public class RoleController {
      * 编辑角色
      */
     @PutMapping("/update")
-    public Result<?> updateRole(@RequestBody SysRole role) {
+    public Result<?> updateRole(@RequestBody TSysRole role) {
         try {
             roleService.updateRole(role);
             return Result.success("角色更新成功");
@@ -103,9 +102,9 @@ public class RoleController {
      * 根据ID获取角色详情
      */
     @GetMapping("/detail")
-    public Result<SysRole> getRoleDetail(@RequestParam("roleId") String roleId) {
+    public Result<TSysRole> getRoleDetail(@RequestParam("roleId") String roleId) {
         try {
-            SysRole role = roleService.getById(roleId);
+            TSysRole role = roleService.getById(roleId);
             if (role != null) {
                 return Result.success(role);
             } else {

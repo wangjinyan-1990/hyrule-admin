@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.sys.org.mapper.SysOrgMapper">
+
+    <select id="selectAllOrgs" resultType="com.king.sys.org.entity.TSysOrg">
+        SELECT 
+            o.ORG_ID, 
+            o.ORG_NAME, 
+            o.PARENT_ORG_ID, 
+            o.ORG_LEVEL, 
+            o.SORT_NO, 
+            o.ORG_STATUS, 
+            o.REMARK,
+            p.ORG_NAME as parentOrgName
+        FROM t_sys_org o
+        LEFT JOIN t_sys_org p ON o.PARENT_ORG_ID = p.ORG_ID
+        ORDER BY o.ORG_LEVEL ASC, o.SORT_NO ASC, o.ORG_ID ASC
+    </select>
+
+    <select id="selectOrgPage" resultType="com.king.sys.org.entity.TSysOrg">
+        SELECT 
+            o.ORG_ID, 
+            o.ORG_NAME, 
+            o.PARENT_ORG_ID, 
+            o.ORG_LEVEL, 
+            o.SORT_NO, 
+            o.ORG_STATUS, 
+            o.REMARK,
+            p.ORG_NAME as parentOrgName
+        FROM t_sys_org o
+        LEFT JOIN t_sys_org p ON o.PARENT_ORG_ID = p.ORG_ID
+        <where>
+            <if test="orgName != null and orgName != ''">
+                AND o.ORG_NAME LIKE CONCAT('%', #{orgName}, '%')
+            </if>
+            <if test="orgStatus != null and orgStatus != ''">
+                AND o.ORG_STATUS = #{orgStatus}
+            </if>
+        </where>
+        ORDER BY o.ORG_LEVEL ASC, o.SORT_NO ASC, o.ORG_ID ASC
+    </select>
+
+    <select id="countChildrenByParentId" resultType="int">
+        SELECT COUNT(1) FROM t_sys_org WHERE PARENT_ORG_ID = #{parentOrgId}
+    </select>
+
+    <select id="countSameLevelOrgName" resultType="int">
+        SELECT COUNT(1) FROM t_sys_org 
+        WHERE ORG_NAME = #{orgName}
+        <if test="parentOrgId == null or parentOrgId == ''">
+            AND (PARENT_ORG_ID IS NULL OR PARENT_ORG_ID = '')
+        </if>
+        <if test="parentOrgId != null and parentOrgId != ''">
+            AND PARENT_ORG_ID = #{parentOrgId}
+        </if>
+        <if test="excludeOrgId != null and excludeOrgId != ''">
+            AND ORG_ID != #{excludeOrgId}
+        </if>
+    </select>
+
+    <select id="getMaxRootOrgId" resultType="string">
+        SELECT MAX(ORG_ID) FROM t_sys_org 
+        WHERE (PARENT_ORG_ID IS NULL OR PARENT_ORG_ID = '')
+    </select>
+
+    <select id="getMaxChildOrgId" resultType="string">
+        SELECT MAX(ORG_ID) FROM t_sys_org 
+        WHERE PARENT_ORG_ID = #{parentOrgId}
+    </select>
+
+    <select id="selectOrgWithParentName" resultType="com.king.sys.org.entity.TSysOrg">
+        SELECT 
+            o.ORG_ID, 
+            o.ORG_NAME, 
+            o.PARENT_ORG_ID, 
+            o.ORG_LEVEL, 
+            o.SORT_NO, 
+            o.ORG_STATUS, 
+            o.REMARK,
+            p.ORG_NAME as parentOrgName
+        FROM t_sys_org o
+        LEFT JOIN t_sys_org p ON o.PARENT_ORG_ID = p.ORG_ID
+        WHERE o.ORG_ID = #{orgId}
+    </select>
+
+</mapper>

@@ -13,7 +13,7 @@ import lombok.Data;
  */
 @Data
 @TableName("t_sys_role_user")
-public class SysRoleUser implements java.io.Serializable {
+public class TSysRoleUser implements java.io.Serializable {
 
 	// Fields
 	@TableId(value = "ID",type = IdType.AUTO)
@@ -26,11 +26,11 @@ public class SysRoleUser implements java.io.Serializable {
 	// Constructors
 
 	/** default constructor */
-	public SysRoleUser() {
+	public TSysRoleUser() {
 	}
 
 	/** full constructor */
-	public SysRoleUser(Integer id, String roleId, String userId) {
+	public TSysRoleUser(Integer id, String roleId, String userId) {
 		this.id = id;
 		this.roleId = roleId;
 		this.userId = userId;

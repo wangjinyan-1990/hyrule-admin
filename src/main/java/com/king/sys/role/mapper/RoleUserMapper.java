@@ -1,7 +1,7 @@
 package com.king.sys.role.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.king.sys.role.entity.SysRoleUser;
+import com.king.sys.role.entity.TSysRoleUser;
 import com.king.sys.user.entity.TSysUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface RoleUserMapper extends BaseMapper<SysRoleUser> {
+public interface RoleUserMapper extends BaseMapper<TSysRoleUser> {
     
     /**
      * 根据角色ID查询用户列表

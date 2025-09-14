@@ -10,5 +10,6 @@ public interface IUserService extends IService<TSysUser> {
     public Map<String, Object> getUserInfo(String token);
     public void createUser(TSysUser user);
     public void updateUser(TSysUser user);
+    public void updateUserRoles(String userId, String roleIds);
     public String getCurrentUserId(HttpServletRequest request);
 }

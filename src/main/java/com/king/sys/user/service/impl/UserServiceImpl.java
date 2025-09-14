@@ -7,6 +7,8 @@ import com.king.common.utils.JwtUtil;
 import com.king.sys.user.entity.TSysUser;
 import com.king.sys.user.mapper.UserMapper;
 import com.king.sys.user.service.IUserService;
+import com.king.sys.role.entity.TSysRoleUser;
+import com.king.sys.role.mapper.RoleUserMapper;
 import com.king.common.constant.Constants;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -14,13 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson2.JSON;
 import com.king.common.utils.Md5Utils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Primary
 @Service
@@ -31,6 +33,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, TSysUser> implement
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private RoleUserMapper roleUserMapper;
 
     @Override
     public Map<String, Object> getUserInfo(String token) {
@@ -76,7 +81,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, TSysUser> implement
         }
         String currentDateStr = DateUtil.getDateFormatYMD();
         user.setSortNo(Integer.parseInt(currentDateStr));
-        // 仅允许字段：userId、userName、loginName、email、status、password、phone、sortNo
+        // 仅允许字段：userId、userName、loginName、email、status、password、phone、sortNo、orgId
         TSysUser toSave = new TSysUser();
         toSave.setUserId(user.getUserId());
         toSave.setLoginName(user.getLoginName());
@@ -86,6 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, TSysUser> implement
         toSave.setPassword(user.getPassword());
         toSave.setPhone(user.getPhone());
         toSave.setSortNo(user.getSortNo());
+        toSave.setOrgId(user.getOrgId()); // 添加机构ID保存
 
         this.baseMapper.insert(toSave);
     }
@@ -122,10 +128,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, TSysUser> implement
         
         // 构建更新对象，只更新允许的字段
         TSysUser toUpdate = new TSysUser();
+        toUpdate.setUserId(user.getUserId()); // 设置用户ID用于更新条件
         toUpdate.setUserName(user.getUserName());
         toUpdate.setEmail(user.getEmail());
         toUpdate.setStatus(user.getStatus());
         toUpdate.setPhone(user.getPhone());
+        toUpdate.setOrgId(user.getOrgId()); // 添加机构ID更新
         
         // 如果提供了loginName，则更新loginName
         if (StringUtils.hasText(user.getLoginName())) {
@@ -138,6 +146,45 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, TSysUser> implement
         }
         
         this.baseMapper.updateById(toUpdate);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUserRoles(String userId, String roleIds) {
+        // 获取当前用户的角色ID列表
+        List<String> currentRoleIds = this.baseMapper.getRoleIdByUserId(userId);
+        
+        // 解析新的角色ID列表
+        List<String> newRoleIds = Arrays.stream(roleIds.split(","))
+                .map(String::trim)
+                .filter(StringUtils::hasText)
+                .collect(Collectors.toList());
+        
+        // 找出需要添加的角色（新角色中不在当前角色中的）
+        List<String> rolesToAdd = newRoleIds.stream()
+                .filter(roleId -> !currentRoleIds.contains(roleId))
+                .collect(Collectors.toList());
+        
+        // 找出需要删除的角色（当前角色中不在新角色中的）
+        List<String> rolesToRemove = currentRoleIds.stream()
+                .filter(roleId -> !newRoleIds.contains(roleId))
+                .collect(Collectors.toList());
+        
+        // 删除需要移除的角色
+        for (String roleId : rolesToRemove) {
+            LambdaQueryWrapper<TSysRoleUser> deleteWrapper = new LambdaQueryWrapper<>();
+            deleteWrapper.eq(TSysRoleUser::getUserId, userId)
+                        .eq(TSysRoleUser::getRoleId, roleId);
+            roleUserMapper.delete(deleteWrapper);
+        }
+        
+        // 添加新的角色
+        for (String roleId : rolesToAdd) {
+            TSysRoleUser roleUser = new TSysRoleUser();
+            roleUser.setUserId(userId);
+            roleUser.setRoleId(roleId);
+            roleUserMapper.insert(roleUser);
+        }
     }
 
     /**

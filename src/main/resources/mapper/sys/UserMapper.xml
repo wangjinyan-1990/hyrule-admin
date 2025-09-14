@@ -1,12 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.king.sys.user.mapper.UserMapper">
+
+    <resultMap id="UserWithRolesMap" type="com.king.sys.user.entity.TSysUser">
+        <id property="userId" column="USER_ID"/>
+        <result property="loginName" column="LOGIN_NAME"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="password" column="PASSWORD"/>
+        <result property="email" column="EMAIL"/>
+        <result property="phone" column="PHONE"/>
+        <result property="orgId" column="ORG_ID"/>
+        <result property="status" column="STATUS"/>
+        <result property="sortNo" column="SORT_NO"/>
+        <result property="roleNames" column="ROLE_NAMES"/>
+        <result property="roleIds" column="ROLE_IDS"/>
+        <result property="orgName" column="ORG_NAME"/>
+    </resultMap>
     <select id="getRoleNameByUserId" parameterType="String" resultType="String">
         SELECT b.ROLE_NAME
         FROM t_sys_role_user a, t_sys_role b
         WHERE a.ROLE_ID = b.ROLE_ID AND a.USER_ID = #{userId}
     </select>
+    
+    <select id="getRoleIdByUserId" parameterType="String" resultType="String">
+        SELECT a.ROLE_ID
+        FROM t_sys_role_user a
+        WHERE a.USER_ID = #{userId}
+    </select>
     <select id="selectUserList"  resultType="com.king.sys.user.entity.TSysUser">
         SELECT a.* FROM t_sys_user a
+    </select>
+
+    <select id="selectUserPageWithRoles" resultMap="UserWithRolesMap">
+        SELECT 
+            u.USER_ID,
+            u.LOGIN_NAME,
+            u.USER_NAME,
+            u.PASSWORD,
+            u.EMAIL,
+            u.PHONE,
+            u.ORG_ID,
+            u.STATUS,
+            u.SORT_NO,
+            GROUP_CONCAT(DISTINCT r.ROLE_NAME SEPARATOR ',') as ROLE_NAMES,
+            GROUP_CONCAT(DISTINCT ru.ROLE_ID SEPARATOR ',') as ROLE_IDS,
+            o.ORG_NAME
+        FROM t_sys_user u
+        LEFT JOIN t_sys_role_user ru ON u.USER_ID = ru.USER_ID
+        LEFT JOIN t_sys_role r ON ru.ROLE_ID = r.ROLE_ID
+        LEFT JOIN t_sys_org o ON u.ORG_ID = o.ORG_ID
+        <where>
+            <if test="userName != null and userName != ''">
+                AND u.USER_NAME LIKE CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="loginName != null and loginName != ''">
+                AND u.LOGIN_NAME LIKE CONCAT('%', #{loginName}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND u.PHONE = #{phone}
+            </if>
+        </where>
+        GROUP BY u.USER_ID, u.LOGIN_NAME, u.USER_NAME, u.PASSWORD, u.EMAIL, u.PHONE, u.ORG_ID, u.STATUS, u.SORT_NO, o.ORG_NAME
+        ORDER BY u.SORT_NO ASC, u.USER_ID ASC
     </select>
 </mapper>

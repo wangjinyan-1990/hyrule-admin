@@ -1,7 +1,7 @@
 package com.king.sys.menu.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.king.sys.menu.entity.SysRoleMenu;
+import com.king.sys.menu.entity.TSysRoleMenu;
 import com.king.sys.menu.mapper.SysRoleMenuMapper;
 import com.king.sys.menu.service.IRoleMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Primary
 @Service
-public class RoleMenuServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRoleMenu> implements IRoleMenuService {
+public class RoleMenuServiceImpl extends ServiceImpl<SysRoleMenuMapper, TSysRoleMenu> implements IRoleMenuService {
 
     @Autowired
     private SysRoleMenuMapper sysRoleMenuMapper;

@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @TableName("t_sys_counter")
-public class SysCounter {
+public class TSysCounter {
     @TableId(value = "COUNTER_ID",type = IdType.AUTO)
     private Integer counterId;
     @TableField("COUNTER_NAME")
