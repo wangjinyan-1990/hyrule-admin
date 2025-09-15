@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.test.baseManage.testSystem.entity.TTestSystemUser;
 import com.king.test.baseManage.testSystem.mapper.TestSystemUserMapper;
 import com.king.test.baseManage.testSystem.service.ITestSystemUserService;
+import com.king.test.baseManage.testSystem.dto.UserSystemInfoDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -105,5 +106,12 @@ public class TestSystemUserServiceImpl extends ServiceImpl<TestSystemUserMapper,
         wrapper.eq(TTestSystemUser::getSystemId, systemId);
         
         return baseMapper.delete(wrapper) > 0;
+    }
+    
+    @Override
+    public List<UserSystemInfoDTO> getUsersByRoleId(String roleId) {
+        Assert.hasText(roleId, "角色ID不能为空");
+        
+        return baseMapper.getUsersByRoleId(roleId);
     }
 }

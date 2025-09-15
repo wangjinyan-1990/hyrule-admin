@@ -2,6 +2,7 @@ package com.king.test.baseManage.testSystem.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.king.test.baseManage.testSystem.entity.TTestSystemUser;
+import com.king.test.baseManage.testSystem.dto.UserSystemInfoDTO;
 
 import java.util.List;
 
@@ -46,4 +47,12 @@ public interface ITestSystemUserService extends IService<TTestSystemUser> {
      * @return 是否删除成功
      */
     boolean removeAllUsersBySystemId(String systemId);
+    
+    /**
+     * 根据角色ID获取用户列表（在职状态）
+     * 每个人只出现一次，多个系统的systemId和systemName会拼接
+     * @param roleId 角色ID
+     * @return 用户系统信息列表
+     */
+    List<UserSystemInfoDTO> getUsersByRoleId(String roleId);
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.baseManage.testSystem.mapper.TestSystemUserMapper">
+
+    <!-- 根据角色ID获取用户列表（在职状态） -->
+    <select id="getUsersByRoleId" parameterType="String" resultType="com.king.test.baseManage.testSystem.dto.UserSystemInfoDTO">
+        SELECT 
+            u.USER_ID as userId,
+            u.LOGIN_NAME as loginName,
+            u.USER_NAME as userName,
+            u.EMAIL as email,
+            u.PHONE as phone,
+            u.ORG_ID as orgId,
+            o.ORG_NAME as orgName,
+            u.STATUS as status,
+            u.SORT_NO as sortNo,
+            GROUP_CONCAT(DISTINCT tsu.SYSTEM_ID ORDER BY tsu.SYSTEM_ID SEPARATOR ',') as systemIds,
+            GROUP_CONCAT(DISTINCT ts.SYSTEM_NAME ORDER BY ts.SYSTEM_ID SEPARATOR ',') as systemNames
+        FROM t_sys_user u
+        LEFT JOIN t_sys_role_user ru ON u.USER_ID = ru.USER_ID
+        LEFT JOIN t_test_system_user tsu ON u.USER_ID = tsu.USER_ID
+        LEFT JOIN t_test_system ts ON tsu.SYSTEM_ID = ts.SYSTEM_ID
+        LEFT JOIN t_sys_org o ON u.ORG_ID = o.ORG_ID
+        WHERE ru.ROLE_ID = #{roleId}
+          AND u.STATUS = 1
+        GROUP BY u.USER_ID, u.LOGIN_NAME, u.USER_NAME, u.EMAIL, u.PHONE, u.ORG_ID, o.ORG_NAME, u.STATUS, u.SORT_NO
+        ORDER BY u.SORT_NO, u.USER_NAME
+    </select>
+
+</mapper>

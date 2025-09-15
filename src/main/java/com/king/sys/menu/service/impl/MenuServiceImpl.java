@@ -31,4 +31,18 @@ public class MenuServiceImpl extends ServiceImpl<SysMenuMapper, TSysMenu> implem
         return menuMapper.getMenusByUserId(userId);
     }
 
+    /**
+     * 更新父菜单的isLeaf状态
+     */
+    @Override
+    public boolean updateParentMenuIsLeaf(Integer parentId, String isLeaf) {
+        if (parentId == null) {
+            return false;
+        }
+        TSysMenu parentMenu = new TSysMenu();
+        parentMenu.setMenuId(parentId);
+        parentMenu.setIsLeaf(isLeaf);
+        return this.updateById(parentMenu);
+    }
+
 }

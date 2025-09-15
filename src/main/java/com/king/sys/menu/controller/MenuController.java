@@ -78,7 +78,15 @@ public class MenuController {
         if (check != null) return check;
 
         boolean ok = menuService.save(menu);
-        return ok ? Result.success(menu) : Result.error("新增失败");
+        if (ok) {
+            // 如果新增的是子菜单，需要将父菜单的isLeaf设置为0（非叶子菜单）
+            if (menu.getParentId() != null) {
+                menuService.updateParentMenuIsLeaf(menu.getParentId(), "0");
+            }
+            return Result.success(menu);
+        } else {
+            return Result.error("新增失败");
+        }
     }
 
     /**
@@ -121,8 +129,30 @@ public class MenuController {
             return Result.error("存在子菜单，无法删除");
         }
 
+        // 获取要删除的菜单信息，用于后续更新父菜单状态
+        TSysMenu menuToDelete = menuService.getById(menuId);
+        if (menuToDelete == null) {
+            return Result.error("菜单不存在");
+        }
+        
+        Integer parentId = menuToDelete.getParentId();
+        
         boolean ok = menuService.removeById(menuId);
-        return ok ? Result.success() : Result.error("删除失败");
+        if (ok) {
+            // 如果删除的是子菜单，需要检查父菜单是否还有其他子菜单
+            if (parentId != null) {
+                long remainingChildrenCount = menuService.lambdaQuery()
+                        .eq(TSysMenu::getParentId, parentId)
+                        .count();
+                // 如果没有其他子菜单了，将父菜单的isLeaf设置为1（叶子菜单）
+                if (remainingChildrenCount == 0) {
+                    menuService.updateParentMenuIsLeaf(parentId, "1");
+                }
+            }
+            return Result.success();
+        } else {
+            return Result.error("删除失败");
+        }
     }
 
     /**

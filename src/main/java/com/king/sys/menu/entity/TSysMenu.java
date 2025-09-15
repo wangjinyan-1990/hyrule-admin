@@ -26,7 +26,7 @@ public class TSysMenu {
     @TableField("PARENT_ID")
     private Integer parentId;
     @TableField("IS_LEAF")
-    private String isLeaf;
+    private String isLeaf;//是否为叶子菜单：0-否；1-是
     @TableField("HIDDEN")
     private Integer hidden;
 
