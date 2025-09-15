@@ -1,11 +1,13 @@
 package com.king.sys.menu.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.king.common.Result;
 import com.king.sys.menu.entity.TSysMenu;
 import com.king.sys.menu.service.IMenuService;
 import com.king.sys.menu.service.IRoleMenuService;
 import com.king.sys.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -18,15 +20,18 @@ import java.util.Collections;
 public class MenuController {
 
     @Autowired
+    @Qualifier("menuServiceImpl")
     private IMenuService menuService;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
+    @Qualifier("userServiceImpl")
     private IUserService userService;
 
     @Autowired
+    @Qualifier("roleMenuServiceImpl")
     private IRoleMenuService roleMenuService;
 
     /**
@@ -137,42 +142,50 @@ public class MenuController {
         // 1) 同级标题判重
         if (parentId == null) {
             // 一级菜单：在所有一级菜单中(title)唯一
-            boolean existsSameTitleOnRoot = menuService.lambdaQuery()
-                    .isNull(TSysMenu::getParentId)
-                    .eq(TSysMenu::getTitle, menu.getTitle())
-                    .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
-                    .count() > 0;
+            LambdaQueryWrapper<TSysMenu> titleWrapper = new LambdaQueryWrapper<>();
+            titleWrapper.isNull(TSysMenu::getParentId)
+                    .eq(TSysMenu::getTitle, menu.getTitle());
+            if (excludeSelf) {
+                titleWrapper.ne(TSysMenu::getMenuId, menu.getMenuId());
+            }
+            boolean existsSameTitleOnRoot = menuService.count(titleWrapper) > 0;
             if (existsSameTitleOnRoot) {
                 return Result.error("一级菜单名称已存在");
             }
         } else {
             // 子菜单：同 parentId 下(title)唯一
-            boolean existsSameTitleOnSibling = menuService.lambdaQuery()
-                    .eq(TSysMenu::getParentId, parentId)
-                    .eq(TSysMenu::getTitle, menu.getTitle())
-                    .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
-                    .count() > 0;
+            LambdaQueryWrapper<TSysMenu> titleWrapper = new LambdaQueryWrapper<>();
+            titleWrapper.eq(TSysMenu::getParentId, parentId)
+                    .eq(TSysMenu::getTitle, menu.getTitle());
+            if (excludeSelf) {
+                titleWrapper.ne(TSysMenu::getMenuId, menu.getMenuId());
+            }
+            boolean existsSameTitleOnSibling = menuService.count(titleWrapper) > 0;
             if (existsSameTitleOnSibling) {
                 return Result.error("同级(同父)菜单名称已存在");
             }
         }
 
         // 2) path 全局唯一
-        boolean existsSamePath = menuService.lambdaQuery()
-                .eq(TSysMenu::getPath, menu.getPath())
-                .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
-                .count() > 0;
+        LambdaQueryWrapper<TSysMenu> pathWrapper = new LambdaQueryWrapper<>();
+        pathWrapper.eq(TSysMenu::getPath, menu.getPath());
+        if (excludeSelf) {
+            pathWrapper.ne(TSysMenu::getMenuId, menu.getMenuId());
+        }
+        boolean existsSamePath = menuService.count(pathWrapper) > 0;
         if (existsSamePath) {
             return Result.error("路径已存在");
         }
 
         // 3) 子菜单的 component 必须唯一
         if (parentId != null && StringUtils.hasText(menu.getComponent())) {
-            boolean existsSameComponentForChildren = menuService.lambdaQuery()
-                    .isNotNull(TSysMenu::getParentId)
-                    .eq(TSysMenu::getComponent, menu.getComponent())
-                    .apply(excludeSelf ? "AND MENU_ID <> {0}" : "", menu.getMenuId())
-                    .count() > 0;
+            LambdaQueryWrapper<TSysMenu> componentWrapper = new LambdaQueryWrapper<>();
+            componentWrapper.isNotNull(TSysMenu::getParentId)
+                    .eq(TSysMenu::getComponent, menu.getComponent());
+            if (excludeSelf) {
+                componentWrapper.ne(TSysMenu::getMenuId, menu.getMenuId());
+            }
+            boolean existsSameComponentForChildren = menuService.count(componentWrapper) > 0;
             if (existsSameComponentForChildren) {
                 return Result.error("子菜单组件已存在");
             }
@@ -221,7 +234,16 @@ public class MenuController {
         }
         java.util.List<Integer> menuIds;
         if (mids instanceof java.util.List) {
-            menuIds = (java.util.List<Integer>) mids;
+            java.util.List<?> rawList = (java.util.List<?>) mids;
+            menuIds = rawList.stream()
+                    .map(obj -> {
+                        if (obj instanceof Number) {
+                            return ((Number) obj).intValue();
+                        } else {
+                            return Integer.parseInt(obj.toString());
+                        }
+                    })
+                    .collect(java.util.stream.Collectors.toList());
         } else {
             menuIds = Collections.emptyList();
         }

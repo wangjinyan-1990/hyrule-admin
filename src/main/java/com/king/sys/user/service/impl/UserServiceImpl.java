@@ -13,7 +13,6 @@ import com.king.common.constant.Constants;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Primary
-@Service
+@Service("userServiceImpl")
 public class UserServiceImpl extends ServiceImpl<UserMapper, TSysUser> implements IUserService {
 
     @Autowired

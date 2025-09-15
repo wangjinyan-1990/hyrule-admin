@@ -6,7 +6,6 @@ import com.king.sys.role.entity.TSysRoleUser;
 import com.king.sys.role.mapper.RoleUserMapper;
 import com.king.sys.role.service.IRoleUserService;
 import com.king.sys.user.entity.TSysUser;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -15,8 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Primary
-@Service
+@Service("roleUserServiceImpl")
 public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, TSysRoleUser> implements IRoleUserService {
 
     @Override

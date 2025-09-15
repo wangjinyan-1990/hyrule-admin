@@ -8,6 +8,7 @@ import com.king.sys.user.mapper.UserMapper;
 import com.king.common.Result;
 import com.king.sys.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
+    @Qualifier("userServiceImpl")
     private IUserService userService;
 
     @Autowired

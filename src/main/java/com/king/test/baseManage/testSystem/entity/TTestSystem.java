@@ -1,4 +1,4 @@
-package com.king.test.testSystem.entity;
+package com.king.test.baseManage.testSystem.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -11,7 +11,7 @@ import java.util.Date;
  * 测试系统实体类
  */
 @Data
-@TableName("tf_test_system")
+@TableName("t_test_system")
 public class TTestSystem {
 
     /**
@@ -121,6 +121,25 @@ public class TTestSystem {
      */
     @TableField("CHANGE_HISTORY")
     private String changeHistory;
+
+    // 用于显示的关联字段
+    /**
+     * 所属机构名称（用于前端显示）
+     */
+    @TableField(exist = false)
+    private String orgName;
+
+    /**
+     * 测试经理名称（用于前端显示）
+     */
+    @TableField(exist = false)
+    private String testManagerName;
+
+    /**
+     * 开发经理名称（用于前端显示）
+     */
+    @TableField(exist = false)
+    private String devManagerName;
 
     // Getter和Setter方法
     public String getSystemId() {
@@ -265,5 +284,29 @@ public class TTestSystem {
 
     public void setChangeHistory(String changeHistory) {
         this.changeHistory = changeHistory;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public String getTestManagerName() {
+        return testManagerName;
+    }
+
+    public void setTestManagerName(String testManagerName) {
+        this.testManagerName = testManagerName;
+    }
+
+    public String getDevManagerName() {
+        return devManagerName;
+    }
+
+    public void setDevManagerName(String devManagerName) {
+        this.devManagerName = devManagerName;
     }
 }

@@ -8,6 +8,7 @@ import com.king.sys.menu.entity.TSysMenu;
 import com.king.sys.menu.service.IMenuService;
 import com.king.sys.user.entity.TSysUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -19,12 +20,14 @@ import java.util.List;
 public class LoginController {
 
     @Autowired
+    @Qualifier("loginServiceImpl")
     private ILoginervice loginService;
 
     @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
+    @Qualifier("menuServiceImpl")
     private IMenuService menuService;
 
     @PostMapping("/login")

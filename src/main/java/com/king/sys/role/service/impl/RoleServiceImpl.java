@@ -9,10 +9,8 @@ import com.king.sys.role.service.IRoleService;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.context.annotation.Primary;
 
-@Primary
-@Service
+@Service("roleServiceImpl")
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, TSysRole> implements IRoleService {
 
     @Override

@@ -7,6 +7,7 @@ import com.king.sys.role.entity.TSysRole;
 import com.king.sys.role.service.IRoleService;
 import com.king.sys.role.service.IRoleUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +19,11 @@ import java.util.Map;
 public class RoleController {
 
     @Autowired
+    @Qualifier("roleServiceImpl")
     private IRoleService roleService;
     
     @Autowired
+    @Qualifier("roleUserServiceImpl")
     private IRoleUserService roleUserService;
 
     /**

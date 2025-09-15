@@ -3,7 +3,7 @@
 <mapper namespace="com.king.sys.menu.mapper.SysRoleMenuMapper">
 
     <select id="selectMenuIdsByRole" parameterType="string" resultType="int">
-        select cast(MENU_ID as signed) as MENU_ID
+        select MENU_ID
         from t_sys_role_menu
         where ROLE_ID = #{roleId}
     </select>

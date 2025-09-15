@@ -6,39 +6,21 @@
   <component name="ChangeListManager">
     <list default="true" id="3fb9bf1e-559b-4681-844b-159228558448" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/hyrule-admin-error.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/hyrule-admin-error.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/hyrule-admin.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/hyrule-admin.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/common/utils/CounterUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/common/utils/CounterUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/framework/counter/entity/SysCounter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/framework/counter/entity/TSysCounter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/framework/counter/mapper/SysCounterMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/framework/counter/mapper/SysCounterMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/login/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/login/controller/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/login/service/impl/LoginServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/login/service/impl/LoginServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/controller/MenuController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/controller/MenuController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/entity/SysMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/entity/TSysMenu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/entity/SysRoleMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/entity/TSysRoleMenu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/mapper/SysMenuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/mapper/SysMenuMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/mapper/SysRoleMenuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/mapper/SysRoleMenuMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/IMenuService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/IMenuService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/IRoleMenuService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/IRoleMenuService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/entity/TSysRoleMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/entity/TSysRoleMenu.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/impl/MenuServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/impl/MenuServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/impl/RoleMenuServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/menu/service/impl/RoleMenuServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/role/controller/RoleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/role/controller/RoleController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/role/entity/SysRole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/role/entity/TSysRole.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/role/entity/SysRoleUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/role/entity/TSysRoleUser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/role/mapper/RoleMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/role/mapper/RoleMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/role/mapper/RoleUserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/role/mapper/RoleUserMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/role/service/IRoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/role/service/IRoleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/role/service/IRoleUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/role/service/IRoleUserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/role/service/impl/RoleServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/role/service/impl/RoleServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/role/service/impl/RoleUserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/role/service/impl/RoleUserServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/user/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/user/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/user/entity/TSysUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/user/entity/TSysUser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/user/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/user/mapper/UserMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/user/service/IUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/user/service/IUserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/king/sys/user/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/sys/user/service/impl/UserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/init.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/sys/SysCounterMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/sys/SysCounterMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/sys/SysMenuMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/sys/SysMenuMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/sys/UserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/sys/UserMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/king/test/testSystem/entity/TTestSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/king/test/baseManage/testSystem/entity/TTestSystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/sys/SysRoleMenuMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/sys/SysRoleMenuMapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,13 +66,16 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../hyrule-admin-web" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\IdeaProjects\hyrule-admin\src\main\resources\mapper\test\baseManage" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.king.sys.org.entity" />
       <recent name="com.king.common.utils" />
@@ -216,7 +201,9 @@
       <workItem from="1757812436776" duration="133000" />
       <workItem from="1757812819694" duration="33000" />
       <workItem from="1757812966892" duration="224000" />
-      <workItem from="1757813231580" duration="3675000" />
+      <workItem from="1757813231580" duration="18131000" />
+      <workItem from="1757896846611" duration="4287000" />
+      <workItem from="1757920891252" duration="3789000" />
     </task>
     <servers />
   </component>
@@ -228,42 +215,46 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="488" y="48" key="#com.intellij.ide.util.MemberChooser/0.0.1366.728@0.0.1366.728" timestamp="1757811193323" />
+    <state x="322" y="289" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1757900770831">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="322" y="289" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.0.1366.728@0.0.1366.728" timestamp="1757900770831" />
     <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1757810737419">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1757810737419" />
-    <state width="836" height="249" key="GridCell.Tab.0.bottom" timestamp="1757820761403">
+    <state width="819" height="217" key="GridCell.Tab.0.bottom" timestamp="1757934343625">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="836" height="249" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1757820761403" />
-    <state width="836" height="249" key="GridCell.Tab.0.center" timestamp="1757820761402">
+    <state width="819" height="217" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1757934343625" />
+    <state width="819" height="217" key="GridCell.Tab.0.center" timestamp="1757934343625">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="836" height="249" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1757820761402" />
-    <state width="836" height="249" key="GridCell.Tab.0.left" timestamp="1757820761402">
+    <state width="819" height="217" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1757934343625" />
+    <state width="819" height="217" key="GridCell.Tab.0.left" timestamp="1757934343625">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="836" height="249" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1757820761402" />
-    <state width="836" height="249" key="GridCell.Tab.0.right" timestamp="1757820761403">
+    <state width="819" height="217" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1757934343625" />
+    <state width="819" height="217" key="GridCell.Tab.0.right" timestamp="1757934343625">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="836" height="249" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1757820761403" />
-    <state width="837" height="249" key="GridCell.Tab.1.bottom" timestamp="1757820697631">
+    <state width="819" height="217" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1757934343625" />
+    <state width="819" height="217" key="GridCell.Tab.1.bottom" timestamp="1757934343626">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="837" height="249" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1757820697631" />
-    <state width="837" height="249" key="GridCell.Tab.1.center" timestamp="1757820697630">
+    <state width="819" height="217" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1757934343626" />
+    <state width="819" height="217" key="GridCell.Tab.1.center" timestamp="1757934343626">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="837" height="249" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1757820697630" />
-    <state width="837" height="249" key="GridCell.Tab.1.left" timestamp="1757820697630">
+    <state width="819" height="217" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1757934343626" />
+    <state width="819" height="217" key="GridCell.Tab.1.left" timestamp="1757934343625">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="837" height="249" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1757820697630" />
-    <state width="837" height="249" key="GridCell.Tab.1.right" timestamp="1757820697631">
+    <state width="819" height="217" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1757934343625" />
+    <state width="819" height="217" key="GridCell.Tab.1.right" timestamp="1757934343626">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="837" height="249" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1757820697631" />
+    <state width="819" height="217" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1757934343626" />
     <state x="184" y="6" key="SettingsEditor" timestamp="1757813095988">
       <screen x="0" y="0" width="1366" height="728" />
     </state>

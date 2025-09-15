@@ -10,7 +10,6 @@ import com.king.sys.login.service.ILoginervice;
 import com.king.sys.user.entity.TSysUser;
 import com.king.sys.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,8 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-@Primary
-@Service
+@Service("loginServiceImpl")
 public class LoginServiceImpl extends ServiceImpl<UserMapper, TSysUser> implements ILoginervice {
 
     @Autowired

@@ -15,7 +15,7 @@ public class TSysRoleMenu {
     @TableField("ROLE_ID")
     private String roleId;// 角色ID
     @TableField("MENU_ID")
-    private String menuId;// 菜单ID
+    private Integer menuId;// 菜单ID
 
     public Integer getId() {
         return id;
@@ -33,11 +33,11 @@ public class TSysRoleMenu {
         this.roleId = roleId;
     }
 
-    public String getMenuId() {
+    public Integer getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(String menuId) {
+    public void setMenuId(Integer menuId) {
         this.menuId = menuId;
     }
 }

@@ -5,14 +5,12 @@ import com.king.sys.menu.entity.TSysRoleMenu;
 import com.king.sys.menu.mapper.SysRoleMenuMapper;
 import com.king.sys.menu.service.IRoleMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 
-@Primary
-@Service
+@Service("roleMenuServiceImpl")
 public class RoleMenuServiceImpl extends ServiceImpl<SysRoleMenuMapper, TSysRoleMenu> implements IRoleMenuService {
 
     @Autowired
