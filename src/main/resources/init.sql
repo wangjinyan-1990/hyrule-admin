@@ -416,8 +416,8 @@ insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`
 (3,'/sys/role','role',NULL,'role','角色管理','roleManage',1,'1',0),
 (4,'Layout','/test',NULL,'test','测试模块','testModule',NULL,'0',0),
 (5,'/test/baseManage/index','baseManage',NULL,'baseManage','基础管理','baseManage',4,'0',0),
-(6,'/test/baseManage/test2','test2',NULL,'test2','功能2','el-icon-s-help',5,'1',0),
-(7,'/test/baseManage/test3','test3',NULL,'test3','功能3','el-icon-s-help',5,'1',0),
+(6,'/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','el-icon-s-help',5,'1',0),
+(7,'/test/baseManage/testSystemMember','testSystemMember',NULL,'testSystemMember','系统成员维护','testSystemMember',5,'1',0),
 (8,'Layout','/example','/example/table','Example','Example','el-icon-s-help',NULL,'0',0),
 (9,'/example/table','table',NULL,'Table','Table','table',8,'1',0),
 (10,'/example/tree','tree',NULL,'Tree','Tree','tree',8,'1',0),
@@ -434,9 +434,7 @@ insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`
 (21,'Layout','external-link',NULL,NULL,'External Link','link',NULL,'0',0),
 (22,NULL,'https://panjiachen.github.io/vue-element-admin-site/#/',NULL,NULL,'External Link','link',21,'1',0),
 (23,'/sys/menu','menu',NULL,'menu','菜单管理','menuManage',1,'1',0),
-(26,'/sys/org','/org',NULL,'org','机构管理','orgManage',1,'1',0),
-(27,'/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','testSystemManage',5,'1',0),
-(28,'/test/baseManage/testSystemMember','testSystemMember',NULL,'testSystemMember','系统成员管理','testSystemMember',5,'1',0);
+(26,'/sys/org','/org',NULL,'org','机构管理','orgManage',1,'1',0);
 
 /*Table structure for table `t_sys_org` */
 
@@ -577,8 +575,6 @@ CREATE TABLE `t_sys_role_menu` (
 /*Data for the table `t_sys_role_menu` */
 
 insert  into `t_sys_role_menu`(`ID`,`ROLE_ID`,`MENU_ID`) values 
-(115,'0002',6),
-(116,'0002',7),
 (117,'0002',8),
 (118,'0002',9),
 (119,'0002',10),
