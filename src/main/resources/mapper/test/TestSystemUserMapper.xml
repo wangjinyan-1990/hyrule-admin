@@ -3,7 +3,7 @@
 <mapper namespace="com.king.test.baseManage.testSystem.mapper.TestSystemUserMapper">
 
     <!-- 根据角色ID获取用户列表（在职状态） -->
-    <select id="getUsersByRoleId" parameterType="String" resultType="com.king.test.baseManage.testSystem.dto.UserSystemInfoDTO">
+    <select id="getUsersByRoleId" resultType="com.king.test.baseManage.testSystem.dto.UserSystemInfoDTO">
         SELECT 
             u.USER_ID as userId,
             u.LOGIN_NAME as loginName,
@@ -23,6 +23,15 @@
         LEFT JOIN t_sys_org o ON u.ORG_ID = o.ORG_ID
         WHERE ru.ROLE_ID = #{roleId}
           AND u.STATUS = 1
+        <if test="userName != null and userName != ''">
+            AND u.USER_NAME LIKE CONCAT('%', #{userName}, '%')
+        </if>
+        <if test="loginName != null and loginName != ''">
+            AND u.LOGIN_NAME LIKE CONCAT('%', #{loginName}, '%')
+        </if>
+        <if test="phone != null and phone != ''">
+            AND u.PHONE LIKE CONCAT('%', #{phone}, '%')
+        </if>
         GROUP BY u.USER_ID, u.LOGIN_NAME, u.USER_NAME, u.EMAIL, u.PHONE, u.ORG_ID, o.ORG_NAME, u.STATUS, u.SORT_NO
         ORDER BY u.SORT_NO, u.USER_NAME
     </select>

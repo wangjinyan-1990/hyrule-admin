@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -109,9 +111,67 @@ public class TestSystemUserServiceImpl extends ServiceImpl<TestSystemUserMapper,
     }
     
     @Override
-    public List<UserSystemInfoDTO> getUsersByRoleId(String roleId) {
+    public Map<String, Object> getUsersByRoleId(String roleId, Long pageNo, Long pageSize, String userName, String loginName, String phone) {
         Assert.hasText(roleId, "角色ID不能为空");
         
-        return baseMapper.getUsersByRoleId(roleId);
+        // 使用自定义查询方法
+        List<UserSystemInfoDTO> users = baseMapper.getUsersByRoleId(roleId, userName, loginName, phone);
+        
+        // 手动分页
+        int total = users.size();
+        int start = (int) ((pageNo - 1) * pageSize);
+        int end = Math.min(start + pageSize.intValue(), total);
+        
+        List<UserSystemInfoDTO> pageUsers = users.subList(start, end);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("total", total);
+        result.put("rows", pageUsers);
+        
+        return result;
+    }
+    
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateUserSystems(String userId, List<String> systemIds) {
+        Assert.hasText(userId, "用户ID不能为空");
+        
+        // 如果systemIds为null，则清空用户的所有系统关系
+        final List<String> targetSystemIds = systemIds == null ? new java.util.ArrayList<>() : systemIds;
+        
+        // 获取用户当前已分配的系统ID列表
+        List<String> currentSystemIds = getSystemIdsByUserId(userId);
+        
+        // 找出需要添加的系统（新系统中不在当前系统中的）
+        List<String> systemsToAdd = targetSystemIds.stream()
+                .filter(systemId -> !currentSystemIds.contains(systemId))
+                .collect(Collectors.toList());
+        
+        // 找出需要删除的系统（当前系统中不在新系统中的）
+        List<String> systemsToRemove = currentSystemIds.stream()
+                .filter(systemId -> !targetSystemIds.contains(systemId))
+                .collect(Collectors.toList());
+        
+        // 删除需要移除的系统关系
+        if (!systemsToRemove.isEmpty()) {
+            for (String systemId : systemsToRemove) {
+                LambdaQueryWrapper<TTestSystemUser> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(TTestSystemUser::getUserId, userId)
+                       .eq(TTestSystemUser::getSystemId, systemId);
+                baseMapper.delete(wrapper);
+            }
+        }
+        
+        // 添加新的系统关系
+        if (!systemsToAdd.isEmpty()) {
+            for (String systemId : systemsToAdd) {
+                TTestSystemUser systemUser = new TTestSystemUser();
+                systemUser.setUserId(userId);
+                systemUser.setSystemId(systemId);
+                baseMapper.insert(systemUser);
+            }
+        }
+        
+        return true;
     }
 }

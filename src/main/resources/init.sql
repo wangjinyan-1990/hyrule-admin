@@ -558,8 +558,9 @@ CREATE TABLE `t_sys_role` (
 insert  into `t_sys_role`(`ROLE_ID`,`ROLE_NAME`,`SORT_NO`,`REMARK`) values 
 ('0001','开发人员',1,'开发人员使用'),
 ('0002','测试人员',2,'测试人员使用'),
-('0007','管理角色',7,'系统管理'),
-('0008','配置人员',3,'配置人员使用');
+('0003','配置人员',3,'配置人员使用'),
+('0004','环境管理人员',4,'环境管理人员使用'),
+('0007','管理角色',7,'系统管理');
 
 /*Table structure for table `t_sys_role_menu` */
 
@@ -570,7 +571,7 @@ CREATE TABLE `t_sys_role_menu` (
   `ROLE_ID` varchar(32) DEFAULT NULL,
   `MENU_ID` int DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=247 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `t_sys_role_menu` */
 
@@ -587,29 +588,29 @@ insert  into `t_sys_role_menu`(`ID`,`ROLE_ID`,`MENU_ID`) values
 (126,'0002',19),
 (127,'0002',20),
 (128,'0002',4),
-(221,'0001',1),
-(222,'0001',2),
-(223,'0001',3),
-(224,'0001',23),
-(225,'0001',26),
-(226,'0001',4),
-(230,'0001',6),
-(231,'0001',7),
-(232,'0001',8),
-(233,'0001',9),
-(234,'0001',10),
-(235,'0001',11),
-(236,'0001',12),
-(237,'0001',13),
-(238,'0001',14),
-(239,'0001',15),
-(240,'0001',16),
-(241,'0001',17),
-(242,'0001',18),
-(243,'0001',19),
-(244,'0001',20),
-(245,'0001',21),
-(246,'0001',22);
+(247,'0001',1),
+(248,'0001',2),
+(249,'0001',3),
+(250,'0001',23),
+(251,'0001',26),
+(252,'0001',4),
+(253,'0001',5),
+(254,'0001',7),
+(255,'0001',8),
+(256,'0001',9),
+(257,'0001',10),
+(258,'0001',11),
+(259,'0001',12),
+(260,'0001',13),
+(261,'0001',14),
+(262,'0001',15),
+(263,'0001',16),
+(264,'0001',17),
+(265,'0001',18),
+(266,'0001',19),
+(267,'0001',20),
+(268,'0001',21),
+(269,'0001',22);
 
 /*Table structure for table `t_sys_role_user` */
 
@@ -622,7 +623,7 @@ CREATE TABLE `t_sys_role_user` (
   PRIMARY KEY (`ID`),
   KEY `I_t_sys_role_user_ROLE_ID` (`ROLE_ID`),
   KEY `I_t_sys_role_user_USER_ID` (`USER_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `t_sys_role_user` */
 
@@ -636,7 +637,14 @@ insert  into `t_sys_role_user`(`ID`,`ROLE_ID`,`USER_ID`) values
 (9,'0001','4'),
 (10,'0001','5'),
 (11,'0002','6'),
-(12,'0003','admin');
+(12,'0003','admin'),
+(13,'0001','libo'),
+(14,'0001','baiyang'),
+(15,'0002','jianghe'),
+(16,'0002','chenchen'),
+(17,'0002','caojie'),
+(18,'0001','liqi'),
+(20,'0003','yanke');
 
 /*Table structure for table `t_sys_user` */
 
@@ -665,15 +673,15 @@ insert  into `t_sys_user`(`USER_ID`,`LOGIN_NAME`,`PASSWORD`,`USER_NAME`,`EMAIL`,
 ('6','songliu','123456','宋六','songliu@gmail.com','13966667771',1,'300005',0),
 ('admin','admin','e10adc3949ba59abbe56e057f20f883e','超级管理员','super@aliyun.com','18677778888',1,'300002',0),
 ('anqi','anqi','e10adc3949ba59abbe56e057f20f883e','安琪','','15129872940',1,'300002',20250913),
-('baiyang','baiyang','e10adc3949ba59abbe56e057f20f883e','白洋','','13609231828',1,'300002',20250913),
-('caojie','caojie','e10adc3949ba59abbe56e057f20f883e','曹洁','','17829871871',1,'300002',20250913),
-('chenchen','chenchen','e10adc3949ba59abbe56e057f20f883e','陈晨','','15129231991',1,'300002',20250913),
+('baiyang','baiyang','e10adc3949ba59abbe56e057f20f883e','白洋','','13609231828',1,'300002',0),
+('caojie','caojie','e10adc3949ba59abbe56e057f20f883e','曹洁','','17829871871',1,'300002',0),
+('chenchen','chenchen','e10adc3949ba59abbe56e057f20f883e','陈晨','','15129231991',1,'300002',0),
 ('fengyu','fengyu','e10adc3949ba59abbe56e057f20f883e','冯雨','','15852908997',1,'300002',20250914),
-('jianghe','jianghe','e10adc3949ba59abbe56e057f20f883e','江荷','','13259798230',1,'300002',20250914),
-('libo','libo','e10adc3949ba59abbe56e057f20f883e','李波','','13227789228',1,'300009',20250913),
+('jianghe','jianghe','e10adc3949ba59abbe56e057f20f883e','江荷','','13259798230',1,'300002',0),
+('libo','libo','e10adc3949ba59abbe56e057f20f883e','李波','','13227789228',1,'300009',0),
 ('lili','lili','e10adc3949ba59abbe56e057f20f883e','李莉','lili123@189.com','18765342789',1,'300009',20250906),
-('liqi','liqi','e10adc3949ba59abbe56e057f20f883e','李奇','','18700893077',1,'300009',20250913),
-('yanke','yanke','e10adc3949ba59abbe56e057f20f883e','严科','yanke920618@163.com',NULL,1,'300009',0);
+('liqi','liqi','e10adc3949ba59abbe56e057f20f883e','李奇','','18700893077',1,'300009',0),
+('yanke','yanke','e10adc3949ba59abbe56e057f20f883e','严科','yanke920618@163.com','16890234789',1,'300009',0);
 
 /*Table structure for table `t_test_system` */
 
@@ -717,7 +725,7 @@ CREATE TABLE `t_test_system_user` (
   `SYSTEM_ID` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`SYSTEM_USER_ID`),
   KEY `I_SYSTEM_ID` (`SYSTEM_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `t_test_system_user` */
 
@@ -725,4 +733,5 @@ insert  into `t_test_system_user`(`SYSTEM_USER_ID`,`USER_ID`,`SYSTEM_ID`) values
 (1,'lili','sys-001'),
 (2,'baiyang','sys-001'),
 (3,'jianghe','sys-002'),
-(4,'libo','sys-002');
+(4,'libo','sys-002'),
+(5,'2','sys-002');
