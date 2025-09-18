@@ -111,10 +111,10 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, TSysUser> implemen
         if (obj != null) {
             TSysUser loginUser = JSON.parseObject(JSON.toJSONString(obj), TSysUser.class);
             Map<String, Object> data = new HashMap<>();
-            data.put("name", loginUser.getUserName());
-            data.put("phone", loginUser.getPhone());
-            List<String> roleList = this.baseMapper.getRoleNameByUserId(loginUser.getUserId());
-            data.put("roles", roleList);
+            data.put("userId", loginUser.getUserId());
+            data.put("userName", loginUser.getUserName());
+            List<String> roleList = this.baseMapper.getRoleIdByUserId(loginUser.getUserId());
+            data.put("roleIds", roleList);
             return data;
         }
 
@@ -126,10 +126,10 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, TSysUser> implemen
                 return null;
             }
             Map<String, Object> data = new HashMap<>();
-            data.put("name", user.getUserName());
-            data.put("phone", user.getPhone());
-            List<String> roleList = this.baseMapper.getRoleNameByUserId(userId);
-            data.put("roles", roleList);
+            data.put("userId", user.getUserId());
+            data.put("userName", user.getUserName());
+            List<String> roleList = this.baseMapper.getRoleIdByUserId(userId);
+            data.put("roleIds", roleList);
             return data;
         }
         return null;

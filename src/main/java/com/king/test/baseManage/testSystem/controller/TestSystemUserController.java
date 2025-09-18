@@ -24,7 +24,7 @@ public class TestSystemUserController {
     private ITestSystemUserService testSystemUserService;
     
     /**
-     * 根据角色ID获取用户列表（在职状态）
+     * 开发人员页签、测试人员页签，根据角色ID获取用户列表，用于系统成员维护（在职状态）
      * 每个人只出现一次，多个系统的systemId和systemName会拼接
      * @param roleId 角色ID
      * @param pageNo 页码

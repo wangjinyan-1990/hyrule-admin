@@ -53,7 +53,23 @@ public class UserSystemUpdateDTO {
      * 系统名称列表
      */
     private String systemNames;
-    
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public List<String> getSystemIds() {
+        return systemIds;
+    }
+
+    public void setSystemIds(List<String> systemIds) {
+        this.systemIds = systemIds;
+    }
+
     public UserSystemUpdateDTO() {
     }
     

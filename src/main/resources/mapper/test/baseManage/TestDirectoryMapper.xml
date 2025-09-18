@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.baseManage.testDirectory.mapper.TestDirectoryMapper">
+
+    <!-- 根据用户ID获取该用户参与的系统列表 -->
+    <select id="getSystemsByUserId" resultType="com.king.test.baseManage.testDirectory.entity.TTestDirectory">
+        SELECT tsu.SYSTEM_ID AS systemId,
+                ts.SYSTEM_NAME AS directoryName,
+                'root' AS directoryType,
+                tsu.SYSTEM_ID AS directoryId,
+                NULL AS directoryParentId,
+                0 AS level,
+                NULL AS fullPath,
+                NULL AS firstPath,
+                NULL AS secondPath,
+                NULL AS thirdPath,
+                NULL AS isUseTestcase,
+                NULL AS isUseTestset,
+                NULL AS relateId,
+                NULL AS createTime
+        FROM t_test_system_user tsu
+        LEFT JOIN t_test_system ts ON tsu.SYSTEM_ID = ts.SYSTEM_ID
+        WHERE WHERE ts.IS_USE = '1' AND ts.SYSTEM_STAGE != '5' AND tsu.USER_ID = #{userId}
+        GROUP BY tsu.SYSTEM_ID
+        ORDER BY tsu.SYSTEM_ID DESC
+    </select>
+
+    <select id="getRootDirectory" resultType="com.king.test.baseManage.testDirectory.entity.TTestDirectory">
+        SELECT ts.SYSTEM_ID AS systemId,
+                ts.SYSTEM_NAME AS directoryName,
+                'root' AS directoryType,
+                ts.SYSTEM_ID AS directoryId,
+                NULL AS directoryParentId,
+                0 AS LEVEL,
+                NULL AS fullPath,
+                NULL AS firstPath,
+                NULL AS secondPath,
+                NULL AS thirdPath,
+                NULL AS isUseTestcase,
+                NULL AS isUseTestset,
+                NULL AS relateId,
+                NULL AS createTime
+        FROM t_test_system ts
+        WHERE ts.IS_USE = '1' AND ts.SYSTEM_STAGE != '5'
+         ORDER BY ts.SYSTEM_ID DESC
+     </select>
+
+     <!-- 根据父目录ID和系统ID查询子目录 -->
+     <select id="getChildrenByParentId" resultType="com.king.test.baseManage.testDirectory.entity.TTestDirectory">
+         SELECT 
+             DIRECTORY_ID as directoryId,
+             DIRECTORY_NAME as directoryName,
+             DIRECTORY_PARENTID as directoryParentId,
+             LEVEL as level,
+             FULLPATH as fullPath,
+             SYSTEM_ID as systemId,
+             FIRST_PATH as firstPath,
+             SECOND_PATH as secondPath,
+             THIRD_PATH as thirdPath,
+             IS_USE_TESTCASE as isUseTestcase,
+             IS_USE_TESTSET as isUseTestset,
+             DIRECTORY_TYPE as directoryType,
+             RELATE_ID as relateId,
+             CREATE_TIME as createTime
+         FROM t_test_directory
+         WHERE SYSTEM_ID = #{systemId}
+         <choose>
+             <when test="directoryParentId == null or directoryParentId == ''">
+                 AND DIRECTORY_PARENTID IS NULL
+                 AND LEVEL = 1
+             </when>
+             <otherwise>
+                 AND DIRECTORY_PARENTID = #{directoryParentId}
+             </otherwise>
+         </choose>
+         ORDER BY LEVEL ASC, DIRECTORY_NAME ASC
+     </select>
+
+     <!-- 检查目录名称是否存在 -->
+     <select id="checkDirectoryNameExists" resultType="com.king.test.baseManage.testDirectory.entity.TTestDirectory">
+         SELECT 
+             DIRECTORY_ID as directoryId,
+             DIRECTORY_NAME as directoryName,
+             DIRECTORY_PARENTID as directoryParentId,
+             LEVEL as level,
+             FULLPATH as fullPath,
+             SYSTEM_ID as systemId,
+             FIRST_PATH as firstPath,
+             SECOND_PATH as secondPath,
+             THIRD_PATH as thirdPath,
+             IS_USE_TESTCASE as isUseTestcase,
+             IS_USE_TESTSET as isUseTestset,
+             DIRECTORY_TYPE as directoryType,
+             RELATE_ID as relateId,
+             CREATE_TIME as createTime
+         FROM t_test_directory
+         WHERE DIRECTORY_NAME = #{directoryName}
+           AND SYSTEM_ID = #{systemId}
+         <choose>
+             <when test="directoryParentId == null or directoryParentId == ''">
+                 AND DIRECTORY_PARENTID IS NULL
+                 AND LEVEL = 1
+             </when>
+             <otherwise>
+                 AND DIRECTORY_PARENTID = #{directoryParentId}
+             </otherwise>
+         </choose>
+         <if test="excludeDirectoryId != null and excludeDirectoryId != ''">
+             AND DIRECTORY_ID != #{excludeDirectoryId}
+         </if>
+     </select>
+ </mapper>

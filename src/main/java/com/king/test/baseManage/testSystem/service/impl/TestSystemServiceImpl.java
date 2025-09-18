@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.common.utils.CounterUtil;
+import com.king.common.utils.SecurityUtils;
 import com.king.test.baseManage.testSystem.entity.TTestSystem;
 import com.king.test.baseManage.testSystem.mapper.TestSystemMapper;
 import com.king.test.baseManage.testSystem.service.ITestSystemService;
@@ -31,6 +32,9 @@ public class TestSystemServiceImpl extends ServiceImpl<TestSystemMapper, TTestSy
     
     @Autowired
     private CounterUtil counterUtil;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
     
     @Override
     public IPage<TTestSystem> getTestSystemList(Page<TTestSystem> page,
@@ -63,6 +67,8 @@ public class TestSystemServiceImpl extends ServiceImpl<TestSystemMapper, TTestSy
         
         // 设置创建时间和修改时间
         Date now = new Date();
+        // 设置创建人
+        testSystem.setCreatorId(securityUtils.getUserId());
         testSystem.setCreateTime(now);
         testSystem.setModifyTime(now);
         testSystem.setIsUse("1"); // 默认在使用

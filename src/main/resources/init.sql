@@ -406,7 +406,7 @@ CREATE TABLE `t_sys_menu` (
   `IS_LEAF` varchar(1) DEFAULT NULL,
   `HIDDEN` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`MENU_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `t_sys_menu` */
 
@@ -416,7 +416,7 @@ insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`
 (3,'/sys/role','role',NULL,'role','角色管理','roleManage',1,'1',0),
 (4,'Layout','/test',NULL,'test','测试模块','testModule',NULL,'0',0),
 (5,'/test/baseManage/index','baseManage',NULL,'baseManage','基础管理','baseManage',4,'0',0),
-(6,'/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','el-icon-s-help',5,'1',0),
+(6,'/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','testSystem',5,'1',0),
 (7,'/test/baseManage/testSystemMember','testSystemMember',NULL,'testSystemMember','系统成员维护','testSystemMember',5,'1',0),
 (8,'Layout','/example','/example/table','Example','Example','el-icon-s-help',NULL,'0',0),
 (9,'/example/table','table',NULL,'Table','Table','table',8,'1',0),
@@ -434,7 +434,8 @@ insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`
 (21,'Layout','external-link',NULL,NULL,'External Link','link',NULL,'0',0),
 (22,NULL,'https://panjiachen.github.io/vue-element-admin-site/#/',NULL,NULL,'External Link','link',21,'1',0),
 (23,'/sys/menu','menu',NULL,'menu','菜单管理','menuManage',1,'1',0),
-(26,'/sys/org','/org',NULL,'org','机构管理','orgManage',1,'1',0);
+(26,'/sys/org','/org',NULL,'org','机构管理','orgManage',1,'1',0),
+(29,'/test/baseManage/testDirectory','testDirectory',NULL,'testDirectory','测试目录维护','testDirectory',5,'1',NULL);
 
 /*Table structure for table `t_sys_org` */
 
@@ -637,7 +638,7 @@ insert  into `t_sys_role_user`(`ID`,`ROLE_ID`,`USER_ID`) values
 (9,'0001','4'),
 (10,'0001','5'),
 (11,'0002','6'),
-(12,'0003','admin'),
+(12,'0007','admin'),
 (13,'0001','libo'),
 (14,'0001','baiyang'),
 (15,'0002','jianghe'),
@@ -682,6 +683,39 @@ insert  into `t_sys_user`(`USER_ID`,`LOGIN_NAME`,`PASSWORD`,`USER_NAME`,`EMAIL`,
 ('lili','lili','e10adc3949ba59abbe56e057f20f883e','李莉','lili123@189.com','18765342789',1,'300009',20250906),
 ('liqi','liqi','e10adc3949ba59abbe56e057f20f883e','李奇','','18700893077',1,'300009',0),
 ('yanke','yanke','e10adc3949ba59abbe56e057f20f883e','严科','yanke920618@163.com','16890234789',1,'300009',0);
+
+/*Table structure for table `t_test_directory` */
+
+DROP TABLE IF EXISTS `t_test_directory`;
+
+CREATE TABLE `t_test_directory` (
+  `DIRECTORY_ID` varchar(32) DEFAULT NULL,
+  `DIRECTORY_NAME` varchar(100) DEFAULT NULL,
+  `DIRECTORY_PARENTID` varchar(32) DEFAULT NULL,
+  `LEVEL` int DEFAULT NULL,
+  `FULLPATH` varchar(300) DEFAULT NULL,
+  `SYSTEM_ID` varchar(32) NOT NULL,
+  `FIRST_PATH` varchar(100) DEFAULT NULL,
+  `SECOND_PATH` varchar(100) DEFAULT NULL,
+  `THIRD_PATH` varchar(100) DEFAULT NULL,
+  `IS_USE_TESTCASE` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '1' COMMENT '用例库是否使用:0-不使用;1-使用;',
+  `IS_USE_TESTSET` varchar(1) DEFAULT '1' COMMENT '测试集是否使用:0-不使用;1-使用;',
+  `DIRECTORY_TYPE` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '目录类型',
+  `RELATE_ID` varchar(32) DEFAULT NULL COMMENT '关联ID',
+  `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
+  UNIQUE KEY `PK_TF_DIRECTORY` (`DIRECTORY_ID`),
+  KEY `I_SYSTEM_ID` (`SYSTEM_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `t_test_directory` */
+
+insert  into `t_test_directory`(`DIRECTORY_ID`,`DIRECTORY_NAME`,`DIRECTORY_PARENTID`,`LEVEL`,`FULLPATH`,`SYSTEM_ID`,`FIRST_PATH`,`SECOND_PATH`,`THIRD_PATH`,`IS_USE_TESTCASE`,`IS_USE_TESTSET`,`DIRECTORY_TYPE`,`RELATE_ID`,`CREATE_TIME`) values 
+('66397904f882488b8b860a0b403dd235','系统集成测试SIT','sys-002',1,'系统集成测试SIT','sys-002','系统集成测试SIT',NULL,NULL,'1','1','',NULL,'2025-09-17 18:49:10'),
+('253cec943415413ab2c856679e3fa97c','SIT功能测试','sys-001',1,'SIT功能测试','sys-001','SIT功能测试',NULL,NULL,'1','1','',NULL,'2025-09-17 23:00:04'),
+('b290821927c44f74a1b0bdc99263ac9c','第1轮','66397904f882488b8b860a0b403dd235',2,'系统集成测试SIT/第1轮','sys-002','系统集成测试SIT','第1轮',NULL,'1','0','',NULL,'2025-09-18 09:08:37'),
+('0466b92756264b40bf69571ff96ea0d1','第2轮','66397904f882488b8b860a0b403dd235',2,'系统集成测试SIT/第2轮','sys-002','系统集成测试SIT','第2轮',NULL,'1','0','',NULL,'2025-09-18 09:59:08'),
+('96230bd5b6d34c5ba78f26239b365faf','用户中心及财务管理优化','0466b92756264b40bf69571ff96ea0d1',3,'系统集成测试SIT/第2轮/用户中心及财务管理优化','sys-002','系统集成测试SIT','第2轮','用户中心及财务管理优化','1','1','',NULL,'2025-09-18 10:04:58'),
+('709410b526ce46aba648b42213a2ff25','E终端远程银行协议优化','b290821927c44f74a1b0bdc99263ac9c',3,'系统集成测试SIT/第1轮/E终端远程银行协议优化','sys-002','系统集成测试SIT','第1轮','E终端远程银行协议优化','1','1','',NULL,'2025-09-18 17:40:00');
 
 /*Table structure for table `t_test_system` */
 
