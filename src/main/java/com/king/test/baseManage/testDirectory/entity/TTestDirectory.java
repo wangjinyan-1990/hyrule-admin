@@ -82,6 +82,13 @@ public class TTestDirectory {
     private String isUseTestset;
 
     /**
+     * 是否为叶子目录(没有子目录):0-不是;1-是;
+     */
+    @TableField("IS_LEAF_DIRECTORY")
+    private String isLeafDirectory;
+
+
+    /**
      * 目录类型
      */
     @TableField("DIRECTORY_TYPE")
@@ -103,7 +110,7 @@ public class TTestDirectory {
     public TTestDirectory() {
     }
 
-    public TTestDirectory(String directoryId, String directoryName, String directoryParentId, 
+    public TTestDirectory(String directoryId, String directoryName, String directoryParentId,
                          Integer level, String fullPath, String systemId) {
         this.directoryId = directoryId;
         this.directoryName = directoryName;
@@ -200,6 +207,14 @@ public class TTestDirectory {
 
     public void setIsUseTestset(String isUseTestset) {
         this.isUseTestset = isUseTestset;
+    }
+
+    public String getIsLeafDirectory() {
+        return isLeafDirectory;
+    }
+
+    public void setIsLeafDirectory(String isLeafDirectory) {
+        this.isLeafDirectory = isLeafDirectory;
     }
 
     public String getDirectoryType() {

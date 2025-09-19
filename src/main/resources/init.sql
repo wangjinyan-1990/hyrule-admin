@@ -700,6 +700,7 @@ CREATE TABLE `t_test_directory` (
   `THIRD_PATH` varchar(100) DEFAULT NULL,
   `IS_USE_TESTCASE` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '1' COMMENT '用例库是否使用:0-不使用;1-使用;',
   `IS_USE_TESTSET` varchar(1) DEFAULT '1' COMMENT '测试集是否使用:0-不使用;1-使用;',
+  `IS_LEAF_DIRECTORY` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '1' COMMENT '是否为叶子目录:0-不是;1-是;',
   `DIRECTORY_TYPE` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '目录类型',
   `RELATE_ID` varchar(32) DEFAULT NULL COMMENT '关联ID',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
@@ -709,13 +710,13 @@ CREATE TABLE `t_test_directory` (
 
 /*Data for the table `t_test_directory` */
 
-insert  into `t_test_directory`(`DIRECTORY_ID`,`DIRECTORY_NAME`,`DIRECTORY_PARENTID`,`LEVEL`,`FULLPATH`,`SYSTEM_ID`,`FIRST_PATH`,`SECOND_PATH`,`THIRD_PATH`,`IS_USE_TESTCASE`,`IS_USE_TESTSET`,`DIRECTORY_TYPE`,`RELATE_ID`,`CREATE_TIME`) values 
-('66397904f882488b8b860a0b403dd235','系统集成测试SIT','sys-002',1,'系统集成测试SIT','sys-002','系统集成测试SIT',NULL,NULL,'1','1','',NULL,'2025-09-17 18:49:10'),
-('253cec943415413ab2c856679e3fa97c','SIT功能测试','sys-001',1,'SIT功能测试','sys-001','SIT功能测试',NULL,NULL,'1','1','',NULL,'2025-09-17 23:00:04'),
-('b290821927c44f74a1b0bdc99263ac9c','第1轮','66397904f882488b8b860a0b403dd235',2,'系统集成测试SIT/第1轮','sys-002','系统集成测试SIT','第1轮',NULL,'1','0','',NULL,'2025-09-18 09:08:37'),
-('0466b92756264b40bf69571ff96ea0d1','第2轮','66397904f882488b8b860a0b403dd235',2,'系统集成测试SIT/第2轮','sys-002','系统集成测试SIT','第2轮',NULL,'1','0','',NULL,'2025-09-18 09:59:08'),
-('96230bd5b6d34c5ba78f26239b365faf','用户中心及财务管理优化','0466b92756264b40bf69571ff96ea0d1',3,'系统集成测试SIT/第2轮/用户中心及财务管理优化','sys-002','系统集成测试SIT','第2轮','用户中心及财务管理优化','1','1','',NULL,'2025-09-18 10:04:58'),
-('709410b526ce46aba648b42213a2ff25','E终端远程银行协议优化','b290821927c44f74a1b0bdc99263ac9c',3,'系统集成测试SIT/第1轮/E终端远程银行协议优化','sys-002','系统集成测试SIT','第1轮','E终端远程银行协议优化','1','1','',NULL,'2025-09-18 17:40:00');
+insert  into `t_test_directory`(`DIRECTORY_ID`,`DIRECTORY_NAME`,`DIRECTORY_PARENTID`,`LEVEL`,`FULLPATH`,`SYSTEM_ID`,`FIRST_PATH`,`SECOND_PATH`,`THIRD_PATH`,`IS_USE_TESTCASE`,`IS_USE_TESTSET`,`IS_LEAF_DIRECTORY`,`DIRECTORY_TYPE`,`RELATE_ID`,`CREATE_TIME`) values 
+('66397904f882488b8b860a0b403dd235','系统集成测试SIT','sys-002',1,'系统集成测试SIT','sys-002','系统集成测试SIT',NULL,NULL,'1','1','0','',NULL,'2025-09-17 18:49:10'),
+('253cec943415413ab2c856679e3fa97c','SIT功能测试','sys-001',1,'SIT功能测试','sys-001','SIT功能测试',NULL,NULL,'1','1','0','',NULL,'2025-09-17 23:00:04'),
+('b290821927c44f74a1b0bdc99263ac9c','第1轮','66397904f882488b8b860a0b403dd235',2,'系统集成测试SIT/第1轮','sys-002','系统集成测试SIT','第1轮',NULL,'1','0','0','',NULL,'2025-09-18 09:08:37'),
+('0466b92756264b40bf69571ff96ea0d1','第2轮','66397904f882488b8b860a0b403dd235',2,'系统集成测试SIT/第2轮','sys-002','系统集成测试SIT','第2轮',NULL,'1','0','0','',NULL,'2025-09-18 09:59:08'),
+('96230bd5b6d34c5ba78f26239b365faf','用户中心及财务管理优化','0466b92756264b40bf69571ff96ea0d1',3,'系统集成测试SIT/第2轮/用户中心及财务管理优化','sys-002','系统集成测试SIT','第2轮','用户中心及财务管理优化','1','1','1','',NULL,'2025-09-18 10:04:58'),
+('709410b526ce46aba648b42213a2ff25','E终端远程银行协议优化','b290821927c44f74a1b0bdc99263ac9c',3,'系统集成测试SIT/第1轮/E终端远程银行协议优化','sys-002','系统集成测试SIT','第1轮','E终端远程银行协议优化','1','1','1','',NULL,'2025-09-18 17:40:00');
 
 /*Table structure for table `t_test_system` */
 

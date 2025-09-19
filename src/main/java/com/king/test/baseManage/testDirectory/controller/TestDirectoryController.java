@@ -126,5 +126,28 @@ public class TestDirectoryController {
             return Result.error("更新目录失败：" + e.getMessage());
         }
     }
+    
+    /**
+     * 删除测试目录
+     * @param directoryId 目录ID
+     * @return 删除结果
+     */
+    @DeleteMapping("/{directoryId}")
+    public Result<?> deleteDirectory(@PathVariable("directoryId") String directoryId) {
+        if (!StringUtils.hasText(directoryId)) {
+            return Result.error("目录ID不能为空");
+        }
+        
+        try {
+            boolean success = testDirectoryService.deleteDirectory(directoryId);
+            if (success) {
+                return Result.success("目录删除成功");
+            } else {
+                return Result.error("目录删除失败");
+            }
+        } catch (Exception e) {
+            return Result.error("删除目录失败：" + e.getMessage());
+        }
+    }
 
 }

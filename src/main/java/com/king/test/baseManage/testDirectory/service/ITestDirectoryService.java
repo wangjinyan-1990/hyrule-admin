@@ -42,5 +42,12 @@ public interface ITestDirectoryService extends IService<TTestDirectory> {
      * @return 是否更新成功
      */
     boolean updateDirectory(TTestDirectory directory);
+    
+    /**
+     * 删除测试目录
+     * @param directoryId 目录ID
+     * @return 是否删除成功
+     */
+    boolean deleteDirectory(String directoryId);
 
 }

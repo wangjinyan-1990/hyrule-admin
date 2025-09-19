@@ -71,8 +71,18 @@ public class TestDirectoryServiceImpl extends ServiceImpl<TestDirectoryMapper, T
             directory.setIsUseTestset("1");
         }
         
+        // 设置新目录为叶子目录（默认值为1）
+        directory.setIsLeafDirectory("1");
+        
         // 保存到数据库
-        return baseMapper.insert(directory) > 0;
+        boolean result = baseMapper.insert(directory) > 0;
+        
+        // 如果有父目录，将父目录设置为非叶子目录
+        if (result && directory.getDirectoryParentId() != null && !directory.getDirectoryParentId().trim().isEmpty()) {
+            updateParentDirectoryLeafStatus(directory.getDirectoryParentId(), "0");
+        }
+        
+        return result;
     }
     
     /**
@@ -181,6 +191,67 @@ public class TestDirectoryServiceImpl extends ServiceImpl<TestDirectoryMapper, T
         
         if (!existingDirectories.isEmpty()) {
             throw new IllegalArgumentException("目录名称已存在");
+        }
+    }
+    
+    /**
+     * 更新父目录的叶子状态
+     * @param directoryParentId 父目录ID
+     * @param isLeafDirectory 是否为叶子目录："0"-不是；"1"-是
+     */
+    private void updateParentDirectoryLeafStatus(String directoryParentId, String isLeafDirectory) {
+        TTestDirectory parentDirectory = baseMapper.selectById(directoryParentId);
+        if (parentDirectory != null) {
+            parentDirectory.setIsLeafDirectory(isLeafDirectory);
+            baseMapper.updateById(parentDirectory);
+        }
+    }
+    
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteDirectory(String directoryId) {
+        Assert.hasText(directoryId, "目录ID不能为空");
+        
+        // 检查目录是否存在
+        TTestDirectory directory = baseMapper.selectById(directoryId);
+        if (directory == null) {
+            throw new IllegalArgumentException("目录不存在");
+        }
+        
+        // 检查是否有子目录
+        List<TTestDirectory> children = baseMapper.getChildrenByParentId(directoryId, directory.getSystemId());
+        if (!children.isEmpty()) {
+            throw new IllegalArgumentException("目录下存在子目录，无法删除");
+        }
+        
+        // 保存父目录ID，用于后续更新父目录的叶子状态
+        String parentId = directory.getDirectoryParentId();
+        
+        // 删除目录
+        boolean result = baseMapper.deleteById(directoryId) > 0;
+        
+        // 如果有父目录，检查父目录是否还有其他子目录
+        if (result && parentId != null && !parentId.trim().isEmpty()) {
+            checkAndUpdateParentLeafStatus(parentId);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 检查并更新父目录的叶子状态
+     * @param parentId 父目录ID
+     */
+    private void checkAndUpdateParentLeafStatus(String parentId) {
+        TTestDirectory parentDirectory = baseMapper.selectById(parentId);
+        if (parentDirectory != null) {
+            // 查询父目录下是否还有其他子目录
+            List<TTestDirectory> siblings = baseMapper.getChildrenByParentId(parentId, parentDirectory.getSystemId());
+            
+            // 如果没有子目录了，设置为叶子目录
+            if (siblings.isEmpty()) {
+                updateParentDirectoryLeafStatus(parentId, "1");
+            }
         }
     }
 
