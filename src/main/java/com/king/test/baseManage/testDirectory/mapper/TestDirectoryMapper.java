@@ -1,10 +1,7 @@
 package com.king.test.baseManage.testDirectory.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.king.test.baseManage.testDirectory.entity.TTestDirectory;
-import com.king.test.baseManage.testSystem.entity.TTestSystem;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,14 +14,14 @@ import java.util.List;
 public interface TestDirectoryMapper extends BaseMapper<TTestDirectory> {
     
     /**
-     * 查询用户参与的测试系统
+     * 查询用户参与的测试系统,目录树展示系统根目录
      * @param userId 用户ID
      * @return
      */
-    List<TTestDirectory> getSystemsByUserId( @Param("userId") String userId);
+    List<TTestDirectory> getRootDirectoryByUserId( @Param("userId") String userId);
     
     /**
-     * 查询所有根目录（系统）
+     * 查询所有根目录（系统）,admin用户目录树展示所有系统根目录
      * @return 根目录列表
      */
     List<TTestDirectory> getRootDirectory();

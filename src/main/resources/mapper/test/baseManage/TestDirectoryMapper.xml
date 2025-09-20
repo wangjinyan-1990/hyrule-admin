@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.king.test.baseManage.testDirectory.mapper.TestDirectoryMapper">
 
-    <!-- 根据用户ID获取该用户参与的系统列表 -->
-    <select id="getSystemsByUserId" resultType="com.king.test.baseManage.testDirectory.entity.TTestDirectory">
+    <!-- 根据用户ID获取该用户参与的系统列表,用来展示目录树系统根目录 -->
+    <select id="getRootDirectoryByUserId" resultType="com.king.test.baseManage.testDirectory.entity.TTestDirectory">
         SELECT tsu.SYSTEM_ID AS systemId,
                 ts.SYSTEM_NAME AS directoryName,
                 'root' AS directoryType,
@@ -16,15 +16,21 @@
                 NULL AS thirdPath,
                 NULL AS isUseTestcase,
                 NULL AS isUseTestset,
+                CASE 
+                    WHEN EXISTS (SELECT 1 FROM t_test_directory td WHERE td.SYSTEM_ID = tsu.SYSTEM_ID AND td.LEVEL = 1) 
+                    THEN '0' 
+                    ELSE '1' 
+                END AS isLeafDirectory,
                 NULL AS relateId,
                 NULL AS createTime
         FROM t_test_system_user tsu
         LEFT JOIN t_test_system ts ON tsu.SYSTEM_ID = ts.SYSTEM_ID
-        WHERE WHERE ts.IS_USE = '1' AND ts.SYSTEM_STAGE != '5' AND tsu.USER_ID = #{userId}
+        WHERE ts.IS_USE = '1' AND ts.SYSTEM_STAGE != '5' AND tsu.USER_ID = #{userId}
         GROUP BY tsu.SYSTEM_ID
         ORDER BY tsu.SYSTEM_ID DESC
     </select>
 
+    <!-- admin用户目录树展示所有系统根目录 -->
     <select id="getRootDirectory" resultType="com.king.test.baseManage.testDirectory.entity.TTestDirectory">
         SELECT ts.SYSTEM_ID AS systemId,
                 ts.SYSTEM_NAME AS directoryName,
@@ -38,6 +44,11 @@
                 NULL AS thirdPath,
                 NULL AS isUseTestcase,
                 NULL AS isUseTestset,
+                CASE 
+                    WHEN EXISTS (SELECT 1 FROM t_test_directory td WHERE td.SYSTEM_ID = ts.SYSTEM_ID AND td.LEVEL = 1) 
+                    THEN '0' 
+                    ELSE '1' 
+                END AS isLeafDirectory,
                 NULL AS relateId,
                 NULL AS createTime
         FROM t_test_system ts
@@ -59,6 +70,7 @@
              THIRD_PATH as thirdPath,
              IS_USE_TESTCASE as isUseTestcase,
              IS_USE_TESTSET as isUseTestset,
+             IS_LEAF_DIRECTORY as isLeafDirectory,
              DIRECTORY_TYPE as directoryType,
              RELATE_ID as relateId,
              CREATE_TIME as createTime
@@ -90,6 +102,7 @@
              THIRD_PATH as thirdPath,
              IS_USE_TESTCASE as isUseTestcase,
              IS_USE_TESTSET as isUseTestset,
+             IS_LEAF_DIRECTORY as isLeafDirectory,
              DIRECTORY_TYPE as directoryType,
              RELATE_ID as relateId,
              CREATE_TIME as createTime

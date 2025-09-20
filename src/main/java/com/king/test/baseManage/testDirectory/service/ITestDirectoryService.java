@@ -1,12 +1,8 @@
 package com.king.test.baseManage.testDirectory.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.king.test.baseManage.testDirectory.entity.TTestDirectory;
-import com.king.test.baseManage.testSystem.entity.TTestSystem;
-
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,11 +11,11 @@ import java.util.Map;
 public interface ITestDirectoryService extends IService<TTestDirectory> {
 
     /**
-     * 查询用户参与的测试系统
+     * 查询用户参与的测试系统,目录树展示系统根目录
      * @param userId 用户ID
      * @return
      */
-    Map<String, Object> getSystemsByUserId(String userId);
+    Map<String, Object> getRootDirectoryByUserId(String userId);
 
     /**
      * 创建测试目录

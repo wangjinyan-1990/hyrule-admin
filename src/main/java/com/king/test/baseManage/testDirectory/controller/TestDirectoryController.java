@@ -26,14 +26,14 @@ public class TestDirectoryController {
      * @param userId 用户ID
      * @return 系统信息列表
      */
-    @GetMapping("/getSystemsByUserId")
-    public Result<Map<String, Object>> getSystemsByUserId(@RequestParam("userId") String userId) {
+    @GetMapping("/getRootDirectoryByUserId")
+    public Result<Map<String, Object>> getRootDirectoryByUserId(@RequestParam("userId") String userId) {
         if (!StringUtils.hasText(userId)) {
             return Result.error("用户ID不能为空");
         }
 
         try {
-            Map<String, Object> data = testDirectoryService.getSystemsByUserId(userId);
+            Map<String, Object> data = testDirectoryService.getRootDirectoryByUserId(userId);
             return Result.success(data);
         } catch (Exception e) {
             return Result.error("查询用户参与的系统列表失败：" + e.getMessage());
@@ -132,7 +132,7 @@ public class TestDirectoryController {
      * @param directoryId 目录ID
      * @return 删除结果
      */
-    @DeleteMapping("/{directoryId}")
+    @DeleteMapping("/delete/{directoryId}")
     public Result<?> deleteDirectory(@PathVariable("directoryId") String directoryId) {
         if (!StringUtils.hasText(directoryId)) {
             return Result.error("目录ID不能为空");

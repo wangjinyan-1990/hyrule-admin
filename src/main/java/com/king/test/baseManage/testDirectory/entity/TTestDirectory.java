@@ -110,14 +110,22 @@ public class TTestDirectory {
     public TTestDirectory() {
     }
 
-    public TTestDirectory(String directoryId, String directoryName, String directoryParentId,
-                         Integer level, String fullPath, String systemId) {
+    public TTestDirectory(String directoryId, String directoryName, String directoryParentId, Integer level, String fullPath, String systemId, String firstPath, String secondPath, String thirdPath, String isUseTestcase, String isUseTestset, String isLeafDirectory, String directoryType, String relateId, LocalDateTime createTime) {
         this.directoryId = directoryId;
         this.directoryName = directoryName;
         this.directoryParentId = directoryParentId;
         this.level = level;
         this.fullPath = fullPath;
         this.systemId = systemId;
+        this.firstPath = firstPath;
+        this.secondPath = secondPath;
+        this.thirdPath = thirdPath;
+        this.isUseTestcase = isUseTestcase;
+        this.isUseTestset = isUseTestset;
+        this.isLeafDirectory = isLeafDirectory;
+        this.directoryType = directoryType;
+        this.relateId = relateId;
+        this.createTime = createTime;
     }
 
     // Getter和Setter方法（Lombok的@Data注解会自动生成，这里提供手动版本作为备选）

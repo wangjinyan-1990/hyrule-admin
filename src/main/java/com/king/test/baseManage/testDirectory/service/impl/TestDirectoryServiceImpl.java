@@ -1,7 +1,6 @@
 package com.king.test.baseManage.testDirectory.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.king.common.utils.SecurityUtils;
 import com.king.test.baseManage.testDirectory.entity.TTestDirectory;
 import com.king.test.baseManage.testDirectory.mapper.TestDirectoryMapper;
 import com.king.test.baseManage.testDirectory.service.ITestDirectoryService;
@@ -21,22 +20,22 @@ import java.util.UUID;
 @Service("testDirectoryServiceImpl")
 public class TestDirectoryServiceImpl extends ServiceImpl<TestDirectoryMapper, TTestDirectory> implements ITestDirectoryService {
 
-    @Autowired
-    private SecurityUtils securityUtils;
-
+    /**
+     * 查询用户参与的测试系统,目录树展示系统根目录
+     */
     @Override
-    public Map<String, Object> getSystemsByUserId(String userId) {
+    public Map<String, Object> getRootDirectoryByUserId(String userId) {
         Assert.hasText(userId, "用户ID不能为空");
-        List<TTestDirectory> systems;
+        List<TTestDirectory> rootDirectories;
         // 使用自定义查询方法
         if("admin".equals(userId)){
-            systems = baseMapper.getRootDirectory();
+            rootDirectories = baseMapper.getRootDirectory();
         }else{
-            systems = baseMapper.getSystemsByUserId(userId);
+            rootDirectories = baseMapper.getRootDirectoryByUserId(userId);
         }
 
         Map<String, Object> result = new HashMap<>();
-        result.put("rows", systems);
+        result.put("rows", rootDirectories);
         return result;
     }
 
