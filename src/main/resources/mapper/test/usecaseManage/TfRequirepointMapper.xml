@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.usecaseManage.requireRepository.mapper.TfRequirepointMapper">
+
+    <!-- 分页查询需求点列表 -->
+    <select id="selectPageRequirepoints" resultType="com.king.test.usecaseManage.requireRepository.entity.TfRequirepoint">
+        SELECT 
+            rp.REQUIRE_POINT_ID as requirePointId,
+            rp.REQUIRE_POINT_DESC as requirePointDesc,
+            rp.SYSTEM_ID as systemId,
+            rp.DIRECTORY_ID as directoryId,
+            rp.REQUIRE_POINT_TYPE as requirePointType,
+            rp.REVIEW_STATUS as reviewStatus,
+            rp.ANALYSIS_METHOD as analysisMethod,
+            rp.REQUIRE_STATUS as requireStatus,
+            rp.DESIGNER_ID as designerId,
+            u.USER_NAME as designer,
+            rp.CREATE_TIME as createTime,
+            rp.MODIFIER_ID as modifierId,
+            rp.MODIFY_TIME as modifyTime,
+            rp.REMARK as remark,
+            rp.SEND_TEST_ID as sendTestId,
+            rp.WORK_PACKAGE_ID as workPackageId
+        FROM tf_requirepoint rp
+        LEFT JOIN t_sys_user u ON rp.DESIGNER_ID = u.USER_ID
+        <where>
+            <if test="systemId != null and systemId != ''">
+                AND rp.SYSTEM_ID = #{systemId}
+            </if>
+            <if test="directoryIds != null and directoryIds.size() > 0">
+                AND rp.DIRECTORY_ID IN
+                <foreach collection="directoryIds" item="directoryId" open="(" separator="," close=")">
+                    #{directoryId}
+                </foreach>
+            </if>
+            <if test="requirePointType != null and requirePointType != ''">
+                AND rp.REQUIRE_POINT_TYPE = #{requirePointType}
+            </if>
+            <if test="reviewStatus != null and reviewStatus != ''">
+                AND rp.REVIEW_STATUS = #{reviewStatus}
+            </if>
+            <if test="requireStatus != null and requireStatus != ''">
+                AND rp.REQUIRE_STATUS = #{requireStatus}
+            </if>
+            <if test="designer != null and designer != ''">
+                AND u.USER_NAME = #{designer}
+            </if>
+        </where>
+        ORDER BY rp.CREATE_TIME DESC
+    </select>
+
+    <!-- 导出需求点数据 -->
+    <select id="selectRequirepoints" resultType="com.king.test.usecaseManage.requireRepository.entity.TfRequirepoint">
+        SELECT 
+            rp.REQUIRE_POINT_ID as requirePointId,
+            rp.REQUIRE_POINT_DESC as requirePointDesc,
+            rp.SYSTEM_ID as systemId,
+            rp.DIRECTORY_ID as directoryId,
+            rp.REQUIRE_POINT_TYPE as requirePointType,
+            rp.REVIEW_STATUS as reviewStatus,
+            rp.ANALYSIS_METHOD as analysisMethod,
+            rp.REQUIRE_STATUS as requireStatus,
+            rp.DESIGNER_ID as designerId,
+            u.USER_NAME as designer,
+            rp.CREATE_TIME as createTime,
+            rp.MODIFIER_ID as modifierId,
+            rp.MODIFY_TIME as modifyTime,
+            rp.REMARK as remark,
+            rp.SEND_TEST_ID as sendTestId,
+            rp.WORK_PACKAGE_ID as workPackageId
+        FROM tf_requirepoint rp
+        LEFT JOIN t_sys_user u ON rp.DESIGNER_ID = u.USER_ID
+        <where>
+            <if test="systemId != null and systemId != ''">
+                AND rp.SYSTEM_ID = #{systemId}
+            </if>
+            <if test="directoryIds != null and directoryIds.size() > 0">
+                AND rp.DIRECTORY_ID IN
+                <foreach collection="directoryIds" item="directoryId" open="(" separator="," close=")">
+                    #{directoryId}
+                </foreach>
+            </if>
+            <if test="requirePointType != null and requirePointType != ''">
+                AND rp.REQUIRE_POINT_TYPE = #{requirePointType}
+            </if>
+            <if test="reviewStatus != null and reviewStatus != ''">
+                AND rp.REVIEW_STATUS = #{reviewStatus}
+            </if>
+            <if test="requireStatus != null and requireStatus != ''">
+                AND rp.REQUIRE_STATUS = #{requireStatus}
+            </if>
+            <if test="designer != null and designer != ''">
+                AND u.USER_NAME = #{designer}
+            </if>
+        </where>
+        ORDER BY rp.CREATE_TIME DESC
+    </select>
+
+</mapper>
