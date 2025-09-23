@@ -16,4 +16,12 @@ public interface IDataDictionaryService extends IService<DataDictionary> {
      * @return 字典列表
      */
     List<DataDictionary> getByDataType(String dataType);
+    
+    /**
+     * 根据数据类型和数据名称返回数据值
+     * @param dataType 数据类型
+     * @param dataName 数据名称
+     * @return 数据值，如果未找到则返回null
+     */
+    String getDataValueByTypeAndName(String dataType, String dataName);
 }

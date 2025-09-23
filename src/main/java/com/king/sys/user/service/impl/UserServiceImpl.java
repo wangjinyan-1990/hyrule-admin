@@ -318,5 +318,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, TSysUser> implement
         }
     }
 
+    /**
+     * 根据用户名查询用户ID
+     * @param userName 用户名
+     * @return 用户ID，如果未找到则返回null
+     */
+    @Override
+    public String getUserIdByUserName(String userName) {
+        if (!StringUtils.hasText(userName)) {
+            return null;
+        }
+        
+        LambdaQueryWrapper<TSysUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TSysUser::getUserName, userName);
+        TSysUser user = this.baseMapper.selectOne(wrapper);
+        
+        return user != null ? user.getUserId() : null;
+    }
 
 }

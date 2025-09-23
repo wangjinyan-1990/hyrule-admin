@@ -45,5 +45,12 @@ public interface ITestDirectoryService extends IService<TTestDirectory> {
      * @return 是否删除成功
      */
     boolean deleteDirectory(String directoryId);
+    
+    /**
+     * 根据完整路径查找目录ID
+     * @param fullPath 完整路径
+     * @return 目录ID，如果未找到返回null
+     */
+    String getDirectoryIdByFullPath(String fullPath);
 
 }

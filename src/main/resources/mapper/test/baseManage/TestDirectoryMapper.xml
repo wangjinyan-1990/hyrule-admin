@@ -122,4 +122,27 @@
              AND DIRECTORY_ID != #{excludeDirectoryId}
          </if>
      </select>
+
+     <!-- 根据完整路径查找目录 -->
+     <select id="getDirectoryByFullPath" resultType="com.king.test.baseManage.testDirectory.entity.TTestDirectory">
+         SELECT 
+             DIRECTORY_ID as directoryId,
+             DIRECTORY_NAME as directoryName,
+             DIRECTORY_PARENTID as directoryParentId,
+             LEVEL as level,
+             FULLPATH as fullPath,
+             SYSTEM_ID as systemId,
+             FIRST_PATH as firstPath,
+             SECOND_PATH as secondPath,
+             THIRD_PATH as thirdPath,
+             IS_USE_TESTCASE as isUseTestcase,
+             IS_USE_TESTSET as isUseTestset,
+             IS_LEAF_DIRECTORY as isLeafDirectory,
+             DIRECTORY_TYPE as directoryType,
+             RELATE_ID as relateId,
+             CREATE_TIME as createTime
+         FROM t_test_directory
+         WHERE FULLPATH = #{fullPath}
+         LIMIT 1
+     </select>
  </mapper>

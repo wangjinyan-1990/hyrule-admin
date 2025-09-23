@@ -1,5 +1,6 @@
 package com.king.framework.dataDictionary.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.framework.dataDictionary.entity.DataDictionary;
 import com.king.framework.dataDictionary.mapper.DataDictionaryMapper;
@@ -23,5 +24,20 @@ public class DataDictionaryServiceImpl extends ServiceImpl<DataDictionaryMapper,
             return Collections.emptyList(); // 返回空列表
         }
         return baseMapper.selectByDataType(dataType);
+    }
+    
+    @Override
+    public String getDataValueByTypeAndName(String dataType, String dataName) {
+        if (!StringUtils.hasText(dataType) || !StringUtils.hasText(dataName)) {
+            return null;
+        }
+        
+        LambdaQueryWrapper<DataDictionary> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(DataDictionary::getDataType, dataType)
+               .eq(DataDictionary::getDataName, dataName);
+        
+        DataDictionary dataDictionary = this.baseMapper.selectOne(wrapper);
+        
+        return dataDictionary != null ? dataDictionary.getDataValue() : null;
     }
 }

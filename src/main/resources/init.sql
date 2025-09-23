@@ -49,11 +49,9 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (30,'CloseReason','验证通过','验证通过',NULL,'A','bug关闭原因'),
 (31,'CloseReason','不是缺陷','不是缺陷',NULL,'A','bug关闭原因'),
 (32,'CloseReason','不处理','不处理',NULL,'A','bug关闭原因'),
-(33,'ReviewStatus','未评审','0',NULL,'A',NULL),
-(34,'ReviewStatus','已评审','1',NULL,'A',NULL),
-(35,'ReviewStatus','评审不通过','2',NULL,'A',NULL),
-(38,'variableType','输入变量','0',NULL,'A','变量类型'),
-(39,'variableType','引用输出变量','1',NULL,'A','变量类型'),
+(33,'reviewStatus','未评审','0',NULL,'A',NULL),
+(34,'reviewStatus','已评审','1',NULL,'A',NULL),
+(35,'reviewStatus','评审不通过','2',NULL,'A',NULL),
 (40,'MessageType','XML','0',NULL,'A',NULL),
 (41,'MessageType','定长报文','1',NULL,'A',NULL),
 (42,'TestcaseType','自动化测试','0',1,'A','用例类型'),
@@ -67,10 +65,6 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (50,'level','高','0',1,'A','需求优先级'),
 (51,'level','中','1',2,'A','需求优先级'),
 (52,'level','低','2',3,'A','需求优先级'),
-(56,'changeStatus','原始','1',1,'A',NULL),
-(57,'changeStatus','新增','2',2,'A',NULL),
-(58,'changeStatus','修改','3',3,'A',NULL),
-(59,'changeStatus','作废','4',4,'A',NULL),
 (60,'BugLevel','高','1',NULL,'A','bug优先级'),
 (61,'BugLevel','中','2',NULL,'A','bug优先级'),
 (62,'BugLevel','低','3',NULL,'A','bug优先级'),
@@ -79,25 +73,20 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (65,'BugLevelKey','一般','3',NULL,'A','bug严重级别'),
 (66,'BugLevelKey','轻微','4',NULL,'A','bug严重级别'),
 (67,'BugLevelKey','建议','5',NULL,'A','bug严重级别'),
-(68,'ProjectRole','项目经理','ProjectManager',1,'A','项目角色'),
-(69,'ProjectRole','开发组长','DevManager',2,'A','项目角色'),
-(70,'ProjectRole','测试组长','TestManager',3,'A','项目角色'),
-(71,'ProjectRole','开发人员','Dev',4,'A','项目角色'),
-(72,'ProjectRole','测试人员','Tester',5,'A','项目角色'),
 (73,'Cycle','每周','2',NULL,'A','测试集计划时间周期'),
 (74,'Cycle','每月','3',NULL,'A','测试集计划时间周期'),
 (75,'sex','男','1',NULL,'A','性别'),
 (76,'sex','女','2',NULL,'A','性别'),
-(77,'RequireStatus','未执行','6',6,'A',NULL),
-(78,'RequireStatus','未覆盖','1',1,'A',NULL),
-(79,'RequireStatus','通过','2',2,'A',NULL),
-(80,'RequireStatus','未通过','3',3,'A',NULL),
-(81,'RequireStatus','未完成','4',4,'A',NULL),
-(82,'RequireStatus','作废','5',5,'A',NULL),
-(83,'AnalysisType','业务流程','1',1,'A',NULL),
-(84,'AnalysisType','业务功能','2',2,'A',NULL),
-(85,'AnalysisType','业务要素','3',3,'A',NULL),
-(86,'AnalysisType','业务规则','4',4,'A',NULL),
+(77,'requireStatus','未执行','6',6,'A',NULL),
+(78,'requireStatus','未覆盖','1',1,'A',NULL),
+(79,'requireStatus','通过','2',2,'A',NULL),
+(80,'requireStatus','未通过','3',3,'A',NULL),
+(81,'requireStatus','未完成','4',4,'A',NULL),
+(82,'requireStatus','作废','5',5,'A',NULL),
+(83,'analysisMethod','业务流程','1',1,'A',NULL),
+(84,'analysisMethod','业务功能','2',2,'A',NULL),
+(85,'analysisMethod','业务要素','3',3,'A',NULL),
+(86,'analysisMethod','业务规则','4',4,'A',NULL),
 (87,'NoticeType','任务开始提醒','任务开始提醒',1,'A','提醒类型'),
 (88,'NoticeType','任务到期提醒','任务到期提醒',2,'A','提醒类型'),
 (89,'NoticeType','任务超期提醒','任务超期提醒',3,'A','提醒类型'),
@@ -386,7 +375,7 @@ CREATE TABLE `t_sys_counter` (
 
 insert  into `t_sys_counter`(`COUNTER_ID`,`COUNTER_NAME`,`CURRENT_NUMBER`,`PREFIX`,`COUNTER_LENGTH`) values 
 (1,'sysCode',2,'sys-',3),
-(2,'requireCode',0,'req',5),
+(2,'requireCode',4,'req',5),
 (3,'testcaseCode',0,'tc',5),
 (4,'bugCode',0,'bug',6);
 
@@ -406,7 +395,7 @@ CREATE TABLE `t_sys_menu` (
   `IS_LEAF` varchar(1) DEFAULT NULL,
   `HIDDEN` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`MENU_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `t_sys_menu` */
 
@@ -435,7 +424,11 @@ insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`
 (22,NULL,'https://panjiachen.github.io/vue-element-admin-site/#/',NULL,NULL,'External Link','link',21,'1',0),
 (23,'/sys/menu','menu',NULL,'menu','菜单管理','menuManage',1,'1',0),
 (26,'/sys/org','/org',NULL,'org','机构管理','orgManage',1,'1',0),
-(29,'/test/baseManage/testDirectory','testDirectory',NULL,'testDirectory','测试目录维护','testDirectory',5,'1',NULL);
+(29,'/test/baseManage/testDirectory','testDirectory',NULL,'testDirectory','测试目录维护','testDirectory',5,'1',0),
+(30,'/test/usecaseManage/index','usecaseManage',NULL,'usecaseManage','用例管理','usecaseManage',4,'0',0),
+(31,'/test/usecaseManage/requireRepository','requireRepository',NULL,'requireRepository','需求库','requireRepository',30,'1',0),
+(32,'/test/usecaseManage/useCaseRepository','useCaseRepository',NULL,'useCaseRepository','用例库','useCaseRepository',30,'1',0),
+(33,'/test/usecaseManage/useCaseExecution','useCaseExecution',NULL,'useCaseExecution','执行库','useCaseExecution',30,'1',0);
 
 /*Table structure for table `t_sys_org` */
 
@@ -667,11 +660,6 @@ CREATE TABLE `t_sys_user` (
 /*Data for the table `t_sys_user` */
 
 insert  into `t_sys_user`(`USER_ID`,`LOGIN_NAME`,`PASSWORD`,`USER_NAME`,`EMAIL`,`PHONE`,`STATUS`,`ORG_ID`,`SORT_NO`) values 
-('2','zhangsan','e10adc3949ba59abbe56e057f20f883e','张三','zhangsan@gmail.com','13966667777',1,'300012',0),
-('3','lisi','e10adc3949ba59abbe56e057f20f883e','李四','lisi@gmail.com','13966667778',1,'300005',0),
-('4','wangwu','e10adc3949ba59abbe56e057f20f883e','王五','wangwu@gmail.com','13966667772',1,'300005',0),
-('5','zhaoer','e10adc3949ba59abbe56e057f20f883e','赵二','zhaoer@gmail.com','13966667776',0,'300005',0),
-('6','songliu','123456','宋六','songliu@gmail.com','13966667771',1,'300005',0),
 ('admin','admin','e10adc3949ba59abbe56e057f20f883e','超级管理员','super@aliyun.com','18677778888',1,'300002',0),
 ('anqi','anqi','e10adc3949ba59abbe56e057f20f883e','安琪','','15129872940',1,'300002',20250913),
 ('baiyang','baiyang','e10adc3949ba59abbe56e057f20f883e','白洋','','13609231828',1,'300002',0),
@@ -682,7 +670,12 @@ insert  into `t_sys_user`(`USER_ID`,`LOGIN_NAME`,`PASSWORD`,`USER_NAME`,`EMAIL`,
 ('libo','libo','e10adc3949ba59abbe56e057f20f883e','李波','','13227789228',1,'300009',0),
 ('lili','lili','e10adc3949ba59abbe56e057f20f883e','李莉','lili123@189.com','18765342789',1,'300009',20250906),
 ('liqi','liqi','e10adc3949ba59abbe56e057f20f883e','李奇','','18700893077',1,'300009',0),
-('yanke','yanke','e10adc3949ba59abbe56e057f20f883e','严科','yanke920618@163.com','16890234789',1,'300009',0);
+('lisi','lisi','e10adc3949ba59abbe56e057f20f883e','李四','lisi@gmail.com','13966667778',1,'300005',0),
+('songliu','songliu','e10adc3949ba59abbe56e057f20f883e','宋六','songliu@gmail.com','13966667771',1,'300005',0),
+('wangwu','wangwu','e10adc3949ba59abbe56e057f20f883e','王五','wangwu@gmail.com','13966667772',1,'300005',0),
+('yanke','yanke','e10adc3949ba59abbe56e057f20f883e','严科','yanke920618@163.com','16890234789',1,'300009',0),
+('zhangsan','zhangsan','e10adc3949ba59abbe56e057f20f883e','张三','zhangsan@gmail.com','13966667777',1,'300012',0),
+('zhaoer','zhaoer','e10adc3949ba59abbe56e057f20f883e','赵二','zhaoer@gmail.com','13966667776',0,'300005',0);
 
 /*Table structure for table `t_test_directory` */
 
@@ -712,11 +705,12 @@ CREATE TABLE `t_test_directory` (
 
 insert  into `t_test_directory`(`DIRECTORY_ID`,`DIRECTORY_NAME`,`DIRECTORY_PARENTID`,`LEVEL`,`FULLPATH`,`SYSTEM_ID`,`FIRST_PATH`,`SECOND_PATH`,`THIRD_PATH`,`IS_USE_TESTCASE`,`IS_USE_TESTSET`,`IS_LEAF_DIRECTORY`,`DIRECTORY_TYPE`,`RELATE_ID`,`CREATE_TIME`) values 
 ('66397904f882488b8b860a0b403dd235','系统集成测试SIT','sys-002',1,'系统集成测试SIT','sys-002','系统集成测试SIT',NULL,NULL,'1','1','0','',NULL,'2025-09-17 18:49:10'),
-('253cec943415413ab2c856679e3fa97c','SIT功能测试','sys-001',1,'SIT功能测试','sys-001','SIT功能测试',NULL,NULL,'1','1','0','',NULL,'2025-09-17 23:00:04'),
+('253cec943415413ab2c856679e3fa97c','SIT功能测试','sys-001',1,'SIT功能测试','sys-001','SIT功能测试',NULL,NULL,'1','1','1','',NULL,'2025-09-17 23:00:04'),
 ('b290821927c44f74a1b0bdc99263ac9c','第1轮','66397904f882488b8b860a0b403dd235',2,'系统集成测试SIT/第1轮','sys-002','系统集成测试SIT','第1轮',NULL,'1','0','0','',NULL,'2025-09-18 09:08:37'),
 ('0466b92756264b40bf69571ff96ea0d1','第2轮','66397904f882488b8b860a0b403dd235',2,'系统集成测试SIT/第2轮','sys-002','系统集成测试SIT','第2轮',NULL,'1','0','0','',NULL,'2025-09-18 09:59:08'),
 ('96230bd5b6d34c5ba78f26239b365faf','用户中心及财务管理优化','0466b92756264b40bf69571ff96ea0d1',3,'系统集成测试SIT/第2轮/用户中心及财务管理优化','sys-002','系统集成测试SIT','第2轮','用户中心及财务管理优化','1','1','1','',NULL,'2025-09-18 10:04:58'),
-('709410b526ce46aba648b42213a2ff25','E终端远程银行协议优化','b290821927c44f74a1b0bdc99263ac9c',3,'系统集成测试SIT/第1轮/E终端远程银行协议优化','sys-002','系统集成测试SIT','第1轮','E终端远程银行协议优化','1','1','1','',NULL,'2025-09-18 17:40:00');
+('709410b526ce46aba648b42213a2ff25','E终端远程银行协议优化','b290821927c44f74a1b0bdc99263ac9c',3,'系统集成测试SIT/第1轮/E终端远程银行协议优化','sys-002','系统集成测试SIT','第1轮','E终端远程银行协议优化','1','1','0','',NULL,'2025-09-18 17:40:00'),
+('6a2b553cede94d1c9c8fc59f36b370d8','如图宇航','709410b526ce46aba648b42213a2ff25',4,'系统集成测试SIT/第1轮/E终端远程银行协议优化/如图宇航','sys-002','系统集成测试SIT','第1轮','E终端远程银行协议优化','1','1','1','',NULL,'2025-09-20 15:20:27');
 
 /*Table structure for table `t_test_system` */
 
@@ -770,3 +764,36 @@ insert  into `t_test_system_user`(`SYSTEM_USER_ID`,`USER_ID`,`SYSTEM_ID`) values
 (3,'jianghe','sys-002'),
 (4,'libo','sys-002'),
 (5,'2','sys-002');
+
+/*Table structure for table `tf_requirepoint` */
+
+DROP TABLE IF EXISTS `tf_requirepoint`;
+
+CREATE TABLE `tf_requirepoint` (
+  `REQUIRE_POINT_ID` varchar(32) NOT NULL COMMENT '需求点Id',
+  `REQUIRE_POINT_DESC` text COMMENT '需求点概述',
+  `SYSTEM_ID` varchar(32) NOT NULL COMMENT '测试系统ID',
+  `DIRECTORY_ID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '目录Id',
+  `REQUIRE_POINT_TYPE` varchar(1) DEFAULT NULL COMMENT '需求点类型',
+  `REVIEW_STATUS` varchar(1) DEFAULT '0' COMMENT '评审状态',
+  `ANALYSIS_METHOD` varchar(1) DEFAULT NULL COMMENT '分析方法',
+  `REQUIRE_STATUS` char(1) DEFAULT NULL COMMENT '需求状态',
+  `DESIGNER_ID` varchar(30) DEFAULT NULL COMMENT '设计人Id',
+  `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
+  `MODIFIER_ID` varchar(30) DEFAULT NULL COMMENT '修改人Id',
+  `MODIFY_TIME` datetime DEFAULT NULL COMMENT '修改时间',
+  `REMARK` text COMMENT '备注',
+  `SEND_TEST_ID` varchar(32) DEFAULT NULL COMMENT '所属送测单Id',
+  `WORK_PACKAGE_ID` int DEFAULT NULL COMMENT '所属工作包Id',
+  PRIMARY KEY (`REQUIRE_POINT_ID`),
+  KEY `I_SYSTEM_ID` (`SYSTEM_ID`),
+  KEY `I_DIRECTORY_ID` (`DIRECTORY_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_requirepoint` */
+
+insert  into `tf_requirepoint`(`REQUIRE_POINT_ID`,`REQUIRE_POINT_DESC`,`SYSTEM_ID`,`DIRECTORY_ID`,`REQUIRE_POINT_TYPE`,`REVIEW_STATUS`,`ANALYSIS_METHOD`,`REQUIRE_STATUS`,`DESIGNER_ID`,`CREATE_TIME`,`MODIFIER_ID`,`MODIFY_TIME`,`REMARK`,`SEND_TEST_ID`,`WORK_PACKAGE_ID`) values 
+('sys-002-req00001','郭德纲的反腐败','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','1',NULL,'zhangsan','2025-09-21 16:12:07',NULL,NULL,'',NULL,NULL),
+('sys-002-req00002','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','1','jianghe','2025-09-23 12:55:55',NULL,NULL,'',NULL,NULL),
+('sys-002-req00003','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','1','jianghe','2025-09-23 13:00:21',NULL,NULL,'',NULL,NULL),
+('sys-002-req00004','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','1','jianghe','2025-09-23 13:01:54',NULL,NULL,'',NULL,NULL);

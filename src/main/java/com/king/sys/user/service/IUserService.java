@@ -12,4 +12,5 @@ public interface IUserService extends IService<TSysUser> {
     public void updateUser(TSysUser user);
     public void updateUserRoles(String userId, String roleIds);
     public String getCurrentUserId(HttpServletRequest request);
+    public String getUserIdByUserName(String userName);
 }

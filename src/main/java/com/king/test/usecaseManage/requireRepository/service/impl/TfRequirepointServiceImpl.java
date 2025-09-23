@@ -3,6 +3,7 @@ package com.king.test.usecaseManage.requireRepository.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.king.common.utils.CounterUtil;
 import com.king.common.utils.SecurityUtils;
 import com.king.test.baseManage.testDirectory.entity.TTestDirectory;
 import com.king.test.baseManage.testDirectory.service.ITestDirectoryService;
@@ -37,6 +38,9 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
     @Autowired
     @Qualifier("testDirectoryServiceImpl")
     private ITestDirectoryService testDirectoryService;
+    
+    @Autowired
+    private CounterUtil counterUtil;
 
     @Override
     public Map<String, Object> getRequirepointsWithPagination(int pageNo, int pageSize, 
@@ -75,16 +79,23 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         Assert.hasText(requirepoint.getSystemId(), "系统ID不能为空");
         Assert.hasText(requirepoint.getRequirePointDesc(), "需求点概述不能为空");
 
-        // 生成需求点ID
-        requirepoint.setRequirePointId(UUID.randomUUID().toString().replace("-", ""));
+        // 如果需求点ID为空，则使用计数器生成
+        if (!StringUtils.hasText(requirepoint.getRequirePointId())) {
+            String requirePointId = generateRequirePointId(requirepoint.getSystemId());
+            requirepoint.setRequirePointId(requirePointId);
+        }
         
         // 设置创建时间
-        requirepoint.setCreateTime(LocalDateTime.now());
+        if (requirepoint.getCreateTime() == null) {
+            requirepoint.setCreateTime(LocalDateTime.now());
+        }
         
         // 设置设计人为当前用户ID
-        String currentUserId = securityUtils.getUserId();
-        if (StringUtils.hasText(currentUserId)) {
-            requirepoint.setDesignerId(currentUserId);
+        if (!StringUtils.hasText(requirepoint.getDesignerId())) {
+            String currentUserId = securityUtils.getUserId();
+            if (StringUtils.hasText(currentUserId)) {
+                requirepoint.setDesignerId(currentUserId);
+            }
         }
         
         // 设置默认评审状态
@@ -231,5 +242,16 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
             // 查询失败时记录日志，但不影响主流程
             System.err.println("查询子目录失败: " + e.getMessage());
         }
+    }
+
+    /**
+     * 生成需求点ID
+     * @param systemId 系统ID
+     * @return 需求点ID
+     */
+    private String generateRequirePointId(String systemId) {
+        // 使用计数器生成需求点ID
+        String requirePointId = systemId + "-" + counterUtil.generateNextCode("requireCode");
+        return requirePointId;
     }
 }

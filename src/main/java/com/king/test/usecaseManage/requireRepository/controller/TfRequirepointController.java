@@ -1,6 +1,11 @@
 package com.king.test.usecaseManage.requireRepository.controller;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.king.common.Result;
+import com.king.common.utils.CounterUtil;
+import com.king.framework.dataDictionary.service.IDataDictionaryService;
+import com.king.sys.user.service.IUserService;
+import com.king.test.baseManage.testDirectory.service.ITestDirectoryService;
 import com.king.test.usecaseManage.requireRepository.entity.TfRequirepoint;
 import com.king.test.usecaseManage.requireRepository.service.ITfRequirepointService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -19,6 +25,12 @@ import java.nio.file.Paths;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * 需求点Controller
@@ -30,6 +42,21 @@ public class TfRequirepointController {
     @Autowired
     @Qualifier("tfRequirepointServiceImpl")
     private ITfRequirepointService tfRequirepointService;
+    
+    @Autowired
+    @Qualifier("testDirectoryServiceImpl")
+    private ITestDirectoryService testDirectoryService;
+    
+    @Autowired
+    private CounterUtil counterUtil;
+    
+    @Autowired
+    @Qualifier("userServiceImpl")
+    private IUserService userService;
+
+    @Autowired
+    @Qualifier("dataDictionaryServiceImpl")
+    private IDataDictionaryService dataDictionaryService;
 
     /**
      * 分页查询需求点列表
@@ -332,5 +359,387 @@ public class TfRequirepointController {
                 ioException.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 导入需求点数据
+     * @param file 上传的Excel文件
+     * @param systemId 系统ID（可选，如果提供则覆盖Excel中的系统ID）
+     * @return 导入结果
+     */
+    @PostMapping("/import")
+    public Result<?> importRequirePoints(@RequestParam("file") MultipartFile file,
+                                       @RequestParam(value = "systemId", required = false) String systemId) {
+        if (file == null || file.isEmpty()) {
+            return Result.error("上传文件不能为空");
+        }
+
+        // 检查文件类型
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || (!originalFilename.endsWith(".xlsx") && !originalFilename.endsWith(".xls"))) {
+            return Result.error("文件格式不正确，请上传Excel文件(.xlsx或.xls)");
+        }
+
+        try {
+            // 解析Excel文件并收集错误信息
+            Map<String, Object> parseResult = parseExcelFileWithErrors(file, systemId);
+            List<TfRequirepoint> requirepoints = (List<TfRequirepoint>) parseResult.get("data");
+            List<String> parseErrors = (List<String>) parseResult.get("errors");
+            
+            if (requirepoints.isEmpty() && parseErrors.isEmpty()) {
+                return Result.error("Excel文件中没有有效的数据行");
+            }
+
+            // 批量保存需求点
+            int successCount = 0;
+            int failCount = 0;
+            List<String> errorMessages = new ArrayList<>();
+            
+            // 添加解析错误
+            errorMessages.addAll(parseErrors);
+
+            for (TfRequirepoint requirepoint : requirepoints) {
+                try {
+                    boolean success = tfRequirepointService.createRequirepoint(requirepoint);
+                    if (success) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                        errorMessages.add("需求点 '" + requirepoint.getRequirePointDesc() + "' 保存失败");
+                    }
+                } catch (Exception e) {
+                    failCount++;
+                    errorMessages.add("需求点 '" + requirepoint.getRequirePointDesc() + "' 保存失败: " + e.getMessage());
+                }
+            }
+
+            // 构建返回结果
+            Map<String, Object> result = new HashMap<>();
+            result.put("totalCount", requirepoints.size() + parseErrors.size());
+            result.put("successCount", successCount);
+            result.put("failCount", failCount + parseErrors.size());
+            result.put("errorMessages", errorMessages);
+
+            if (failCount == 0 && parseErrors.isEmpty()) {
+                return Result.success(result, "导入成功！共导入 " + successCount + " 条需求点数据");
+            } else {
+                return Result.success(result, "导入完成！成功 " + successCount + " 条，失败 " + (failCount + parseErrors.size()) + " 条");
+            }
+            
+        } catch (Exception e) {
+            return Result.error("导入需求点数据失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 解析Excel文件
+     * @param file Excel文件
+     * @param systemId 系统ID（可选，如果提供则覆盖Excel中的系统ID）
+     * @return 需求点列表
+     * @throws IOException IO异常
+     */
+    private List<TfRequirepoint> parseExcelFile(MultipartFile file, String systemId) throws IOException {
+        List<TfRequirepoint> requirepoints = new ArrayList<>();
+        
+        try (InputStream inputStream = file.getInputStream();
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            
+            Sheet sheet = workbook.getSheetAt(0); // 获取第一个工作表
+            
+            // 获取标题行（第一行）
+            Row headerRow = sheet.getRow(0);
+            if (headerRow == null) {
+                throw new IllegalArgumentException("Excel文件缺少标题行");
+            }
+            
+            // 跳过标题行，从第二行开始读取数据
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+                
+                // 检查是否为空行
+                if (isRowEmpty(row)) continue;
+                
+                Map<String, Object> parseResult = parseRowToRequirepoint(row, systemId, headerRow, i + 1);
+                if ((Boolean) parseResult.get("success")) {
+                    TfRequirepoint requirepoint = (TfRequirepoint) parseResult.get("data");
+                    requirepoints.add(requirepoint);
+                }
+                // 注意：这里暂时不处理错误信息，错误信息会在导入接口中统一处理
+            }
+        }
+        
+        return requirepoints;
+    }
+
+    /**
+     * 解析行数据为需求点对象
+     * @param row Excel行
+     * @param systemId 系统ID（可选，如果提供则覆盖Excel中的系统ID）
+     * @param headerRow 标题行，用于获取列名映射
+     * @param rowNumber 行号（用于错误提示）
+     * @return 解析结果，包含需求点对象和错误信息
+     */
+    private Map<String, Object> parseRowToRequirepoint(Row row, String systemId, Row headerRow, int rowNumber) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            TfRequirepoint requirepoint = new TfRequirepoint();
+            
+            // 设置ID和创建时间
+            requirepoint.setCreateTime(LocalDateTime.now());
+            
+            // 根据列名获取数据
+            String fullPath = getCellValueByColumnName(row, headerRow, "模块路径*");
+            // 根据fullPath完整路径 查找 directoryId目录ID
+            String directoryId = testDirectoryService.getDirectoryIdByFullPath(fullPath);
+            requirepoint.setDirectoryId(directoryId);
+
+            requirepoint.setSystemId(systemId);
+            
+            // 生成需求点ID
+            requirepoint.setRequirePointId(generateRequirePointId(systemId));
+            requirepoint.setRequirePointDesc(getCellValueByColumnName(row, headerRow, "需求点概述*"));
+
+            // 测试需求类型 - 通过数据字典验证和转换
+            String requirePointType = getCellValueByColumnName(row, headerRow, "测试需求类型*");
+            if (StringUtils.hasText(requirePointType)) {
+                String requirePointTypeValue = dataDictionaryService.getDataValueByTypeAndName("requirePointType", requirePointType);
+                if (requirePointTypeValue == null) {
+                    result.put("success", false);
+                    result.put("error", "第" + rowNumber + "行，测试需求类型不存在：" + requirePointType);
+                    return result;
+                }
+                requirepoint.setRequirePointType(requirePointTypeValue);
+            }
+
+            // 分析方法 - 通过数据字典验证和转换
+            String analysisMethod = getCellValueByColumnName(row, headerRow, "分析方法*");
+            if (StringUtils.hasText(analysisMethod)) {
+                String analysisMethodValue = dataDictionaryService.getDataValueByTypeAndName("analysisMethod", analysisMethod);
+                if (analysisMethodValue == null) {
+                    result.put("success", false);
+                    result.put("error", "第" + rowNumber + "行，分析方法不存在：" + analysisMethod);
+                    return result;
+                }
+                requirepoint.setAnalysisMethod(analysisMethodValue);
+            }
+            
+            // 需求状态 - 通过数据字典验证和转换
+            String requireStatus = getCellValueByColumnName(row, headerRow, "需求状态");
+            if (StringUtils.hasText(requireStatus)) {
+                String requireStatusValue = dataDictionaryService.getDataValueByTypeAndName("requireStatus", requireStatus);
+                if (requireStatusValue == null) {
+                    result.put("success", false);
+                    result.put("error", "第" + rowNumber + "行，需求状态不存在：" + requireStatus);
+                    return result;
+                }
+                requirepoint.setRequireStatus(requireStatusValue);
+            }
+            
+            // 评审状态 - 通过数据字典验证和转换
+            String reviewStatus = getCellValueByColumnName(row, headerRow, "评审状态");
+            if (StringUtils.hasText(reviewStatus)) {
+                String reviewStatusValue = dataDictionaryService.getDataValueByTypeAndName("reviewStatus", reviewStatus);
+                if (reviewStatusValue == null) {
+                    result.put("success", false);
+                    result.put("error", "第" + rowNumber + "行，评审状态不存在：" + reviewStatus);
+                    return result;
+                }
+                requirepoint.setReviewStatus(reviewStatusValue);
+            } else {
+                // 评审状态为空时，默认为待评审状态
+                String defaultReviewStatus = dataDictionaryService.getDataValueByTypeAndName("reviewStatus", "待评审");
+                if (defaultReviewStatus != null) {
+                    requirepoint.setReviewStatus(defaultReviewStatus);
+                } else {
+                    requirepoint.setReviewStatus("0"); // 如果数据字典中没有默认值，使用硬编码
+                }
+            }
+
+            requirepoint.setRemark(getCellValueByColumnName(row, headerRow, "备注"));
+
+            // 处理设计者信息
+            String designer = getCellValueByColumnName(row, headerRow, "设计者*");
+            if (StringUtils.hasText(designer)) {
+                String designerId = userService.getUserIdByUserName(designer);
+                // 设计者不存在
+                if (!StringUtils.hasText(designerId)) {
+                    result.put("success", false);
+                    result.put("error", "第" + rowNumber + "行，设计者不存在：" + designer);
+                    return result;
+                }
+                requirepoint.setDesignerId(designerId);
+            }
+            
+            // 验证必填字段
+            if (!StringUtils.hasText(requirepoint.getDirectoryId())) {
+                result.put("success", false);
+                result.put("error", "第" + rowNumber + "行，模块路径不能为空");
+                return result;
+            }
+            
+            if (!StringUtils.hasText(requirepoint.getRequirePointDesc())) {
+                result.put("success", false);
+                result.put("error", "第" + rowNumber + "行，需求点概述不能为空");
+                return result;
+            }
+            
+            result.put("success", true);
+            result.put("data", requirepoint);
+            return result;
+            
+        } catch (Exception e) {
+            // 解析失败
+            result.put("success", false);
+            result.put("error", "第" + rowNumber + "行，数据解析失败：" + e.getMessage());
+            return result;
+        }
+    }
+
+    /**
+     * 获取单元格值作为字符串
+     * @param cell 单元格
+     * @return 字符串值
+     */
+    private String getCellValueAsString(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+        
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue().trim();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                } else {
+                    // 处理数字类型，避免科学计数法
+                    double numericValue = cell.getNumericCellValue();
+                    if (numericValue == (long) numericValue) {
+                        return String.valueOf((long) numericValue);
+                    } else {
+                        return String.valueOf(numericValue);
+                    }
+                }
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                return cell.getCellFormula();
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * 检查行是否为空
+     * @param row Excel行
+     * @return 是否为空
+     */
+    private boolean isRowEmpty(Row row) {
+        if (row == null) return true;
+        
+        for (int i = 0; i < row.getLastCellNum(); i++) {
+            Cell cell = row.getCell(i);
+            if (cell != null && cell.getCellType() != CellType.BLANK) {
+                String value = getCellValueAsString(cell);
+                if (StringUtils.hasText(value)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 根据列名获取单元格值
+     * @param row 数据行
+     * @param headerRow 标题行
+     * @param columnName 列名
+     * @return 单元格值
+     */
+    private String getCellValueByColumnName(Row row, Row headerRow, String columnName) {
+        if (row == null || headerRow == null || !StringUtils.hasText(columnName)) {
+            return null;
+        }
+        
+        // 在标题行中查找列名对应的列索引
+        int columnIndex = -1;
+        for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+            Cell headerCell = headerRow.getCell(i);
+            if (headerCell != null) {
+                String headerValue = getCellValueAsString(headerCell);
+                if (columnName.equals(headerValue)) {
+                    columnIndex = i;
+                    break;
+                }
+            }
+        }
+        
+        // 如果找到列索引，获取对应单元格的值
+        if (columnIndex >= 0) {
+            Cell cell = row.getCell(columnIndex);
+            return getCellValueAsString(cell);
+        }
+        
+        return null;
+    }
+
+    /**
+     * 解析Excel文件并收集错误信息
+     * @param file Excel文件
+     * @param systemId 系统ID（可选，如果提供则覆盖Excel中的系统ID）
+     * @return 解析结果，包含需求点列表和错误信息
+     * @throws IOException IO异常
+     */
+    private Map<String, Object> parseExcelFileWithErrors(MultipartFile file, String systemId) throws IOException {
+        List<TfRequirepoint> requirepoints = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+        
+        try (InputStream inputStream = file.getInputStream();
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            
+            Sheet sheet = workbook.getSheetAt(0); // 获取第一个工作表
+            
+            // 获取标题行（第一行）
+            Row headerRow = sheet.getRow(0);
+            if (headerRow == null) {
+                throw new IllegalArgumentException("Excel文件缺少标题行");
+            }
+            
+            // 跳过标题行，从第二行开始读取数据
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+                
+                // 检查是否为空行
+                if (isRowEmpty(row)) continue;
+                
+                Map<String, Object> parseResult = parseRowToRequirepoint(row, systemId, headerRow, i + 1);
+                if ((Boolean) parseResult.get("success")) {
+                    TfRequirepoint requirepoint = (TfRequirepoint) parseResult.get("data");
+                    requirepoints.add(requirepoint);
+                } else {
+                    String error = (String) parseResult.get("error");
+                    errors.add(error);
+                }
+            }
+        }
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("data", requirepoints);
+        result.put("errors", errors);
+        return result;
+    }
+
+    /**
+     * 生成需求点ID
+     * @param systemId 系统ID
+     * @return 需求点ID
+     */
+    private String generateRequirePointId(String systemId) {
+        // 使用计数器生成需求点ID
+        String requirePointId = systemId + "-" + counterUtil.generateNextCode("requireCode");
+        return requirePointId;
     }
 }

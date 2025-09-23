@@ -47,4 +47,11 @@ public interface TestDirectoryMapper extends BaseMapper<TTestDirectory> {
                                                 @Param("directoryParentId") String directoryParentId,
                                                 @Param("systemId") String systemId,
                                                 @Param("excludeDirectoryId") String excludeDirectoryId);
+    
+    /**
+     * 根据完整路径查找目录ID
+     * @param fullPath 完整路径
+     * @return 目录信息
+     */
+    TTestDirectory getDirectoryByFullPath(@Param("fullPath") String fullPath);
 }
