@@ -53,4 +53,11 @@ public interface ITestDirectoryService extends IService<TTestDirectory> {
      */
     String getDirectoryIdByFullPath(String fullPath);
 
+    /**
+     * 根据目录ID获取完整路径
+     * @param directoryId 目录ID
+     * @return 完整路径
+     */
+    String getDirectoryFullPath(String directoryId);
+
 }

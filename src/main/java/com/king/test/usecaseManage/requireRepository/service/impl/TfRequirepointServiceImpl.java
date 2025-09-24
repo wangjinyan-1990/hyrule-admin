@@ -21,16 +21,12 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * 需求点Service实现类
  */
 @Service("tfRequirepointServiceImpl")
 public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper, TfRequirepoint> implements ITfRequirepointService {
-
-    @Autowired
-    private TfRequirepointMapper tfRequirepointMapper;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -57,7 +53,7 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         }
         
         // 执行分页查询
-        Page<TfRequirepoint> result = tfRequirepointMapper.selectPageRequirepoints(page, systemId, directoryIds,
+        Page<TfRequirepoint> result = baseMapper.selectPageRequirepoints(page, systemId, directoryIds,
                                                                                   requirePointType, reviewStatus, 
                                                                                   requireStatus, designer);
         
@@ -98,12 +94,15 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
             }
         }
         
-        // 设置默认评审状态
+        // 设置默认评审状态: 未评审
         if (!StringUtils.hasText(requirepoint.getReviewStatus())) {
             requirepoint.setReviewStatus("0");
         }
-
-        return tfRequirepointMapper.insert(requirepoint) > 0;
+        // 设置默认需求点状态: 未覆盖
+        if (!StringUtils.hasText(requirepoint.getRequireStatus())) {
+            requirepoint.setRequireStatus("1");
+        }
+        return baseMapper.insert(requirepoint) > 0;
     }
 
     @Override
@@ -115,7 +114,7 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         Assert.hasText(requirepoint.getRequirePointDesc(), "需求点概述不能为空");
 
         // 检查需求点是否存在
-        TfRequirepoint existingRequirepoint = tfRequirepointMapper.selectById(requirepoint.getRequirePointId());
+        TfRequirepoint existingRequirepoint = baseMapper.selectById(requirepoint.getRequirePointId());
         if (existingRequirepoint == null) {
             throw new IllegalArgumentException("需求点不存在");
         }
@@ -123,7 +122,7 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         // 设置修改时间
         requirepoint.setModifyTime(LocalDateTime.now());
 
-        return tfRequirepointMapper.updateById(requirepoint) > 0;
+        return baseMapper.updateById(requirepoint) > 0;
     }
 
     @Override
@@ -132,12 +131,12 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         Assert.hasText(requirePointId, "需求点ID不能为空");
         
         // 检查需求点是否存在
-        TfRequirepoint requirepoint = tfRequirepointMapper.selectById(requirePointId);
+        TfRequirepoint requirepoint = baseMapper.selectById(requirePointId);
         if (requirepoint == null) {
             throw new IllegalArgumentException("需求点不存在");
         }
 
-        return tfRequirepointMapper.deleteById(requirePointId) > 0;
+        return baseMapper.deleteById(requirePointId) > 0;
     }
 
     @Override
@@ -147,14 +146,14 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         
         // 检查所有需求点是否存在
         for (String requirePointId : requirePointIds) {
-            TfRequirepoint requirepoint = tfRequirepointMapper.selectById(requirePointId);
+            TfRequirepoint requirepoint = baseMapper.selectById(requirePointId);
             if (requirepoint == null) {
                 throw new IllegalArgumentException("需求点不存在：" + requirePointId);
             }
         }
         
         // 批量删除
-        return tfRequirepointMapper.deleteBatchIds(requirePointIds) > 0;
+        return baseMapper.deleteBatchIds(requirePointIds) > 0;
     }
 
     @Override
@@ -165,7 +164,7 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         
         // 检查所有需求点是否存在
         for (String requirePointId : requirePointIds) {
-            TfRequirepoint requirepoint = tfRequirepointMapper.selectById(requirePointId);
+            TfRequirepoint requirepoint = baseMapper.selectById(requirePointId);
             if (requirepoint == null) {
                 throw new IllegalArgumentException("需求点不存在：" + requirePointId);
             }
@@ -180,7 +179,7 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
             requirepoint.setRemark(reviewComment); // 将评审意见存储到备注字段
             requirepoint.setModifyTime(LocalDateTime.now());
             
-            if (tfRequirepointMapper.updateById(requirepoint) > 0) {
+            if (baseMapper.updateById(requirepoint) > 0) {
                 successCount++;
             }
         }
@@ -199,7 +198,7 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         }
         
         // 查询所有符合条件的数据
-        return tfRequirepointMapper.selectRequirepoints(systemId, directoryIds, requirePointType,
+        return baseMapper.selectRequirepoints(systemId, directoryIds, requirePointType,
                                                           reviewStatus, requireStatus, designer);
     }
 

@@ -11,8 +11,11 @@
             rp.DIRECTORY_ID as directoryId,
             rp.REQUIRE_POINT_TYPE as requirePointType,
             rp.REVIEW_STATUS as reviewStatus,
+            dic_reviewStatus.DATA_NAME as reviewStatusName,
             rp.ANALYSIS_METHOD as analysisMethod,
+            dic_analysisMethod.DATA_NAME as analysisMethodName,
             rp.REQUIRE_STATUS as requireStatus,
+            dic_requireStatus.DATA_NAME as requireStatusName,
             rp.DESIGNER_ID as designerId,
             u.USER_NAME as designer,
             rp.CREATE_TIME as createTime,
@@ -23,6 +26,9 @@
             rp.WORK_PACKAGE_ID as workPackageId
         FROM tf_requirepoint rp
         LEFT JOIN t_sys_user u ON rp.DESIGNER_ID = u.USER_ID
+        LEFT JOIN data_dictionary dic_requireStatus ON dic_requireStatus.DATA_TYPE = 'requireStatus' AND rp.REQUIRE_STATUS = dic_requireStatus.DATA_VALUE
+        LEFT JOIN data_dictionary dic_analysisMethod ON dic_analysisMethod.DATA_TYPE = 'analysisMethod' AND rp.ANALYSIS_METHOD = dic_analysisMethod.DATA_VALUE
+        LEFT JOIN data_dictionary dic_reviewStatus ON dic_reviewStatus.DATA_TYPE = 'reviewStatus' AND rp.REVIEW_STATUS = dic_reviewStatus.DATA_VALUE
         <where>
             <if test="systemId != null and systemId != ''">
                 AND rp.SYSTEM_ID = #{systemId}
@@ -51,25 +57,31 @@
 
     <!-- 导出需求点数据 -->
     <select id="selectRequirepoints" resultType="com.king.test.usecaseManage.requireRepository.entity.TfRequirepoint">
-        SELECT 
-            rp.REQUIRE_POINT_ID as requirePointId,
-            rp.REQUIRE_POINT_DESC as requirePointDesc,
-            rp.SYSTEM_ID as systemId,
-            rp.DIRECTORY_ID as directoryId,
-            rp.REQUIRE_POINT_TYPE as requirePointType,
-            rp.REVIEW_STATUS as reviewStatus,
-            rp.ANALYSIS_METHOD as analysisMethod,
-            rp.REQUIRE_STATUS as requireStatus,
-            rp.DESIGNER_ID as designerId,
-            u.USER_NAME as designer,
-            rp.CREATE_TIME as createTime,
-            rp.MODIFIER_ID as modifierId,
-            rp.MODIFY_TIME as modifyTime,
-            rp.REMARK as remark,
-            rp.SEND_TEST_ID as sendTestId,
-            rp.WORK_PACKAGE_ID as workPackageId
+        SELECT
+        rp.REQUIRE_POINT_ID AS requirePointId,
+        rp.REQUIRE_POINT_DESC AS requirePointDesc,
+        rp.SYSTEM_ID AS systemId,
+        rp.DIRECTORY_ID AS directoryId,
+        rp.REQUIRE_POINT_TYPE AS requirePointType,
+        rp.REVIEW_STATUS AS reviewStatus,
+        dic_reviewStatus.DATA_NAME AS reviewStatusName,
+        rp.ANALYSIS_METHOD AS analysisMethod,
+        dic_analysisMethod.DATA_NAME AS analysisMethodName,
+        rp.REQUIRE_STATUS AS requireStatus,
+        dic_requireStatus.DATA_NAME AS requireStatusName,
+        rp.DESIGNER_ID AS designerId,
+        u.USER_NAME AS designer,
+        rp.CREATE_TIME AS createTime,
+        rp.MODIFIER_ID AS modifierId,
+        rp.MODIFY_TIME AS modifyTime,
+        rp.REMARK AS remark,
+        rp.SEND_TEST_ID AS sendTestId,
+        rp.WORK_PACKAGE_ID AS workPackageId
         FROM tf_requirepoint rp
         LEFT JOIN t_sys_user u ON rp.DESIGNER_ID = u.USER_ID
+        LEFT JOIN data_dictionary dic_requireStatus ON dic_requireStatus.DATA_TYPE = 'requireStatus' AND rp.REQUIRE_STATUS = dic_requireStatus.DATA_VALUE
+        LEFT JOIN data_dictionary dic_analysisMethod ON dic_analysisMethod.DATA_TYPE = 'analysisMethod' AND rp.ANALYSIS_METHOD = dic_analysisMethod.DATA_VALUE
+        LEFT JOIN data_dictionary dic_reviewStatus ON dic_reviewStatus.DATA_TYPE = 'reviewStatus' AND rp.REVIEW_STATUS = dic_reviewStatus.DATA_VALUE
         <where>
             <if test="systemId != null and systemId != ''">
                 AND rp.SYSTEM_ID = #{systemId}

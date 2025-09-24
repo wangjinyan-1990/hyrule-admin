@@ -265,4 +265,22 @@ public class TestDirectoryServiceImpl extends ServiceImpl<TestDirectoryMapper, T
         return directory != null ? directory.getDirectoryId() : null;
     }
 
+    @Override
+    public String getDirectoryFullPath(String directoryId) {
+        if (!StringUtils.hasText(directoryId)) {
+            return "";
+        }
+        
+        try {
+            TTestDirectory directory = this.getById(directoryId);
+            if (directory != null && directory.getFullPath() != null) {
+                return directory.getFullPath();
+            }
+            
+            return null; // 如果获取不到完整路径，返回null
+        } catch (Exception e) {
+            return null; // 异常时返回null
+        }
+    }
+
 }

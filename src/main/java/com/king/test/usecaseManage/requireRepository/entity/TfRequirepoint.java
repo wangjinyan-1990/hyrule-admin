@@ -52,16 +52,34 @@ public class TfRequirepoint {
     private String reviewStatus;
 
     /**
+     * 评审状态值对应的数据字典名称（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String reviewStatusName;
+
+    /**
      * 分析方法
      */
     @TableField("ANALYSIS_METHOD")
     private String analysisMethod;
 
     /**
+     * 分析方法值对应的数据字典名称（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String analysisMethodName;
+
+    /**
      * 需求状态
      */
     @TableField("REQUIRE_STATUS")
     private String requireStatus;
+
+    /**
+     * 需求状态值对应的数据字典名称（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String requireStatusName;
 
     /**
      * 设计人Id
@@ -110,6 +128,7 @@ public class TfRequirepoint {
      */
     @TableField("WORK_PACKAGE_ID")
     private Integer workPackageId;
+
 
     // 构造函数
     public TfRequirepoint() {
@@ -264,5 +283,30 @@ public class TfRequirepoint {
 
     public void setWorkPackageId(Integer workPackageId) {
         this.workPackageId = workPackageId;
+    }
+
+    // 新增字段的 getter 和 setter 方法
+    public String getReviewStatusName() {
+        return reviewStatusName;
+    }
+
+    public void setReviewStatusName(String reviewStatusName) {
+        this.reviewStatusName = reviewStatusName;
+    }
+
+    public String getAnalysisMethodName() {
+        return analysisMethodName;
+    }
+
+    public void setAnalysisMethodName(String analysisMethodName) {
+        this.analysisMethodName = analysisMethodName;
+    }
+
+    public String getRequireStatusName() {
+        return requireStatusName;
+    }
+
+    public void setRequireStatusName(String requireStatusName) {
+        this.requireStatusName = requireStatusName;
     }
 }

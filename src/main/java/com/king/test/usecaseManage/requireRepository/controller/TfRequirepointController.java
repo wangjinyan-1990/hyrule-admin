@@ -298,12 +298,17 @@ public class TfRequirepointController {
     /**
      * 导出需求点数据
      * @param data 导出参数
-     * @return 导出结果
+     * @param response HTTP响应对象
      */
     @PostMapping("/export")
-    public Result<List<TfRequirepoint>> exportRequirePoints(@RequestBody Map<String, Object> data) {
+    public void exportRequirePoints(@RequestBody Map<String, Object> data, HttpServletResponse response) {
         if (data == null) {
-            return Result.error("导出参数不能为空");
+            try {
+                response.getWriter().write("导出参数不能为空");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
         }
 
         String systemId = (String) data.get("systemId");
@@ -314,12 +319,86 @@ public class TfRequirepointController {
         String designerId = (String) data.get("designerId");
 
         try {
+            // 获取需求点数据
             List<TfRequirepoint> requirepoints = tfRequirepointService.exportRequirepoints(
                 systemId, directoryId, requirePointType, reviewStatus, requireStatus, designerId);
-            return Result.success(requirepoints);
+            
+            // 创建Excel工作簿
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("需求点数据");
+            
+            // 创建表头
+            Row headerRow = sheet.createRow(0);
+            String[] headers = {"需求点Id", "模块路径", "需求点概述", "评审状态", "分析方法", "设计者", "备注", "需求状态"};
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+            }
+            
+            // 填充数据
+            int rowNum = 1;
+            for (TfRequirepoint requirepoint : requirepoints) {
+                Row row = sheet.createRow(rowNum++);
+                
+                // 需求点Id
+                row.createCell(0).setCellValue(requirepoint.getRequirePointId() != null ? requirepoint.getRequirePointId() : "");
+                
+                // 模块路径 - 这里需要根据directoryId获取完整路径
+                String fullPath = "";
+                if (requirepoint.getDirectoryId() != null) {
+                    // 这里可以调用目录服务获取完整路径
+                    fullPath = getDirectoryFullPath(requirepoint.getDirectoryId());
+                }
+                row.createCell(1).setCellValue(fullPath);
+                
+                // 需求点概述
+                row.createCell(2).setCellValue(requirepoint.getRequirePointDesc() != null ? requirepoint.getRequirePointDesc() : "");
+                
+                // 评审状态
+                row.createCell(3).setCellValue(requirepoint.getReviewStatusName() != null ? requirepoint.getReviewStatusName() : "");
+                
+                // 分析方法
+                row.createCell(4).setCellValue(requirepoint.getAnalysisMethodName() != null ? requirepoint.getAnalysisMethodName() : "");
+                
+                // 设计者
+                row.createCell(5).setCellValue(requirepoint.getDesigner() != null ? requirepoint.getDesigner() : "");
+                
+                // 备注
+                row.createCell(6).setCellValue(requirepoint.getRemark() != null ? requirepoint.getRemark() : "");
+                
+                // 需求状态
+                row.createCell(7).setCellValue(requirepoint.getRequireStatusName() != null ? requirepoint.getRequireStatusName() : "");
+            }
+            
+            // 自动调整列宽
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+            
+            // 设置响应头
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=requirepoint_data.xlsx");
+            
+            // 写入响应流
+            workbook.write(response.getOutputStream());
+            workbook.close();
+            
         } catch (Exception e) {
-            return Result.error("导出需求点数据失败：" + e.getMessage());
+            try {
+                response.getWriter().write("导出需求点数据失败：" + e.getMessage());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
+    }
+    
+    /**
+     * 获取目录完整路径
+     * @param directoryId 目录ID
+     * @return 完整路径
+     */
+    private String getDirectoryFullPath(String directoryId) {
+        return testDirectoryService.getDirectoryFullPath(directoryId);
     }
 
     /**
@@ -484,21 +563,51 @@ public class TfRequirepointController {
         Map<String, Object> result = new HashMap<>();
         
         try {
-            TfRequirepoint requirepoint = new TfRequirepoint();
-            
-            // 设置ID和创建时间
-            requirepoint.setCreateTime(LocalDateTime.now());
-            
+            // 根据列名获取数据：requirePointId
+            String requirePointId = getCellValueByColumnName(row, headerRow, "需求点Id");
+            if (requirePointId == null || requirePointId.isEmpty()) {
+                requirePointId = getCellValueByColumnName(row, headerRow, "需求点id");
+            }
+            if (requirePointId == null || requirePointId.isEmpty()) {
+                requirePointId = getCellValueByColumnName(row, headerRow, "需求点ID");
+            }
+            // 如果requirePointId不为空，则找到requirepoint，进行修改替换，若requirePointId为空，则新建
+            TfRequirepoint requirepoint = null;
+            if (StringUtils.hasText(requirePointId)) {
+                requirepoint = getRequirePointByIdInternal(requirePointId);
+            }else{
+                requirepoint = new TfRequirepoint();
+                // 设置ID和创建时间
+                requirepoint.setCreateTime(LocalDateTime.now());
+                requirepoint.setSystemId(systemId);
+                // 生成需求点ID
+                requirepoint.setRequirePointId(generateRequirePointId(systemId));
+
+                // 处理设计者信息
+                String designer = getCellValueByColumnName(row, headerRow, "设计者*");
+                if (designer == null || designer.isEmpty()) {
+                    designer = getCellValueByColumnName(row, headerRow, "设计者");
+                }
+                if (StringUtils.hasText(designer)) {
+                    String designerId = userService.getUserIdByUserName(designer);
+                    // 设计者不存在
+                    if (!StringUtils.hasText(designerId)) {
+                        result.put("success", false);
+                        result.put("error", "第" + rowNumber + "行，设计者不存在：" + designer);
+                        return result;
+                    }
+                    requirepoint.setDesignerId(designerId);
+                }
+
+            }
+
             // 根据列名获取数据
             String fullPath = getCellValueByColumnName(row, headerRow, "模块路径*");
             // 根据fullPath完整路径 查找 directoryId目录ID
             String directoryId = testDirectoryService.getDirectoryIdByFullPath(fullPath);
             requirepoint.setDirectoryId(directoryId);
 
-            requirepoint.setSystemId(systemId);
-            
-            // 生成需求点ID
-            requirepoint.setRequirePointId(generateRequirePointId(systemId));
+
             requirepoint.setRequirePointDesc(getCellValueByColumnName(row, headerRow, "需求点概述*"));
 
             // 测试需求类型 - 通过数据字典验证和转换
@@ -559,19 +668,6 @@ public class TfRequirepointController {
 
             requirepoint.setRemark(getCellValueByColumnName(row, headerRow, "备注"));
 
-            // 处理设计者信息
-            String designer = getCellValueByColumnName(row, headerRow, "设计者*");
-            if (StringUtils.hasText(designer)) {
-                String designerId = userService.getUserIdByUserName(designer);
-                // 设计者不存在
-                if (!StringUtils.hasText(designerId)) {
-                    result.put("success", false);
-                    result.put("error", "第" + rowNumber + "行，设计者不存在：" + designer);
-                    return result;
-                }
-                requirepoint.setDesignerId(designerId);
-            }
-            
             // 验证必填字段
             if (!StringUtils.hasText(requirepoint.getDirectoryId())) {
                 result.put("success", false);
@@ -741,5 +837,18 @@ public class TfRequirepointController {
         // 使用计数器生成需求点ID
         String requirePointId = systemId + "-" + counterUtil.generateNextCode("requireCode");
         return requirePointId;
+    }
+
+    /**
+     * 根据需求点ID获取需求点对象（私有方法，用于内部调用）
+     * @param requirePointId 需求点ID
+     * @return 需求点对象，如果不存在返回null
+     */
+    private TfRequirepoint getRequirePointByIdInternal(String requirePointId) {
+        try {
+            return tfRequirepointService.getById(requirePointId);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
