@@ -188,6 +188,20 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
     }
 
     @Override
+    public TfRequirepoint getRequirepointDetailById(String requirePointId) {
+        Assert.hasText(requirePointId, "需求点ID不能为空");
+        
+        // 根据ID查询需求点详情
+        TfRequirepoint requirepoint = baseMapper.selectRequirepointDetailById(requirePointId);
+        
+        if (requirepoint == null) {
+            throw new IllegalArgumentException("需求点不存在，ID: " + requirePointId);
+        }
+        
+        return requirepoint;
+    }
+
+    @Override
     public List<TfRequirepoint> exportRequirepoints(String systemId, String directoryId, 
                                                    String requirePointType, String reviewStatus, 
                                                    String requireStatus, String designer) {

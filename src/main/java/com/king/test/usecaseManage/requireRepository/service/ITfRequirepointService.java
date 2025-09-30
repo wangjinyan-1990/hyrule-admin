@@ -29,6 +29,13 @@ public interface ITfRequirepointService extends IService<TfRequirepoint> {
                                                       String requireStatus, String designerId);
 
     /**
+     * 获取需求点详情
+     * @param requirePointId
+     * @return 需求点详情
+     */
+    TfRequirepoint getRequirepointDetailById(String requirePointId);
+
+    /**
      * 创建需求点
      * @param requirepoint 需求点信息
      * @return 创建结果

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.tools.notebook.mapper.NotebookDirectoryMapper">
+    
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.king.tools.notebook.entity.TfNotebookDirectory">
+        <id column="DIRECTORY_ID" property="directoryId" />
+        <result column="DIRECTORY_NAME" property="directoryName" />
+        <result column="DIRECTORY_PARENTID" property="directoryParentId" />
+        <result column="USER_ID" property="userId" />
+        <result column="IS_LEAF_DIRECTORY" property="isLeafDirectory" />
+        <result column="CREATE_TIME" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        DIRECTORY_ID, DIRECTORY_NAME, DIRECTORY_PARENTID, USER_ID, IS_LEAF_DIRECTORY, CREATE_TIME
+    </sql>
+
+</mapper>

@@ -49,4 +49,6 @@ public interface TfRequirepointMapper extends BaseMapper<TfRequirepoint> {
                                                @Param("reviewStatus") String reviewStatus,
                                                @Param("requireStatus") String requireStatus,
                                                @Param("designer") String designer);
+
+    TfRequirepoint selectRequirepointDetailById(@Param("requirePointId") String requirePointId);
 }

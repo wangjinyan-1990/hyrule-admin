@@ -3,6 +3,7 @@ package com.king.test.usecaseManage.requireRepository.controller;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.king.common.Result;
 import com.king.common.utils.CounterUtil;
+import com.king.common.utils.SecurityUtils;
 import com.king.framework.dataDictionary.service.IDataDictionaryService;
 import com.king.sys.user.service.IUserService;
 import com.king.test.baseManage.testDirectory.service.ITestDirectoryService;
@@ -57,6 +58,9 @@ public class TfRequirepointController {
     @Autowired
     @Qualifier("dataDictionaryServiceImpl")
     private IDataDictionaryService dataDictionaryService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     /**
      * 分页查询需求点列表
@@ -103,7 +107,7 @@ public class TfRequirepointController {
         }
 
         try {
-            TfRequirepoint requirepoint = tfRequirepointService.getById(requirePointId);
+            TfRequirepoint requirepoint = tfRequirepointService.getRequirepointDetailById(requirePointId);
             if (requirepoint != null) {
                 return Result.success(requirepoint);
             } else {
@@ -173,7 +177,11 @@ public class TfRequirepointController {
             requirepoint.setAnalysisMethod((String) data.get("analysisMethod"));
             requirepoint.setRequireStatus((String) data.get("requireStatus"));
             requirepoint.setDesignerId((String) data.get("designerId"));
-            requirepoint.setModifierId((String) data.get("modifierId"));
+            // 自动设置修改人为当前用户
+            String currentUserId = securityUtils.getUserId();
+            if (StringUtils.hasText(currentUserId)) {
+                requirepoint.setModifierId(currentUserId);
+            }
             requirepoint.setRemark((String) data.get("remark"));
             requirepoint.setSendTestId((String) data.get("sendTestId"));
             
@@ -574,7 +582,7 @@ public class TfRequirepointController {
             // 如果requirePointId不为空，则找到requirepoint，进行修改替换，若requirePointId为空，则新建
             TfRequirepoint requirepoint = null;
             if (StringUtils.hasText(requirePointId)) {
-                requirepoint = getRequirePointByIdInternal(requirePointId);
+                requirepoint = tfRequirepointService.getById(requirePointId);
             }else{
                 requirepoint = new TfRequirepoint();
                 // 设置ID和创建时间
@@ -839,16 +847,4 @@ public class TfRequirepointController {
         return requirePointId;
     }
 
-    /**
-     * 根据需求点ID获取需求点对象（私有方法，用于内部调用）
-     * @param requirePointId 需求点ID
-     * @return 需求点对象，如果不存在返回null
-     */
-    private TfRequirepoint getRequirePointByIdInternal(String requirePointId) {
-        try {
-            return tfRequirepointService.getById(requirePointId);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

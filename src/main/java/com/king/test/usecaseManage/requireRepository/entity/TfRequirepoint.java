@@ -106,6 +106,12 @@ public class TfRequirepoint {
     private String modifierId;
 
     /**
+     * 修改人姓名（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String modifier;
+
+    /**
      * 修改时间
      */
     @TableField("MODIFY_TIME")
