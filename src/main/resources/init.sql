@@ -3,7 +3,6 @@ CREATE DATABASE IF NOT EXISTS hyrule DEFAULT CHARACTER SET utf8mb4;
 
 USE hyrule;
 
-/*Table structure for table `data_dictionary` */
 
 DROP TABLE IF EXISTS `data_dictionary`;
 
@@ -16,66 +15,36 @@ CREATE TABLE `data_dictionary` (
   `STATUS` char(3) DEFAULT NULL,
   `COMMENT` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`DICTIONARY_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=371 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=397 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `data_dictionary` */
 
 insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VALUE`,`POSITION_NO`,`STATUS`,`COMMENT`) values 
-(1,'testStatus','未执行','未执行',1,'A',NULL),
-(2,'testStatus','通过','通过',2,'A',NULL),
-(3,'testStatus','失败','失败',3,'A',NULL),
-(4,'testStatus','未完成','未完成',4,'A',NULL),
-(9,'testStatus','不适用','不适用',5,'A','测试用例执行状态'),
-(10,'runStatus','通过','1',NULL,'A',NULL),
-(11,'runStatus','失败','2',NULL,'A',NULL),
-(12,'runStatus','未执行','0',NULL,'A',NULL),
-(13,'BugSource','1-需求','1',1,'A','bug来源'),
-(14,'BugSource','2-设计','2',2,'A','bug来源'),
-(15,'BugSource','3-编码','3',3,'A','bug来源'),
-(16,'BugSource','4-环境','4',4,'A','bug来源'),
-(17,'BugSource','5-数据','5',5,'A','bug来源'),
-(18,'BugtestRound','1-第一轮','1',NULL,'A','bug测试轮次'),
-(19,'BugtestRound','2-第二轮','2',NULL,'A','bug测试轮次'),
-(20,'BugtestRound','3-第三轮','3',NULL,'A','bug测试轮次'),
-(21,'BugtestRound','4-自动化测试','4',NULL,'A','bug测试轮次'),
-(22,'WeekDay',NULL,'星期一',1,'A','星期几'),
-(23,'WeekDay',NULL,'星期二',2,'A','星期几'),
-(24,'WeekDay',NULL,'星期三',3,'A','星期几'),
-(25,'WeekDay',NULL,'星期四',4,'A','星期几'),
-(26,'WeekDay',NULL,'星期五',5,'A','星期几'),
-(27,'WeekDay',NULL,'星期六',6,'A','星期几'),
-(28,'WeekDay',NULL,'星期日',7,'A','星期几'),
+(22,'WeekDay','星期一','1',1,'A','星期几'),
+(23,'WeekDay','星期二','2',2,'A','星期几'),
+(24,'WeekDay','星期三','3',3,'A','星期几'),
+(25,'WeekDay','星期四','4',4,'A','星期几'),
+(26,'WeekDay','星期五','5',5,'A','星期几'),
+(27,'WeekDay','星期六','6',6,'A','星期几'),
+(28,'WeekDay','星期日','0',7,'A','星期几'),
 (30,'CloseReason','验证通过','验证通过',NULL,'A','bug关闭原因'),
 (31,'CloseReason','不是缺陷','不是缺陷',NULL,'A','bug关闭原因'),
 (32,'CloseReason','不处理','不处理',NULL,'A','bug关闭原因'),
 (33,'reviewStatus','未评审','0',NULL,'A',NULL),
 (34,'reviewStatus','已评审','1',NULL,'A',NULL),
 (35,'reviewStatus','评审不通过','2',NULL,'A',NULL),
-(40,'MessageType','XML','0',NULL,'A',NULL),
-(41,'MessageType','定长报文','1',NULL,'A',NULL),
-(42,'TestcaseType','自动化测试','0',1,'A','用例类型'),
-(43,'TestcaseType','功能测试','1',0,'A','用例类型'),
-(44,'TestcaseType','接口测试','2',2,'A','用例类型'),
-(45,'TestcasePrority','高','0',1,'A','用例优先级'),
-(46,'TestcasePrority','中','1',2,'A','用例优先级'),
-(47,'TestcasePrority','低','2',3,'A','用例优先级'),
-(48,'TestcaseProperty','正例','1',1,'A','用例性质'),
-(49,'TestcaseProperty','反例','0',2,'A','用例性质'),
-(50,'level','高','0',1,'A','需求优先级'),
-(51,'level','中','1',2,'A','需求优先级'),
-(52,'level','低','2',3,'A','需求优先级'),
-(60,'BugLevel','高','1',NULL,'A','bug优先级'),
-(61,'BugLevel','中','2',NULL,'A','bug优先级'),
-(62,'BugLevel','低','3',NULL,'A','bug优先级'),
-(63,'BugLevelKey','致命','1',NULL,'A','bug严重级别'),
-(64,'BugLevelKey','严重','2',NULL,'A','bug严重级别'),
-(65,'BugLevelKey','一般','3',NULL,'A','bug严重级别'),
-(66,'BugLevelKey','轻微','4',NULL,'A','bug严重级别'),
-(67,'BugLevelKey','建议','5',NULL,'A','bug严重级别'),
-(73,'Cycle','每周','2',NULL,'A','测试集计划时间周期'),
-(74,'Cycle','每月','3',NULL,'A','测试集计划时间周期'),
-(75,'sex','男','1',NULL,'A','性别'),
-(76,'sex','女','2',NULL,'A','性别'),
+(45,'prority','高','1',1,'A','用例优先级'),
+(46,'prority','中','2',2,'A','用例优先级'),
+(47,'prority','低','3',3,'A','用例优先级'),
+(48,'usecaseNature','正向测试用例','1',1,'A','用例性质'),
+(49,'usecaseNature','反向测试用例','0',2,'A','用例性质'),
+(63,'bugSeverityLevel','致命','1',1,'A','bug严重级别'),
+(64,'bugSeverityLevel','严重','2',2,'A','bug严重级别'),
+(65,'bugSeverityLevel','一般','3',3,'A','bug严重级别'),
+(66,'bugSeverityLevel','轻微','4',4,'A','bug严重级别'),
+(67,'bugSeverityLevel','建议','5',5,'A','bug严重级别'),
+(75,'sex','男','1',1,'A','性别'),
+(76,'sex','女','2',2,'A','性别'),
 (77,'requireStatus','未执行','6',6,'A',NULL),
 (78,'requireStatus','未覆盖','1',1,'A',NULL),
 (79,'requireStatus','通过','2',2,'A',NULL),
@@ -86,37 +55,9 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (84,'analysisMethod','业务功能','2',2,'A',NULL),
 (85,'analysisMethod','业务要素','3',3,'A',NULL),
 (86,'analysisMethod','业务规则','4',4,'A',NULL),
-(87,'NoticeType','任务开始提醒','任务开始提醒',1,'A','提醒类型'),
-(88,'NoticeType','任务到期提醒','任务到期提醒',2,'A','提醒类型'),
-(89,'NoticeType','任务超期提醒','任务超期提醒',3,'A','提醒类型'),
-(90,'NoticeType','新增问题处理提醒','新增问题处理提醒',4,'A','提醒类型'),
-(91,'NoticeType','问题处理到期提醒','问题处理到期提醒',5,'A','提醒类型'),
-(92,'NoticeType','问题处理超期提醒','问题处理超期提醒',6,'A','提醒类型'),
-(93,'NoticeType','修复缺陷提醒','修复缺陷提醒',7,'A','提醒类型'),
-(94,'NoticeType','验证缺陷提醒','验证缺陷提醒',8,'A','提醒类型'),
-(95,'NoticeType','用例执行提醒','用例执行提醒',9,'A','提醒类型'),
-(96,'DocumentType','测试文档','1',1,'A','文档类型'),
-(97,'DocumentType','需求文档','2',2,'A','文档类型'),
-(98,'DocumentType','评审文档','3',3,'A','文档类型'),
-(99,'DocumentType','管理文档','4',4,'A','文档类型'),
-(100,'DocumentType','培训文档','5',5,'A','文档类型'),
-(101,'DocumentType','其他','6',6,'A','文档类型'),
-(102,'testStatus','阻塞','阻塞',6,'A','测试用例执行状态'),
-(105,'isImplement','否','0',NULL,'A',NULL),
-(106,'isImplement','是','1',NULL,'A',NULL),
-(110,'BelongSystem','核心','1',1,'A','所属系统'),
-(111,'BelongSystem','渠道','2',2,'A','所属系统'),
-(112,'BelongSystem','管理','3',3,'A','所属系统'),
-(115,'ObjectMethod','WebEdit','verifyPropertyNotNull',NULL,'A',NULL),
-(116,'description','verifyPropertyNotNull','验证目标控件相关属性信息不为空   参数：目标对象属性（id,name等）',NULL,'A',NULL),
 (117,'isEnable','否','0',1,'A',NULL),
 (118,'isEnable','是','1',1,'A',NULL),
-(119,'BugSource','6-版本','6',6,'A','bug来源'),
 (120,'changeStatus','关闭','5',5,'A','变更标志'),
-(121,'TestcaseClass','业务','1',1,'A','用例分类'),
-(122,'TestcaseClass','页面要素','2',2,'A','用例分类'),
-(123,'TestcaseClass','流程','3',3,'A','用例分类'),
-(124,'TestcaseClass','接口','4',4,'A','用例分类'),
 (128,'approveType','事假','1',1,'A',NULL),
 (129,'approveType','换休','2',2,'A',NULL),
 (130,'approveType','补签到/退(CTP)','3',3,'B',NULL),
@@ -126,7 +67,6 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (134,'approveType','补签到/退(指纹机)','5',5,'A',NULL),
 (135,'AppSearchCondition','我的申请','2',NULL,'A','审批查询条件'),
 (136,'AppSearchCondition','待我审批','3',NULL,'A','审批查询条件'),
-(137,'TestcaseType','非功能测试','4',3,'A','用例类型'),
 (138,'approveType','病假','6',6,'A',NULL),
 (139,'approveType','年假','7',7,'A',NULL),
 (140,'approveType','婚假','8',8,'A',NULL),
@@ -134,28 +74,14 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (142,'batchExecuteStatus','未执行','1',1,'A','批量执行状态'),
 (143,'batchExecuteStatus','执行中','2',2,'A','批量执行状态'),
 (144,'batchExecuteStatus','已结束','3',3,'A','批量执行状态'),
-(145,'testEnvironment','U1','1',1,'A','测试环境'),
-(146,'testEnvironment','U2','2',2,'A','测试环境'),
-(147,'testEnvironment','U3','3',3,'A','测试环境'),
-(148,'testEnvironment','U4','4',4,'A','测试环境'),
-(149,'testEnvironment','存款产品','5',5,'A','测试环境'),
 (150,'batchPlanStartP','中午','1',1,'A','中午/下午'),
 (151,'batchPlanStartP','下午','2',2,'A','中午/下午'),
 (152,'notifyStatus','待发布','1',1,'A','批量计划发布状态'),
 (153,'notifyStatus','已发布','2',2,'A','批量计划发布状态'),
-(154,'batchProblemState','待解决','1',1,'A','批量问题状态'),
-(155,'batchProblemState','解决中','2',2,'A','批量问题状态'),
-(156,'batchProblemState','已解决','3',3,'A','批量问题状态'),
-(157,'batchProblemState','挂起','4',4,'A','批量问题状态'),
-(162,'BPSearchCondition','我的未解决问题','1',NULL,'A','批量问题查询条件'),
-(163,'BPSearchCondition','我的全部问题','2',NULL,'A','批量问题查询条件'),
 (164,'questionType','环境','1',1,'A','风险问题类型'),
 (165,'questionType','风险','2',2,'A','风险问题类型'),
 (166,'questionType','问题','3',3,'A','风险问题类型'),
 (167,'questionType','评审','4',4,'A','风险问题类型'),
-(168,'testEnvironment','U5','6',6,'A','测试环境'),
-(169,'WKSearchCondition','我交出','1',NULL,'A','工作交接单查询条件'),
-(170,'WKSearchCondition','我接入','2',NULL,'A','工作交接单查询条件'),
 (171,'ApproveState','暂存草稿','1',1,'A','审批状态'),
 (172,'ApproveState','发起审批','2',2,'A','审批状态'),
 (173,'ApproveState','审批完成','3',3,'A','审批状态'),
@@ -190,7 +116,6 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (202,'compatibiType','安卓自由组合机型测试(20起)','003',3,'A','兼容性申请类型'),
 (203,'compatibiType','IOS自由组合机型测试(20起)','004',4,'A','兼容性申请类型'),
 (204,'compatibiType','远程控制真机测试','005',5,'A','兼容性申请类型'),
-(205,'testEnvironment','U6','7',7,'A','测试环境'),
 (206,'scriptType','非功能脚本','1',1,'A','脚本类型'),
 (207,'scriptType','自动化脚本','2',2,'A','脚本类型'),
 (208,'isRunScript','未执行','1',1,'A','是否完成脚本执行'),
@@ -199,47 +124,13 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (211,'isChangeBySource','有变动','2',2,'A','用例源是否变动'),
 (212,'isRelateScript','未编写','1',1,'A','是否完成脚本编写'),
 (213,'isRelateScript','已编写','2',2,'A','是否完成脚本编写'),
-(214,'roundType','SIT','1',1,'A','SIT'),
-(215,'roundType','冒烟','2',2,'A','冒烟'),
-(216,'roundType','UAT','3',3,'A','UAT'),
-(217,'roundType','迁移','4',4,'A','迁移'),
-(218,'roundType','接收','5',5,'A','接收'),
-(219,'roundType','非功能','6',6,'A','非功能'),
-(220,'roundType','自动化','7',7,'A','自动化'),
-(221,'deployEnv','UAT1','UAT1',1,'A',NULL),
-(222,'deployEnv','UAT2','UAT2',2,'A',NULL),
-(223,'deployEnv','UAT3','UAT3',3,'A',NULL),
-(224,'deployEnv','UAT4','UAT4',4,'A',NULL),
-(225,'deployEnv','UAT5','UAT5',5,'A',NULL),
-(226,'deployEnv','UAT6','UAT6',6,'A',NULL),
-(227,'deployEnv','UAT7','UAT7',7,'A',NULL),
-(228,'deployEnv','UAT8','UAT8',8,'A',NULL),
-(229,'deployEnv','UAT9','UAT9',9,'A',NULL),
-(230,'deployEnv','电票环境','电票环境',10,'A',NULL),
-(231,'deployEnv','存款产品','存款产品',11,'A',NULL),
-(232,'deployEnv','秦农信贷跟账环境','秦农信贷跟账环境',12,'A',NULL),
 (233,'sendTestStage','SIT','3',3,'A','送测阶段'),
 (234,'sendTestStage','组件/接口','4',4,'B','送测阶段'),
-(235,'roundType','单元','8',8,'A','组件测试'),
-(236,'roundType','开发联调','9',9,'A','开发联调测试'),
-(237,'roundType','联调验收','11',11,'A','联调验收测试'),
-(238,'roundType','PAT','12',12,'A','PAT测试'),
-(239,'deployEnv','本项目SIT测试自用环境','本项目SIT测试自用环境',13,'A',NULL),
 (240,'scriptType','接口脚本','3',3,'A','脚本类型'),
 (241,'sendTestType','新送测','7',7,'A',NULL),
 (242,'sendTestType','新送测(配合)','7-1',8,'B',NULL),
-(243,'deployEnv','本项目UAT测试自用环境','本项目UAT测试自用环境',14,'A',NULL),
-(244,'testEnvironment','U7','8',8,'A','测试环境'),
-(245,'testEnvironment','U8','9',9,'A','测试环境'),
-(246,'BugSource','7-设备','7',7,'A','bug来源'),
-(247,'deployEnv','本项目非功能测试环境','本项目非功能测试环境',15,'A',NULL),
-(248,'testEnvironment','U9','10',10,'A','测试环境'),
 (249,'sendTestType','修复缺陷送测','8',9,'A',NULL),
 (250,'sendTestType','修复缺陷送测(配合)','8-1',10,'B',NULL),
-(251,'testEnvironment','电票','11',11,'A','测试环境'),
-(252,'deployEnv','SIT/UAT-XC','SIT/UAT-XC',16,'A',NULL),
-(253,'deployEnv','PAT-XC','PAT-XC',17,'A',NULL),
-(254,'deployEnv','开发联调环境','开发联调环境',18,'A',NULL),
 (255,'searchCondition','当前项目所有缺陷','1',NULL,'A','缺陷查询条件'),
 (256,'searchCondition','活动的缺陷','2',NULL,'A','缺陷查询条件'),
 (257,'searchCondition','和我相关的活动缺陷','3',NULL,'A','缺陷查询条件'),
@@ -288,29 +179,6 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (300,'testReportType','功能测试简报','1',1,'A',NULL),
 (301,'testReportType','非功能测试简报','3',3,'A',NULL),
 (302,'testReportType','测试阶段报告','2',2,'A',NULL),
-(303,'testType','自动化测试','自动化测试',5,'A',NULL),
-(304,'testType','性能测试','性能测试',4,'A',NULL),
-(305,'testType','专项测试','专项测试',3,'A',NULL),
-(306,'testType','探索测试','探索测试',2,'A',NULL),
-(307,'testType','功能测试','功能测试',1,'A',NULL),
-(308,'roundEnv','开发联调环境','开发联调环境',18,'A','测试轮次环境'),
-(309,'roundEnv','PAT-XC','PAT-XC',17,'A','测试轮次环境'),
-(310,'roundEnv','SIT/UAT-XC','SIT/UAT-XC',16,'A','测试轮次环境'),
-(311,'roundEnv','本项目非功能测试环境','本项目非功能测试环境',15,'A','测试轮次环境'),
-(312,'roundEnv','本项目UAT测试自用环境','本项目UAT测试自用环境',14,'A','测试轮次环境'),
-(313,'roundEnv','本项目SIT测试自用环境','本项目SIT测试自用环境',13,'A','测试轮次环境'),
-(314,'roundEnv','秦农信贷跟账环境','秦农信贷跟账环境',12,'A','测试轮次环境'),
-(315,'roundEnv','存款产品','存款产品',11,'A','测试轮次环境'),
-(316,'roundEnv','电票环境','电票环境',10,'A','测试轮次环境'),
-(317,'roundEnv','U9','U9',9,'A','测试轮次环境'),
-(318,'roundEnv','U8','U8',8,'A','测试轮次环境'),
-(319,'roundEnv','U7','U7',7,'A','测试轮次环境'),
-(320,'roundEnv','U6','U6',6,'A','测试轮次环境'),
-(321,'roundEnv','U5','U5',5,'A','测试轮次环境'),
-(322,'roundEnv','U4','U4',4,'A','测试轮次环境'),
-(323,'roundEnv','U3','U3',3,'A','测试轮次环境'),
-(324,'roundEnv','U2','U2',2,'A','测试轮次环境'),
-(325,'roundEnv','U1','U1',1,'A','测试轮次环境'),
 (326,'workPackageRoundStatus','已终止','Stop',4,'A','轮次状态'),
 (327,'workPackageRoundStatus','已完成','Finish',3,'A','轮次状态'),
 (328,'workPackageRoundStatus','执行中','Executing',2,'A','轮次状态'),
@@ -330,9 +198,6 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (342,'WorkPackageState','执行中','Executing',4,'A','工作包状态'),
 (343,'WorkPackageState','设计中','Design',3,'A','工作包状态'),
 (344,'WorkPackageState','未开始','NotStart',2,'A','工作包状态'),
-(345,'WorkPackagePriority','重要','3',3,'A','工作包优先级'),
-(346,'WorkPackagePriority','紧急','2',2,'A','工作包优先级'),
-(347,'WorkPackagePriority','紧急重要','1',1,'A','工作包优先级'),
 (348,'WorkPackageLevel','子','2',2,'A','工作包层级'),
 (349,'WorkPackageLevel','主','1',1,'A','工作包层级'),
 (350,'roundStage','SIT','SIT',1,'A','测试阶段'),
@@ -341,12 +206,6 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (353,'roundStage','组件测试','组件测试',4,'A','测试阶段'),
 (354,'roundStage','冒烟','冒烟',5,'A','测试阶段'),
 (355,'bugSearchCondition','一年内的缺陷','8',NULL,'A','缺陷查询条件'),
-(356,'testType','自动化测试','自动化测试',5,'A',NULL),
-(357,'testType','性能测试','性能测试',4,'A',NULL),
-(358,'testType','专项测试','专项测试',3,'A',NULL),
-(359,'testType','探索测试','探索测试',2,'A',NULL),
-(360,'testType','功能测试','功能测试',1,'A',NULL),
-(361,'WorkPackagePriority','一般','4',4,'A','工作包优先级'),
 (362,'systemStage','1-准备阶段','1',1,'A','系统阶段'),
 (363,'systemStage','2-实施阶段','2',2,'A','系统阶段'),
 (364,'systemStage','3-收尾阶段','3',3,'A','系统阶段'),
@@ -355,7 +214,33 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (367,'isUse','未使用','0',1,'A','使用状态'),
 (368,'isUse','使用中','1',2,'A','使用状态'),
 (369,'systemType','初测','1',1,'A','系统类型'),
-(370,'systemType','优化','2',2,'A','系统类型');
+(370,'systemType','优化','2',2,'A','系统类型'),
+(371,'runStatus','未执行','未执行',1,'A','测试用例执行状态'),
+(372,'runStatus','通过','通过',2,'A','测试用例执行状态'),
+(373,'runStatus','失败','失败',3,'A','测试用例执行状态'),
+(374,'runStatus','不适用','不适用',4,'A','测试用例执行状态'),
+(375,'runStatus','阻塞','阻塞',5,'A','测试用例执行状态'),
+(376,'usecaseType','功能测试','1',3,'A','用例类型'),
+(377,'usecaseType','非功能测试','2',2,'A','用例类型'),
+(378,'usecaseType','自动化测试','3',3,'A','用例类型'),
+(379,'testPoint','界面','1',1,'A','用例测试要点'),
+(380,'testPoint','功能','2',2,'A','用例测试要点'),
+(381,'testPoint','流程','3',3,'A','用例测试要点'),
+(382,'testPoint','规则','4',4,'A','用例测试要点'),
+(383,'testPoint','账务','5',5,'A','用例测试要点'),
+(384,'testPoint','高可用','6',6,'A','用例测试要点'),
+(385,'testPoint','稳定性','7',7,'A','用例测试要点'),
+(386,'testPoint','单交易负载','8',8,'A','用例测试要点'),
+(387,'testPoint','单交易基准','9',9,'A','用例测试要点'),
+(388,'testPoint','混合容量','10',10,'A','用例测试要点'),
+(389,'testPoint','批量','11',11,'A','用例测试要点'),
+(390,'bugSource','1-需求','1',1,'A','bug来源'),
+(391,'bugSource','2-设计','2',2,'A','bug来源'),
+(392,'bugSource','3-编码','3',3,'A','bug来源'),
+(393,'bugSource','4-环境','4',4,'A','bug来源'),
+(394,'bugSource','5-数据','5',5,'A','bug来源'),
+(395,'bugSource','6-版本','6',6,'A','bug来源'),
+(396,'bugSource','7-设备','7',7,'A','bug来源');
 
 /*Table structure for table `t_sys_counter` */
 
@@ -394,7 +279,7 @@ CREATE TABLE `t_sys_menu` (
   `IS_LEAF` varchar(1) DEFAULT NULL,
   `HIDDEN` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`MENU_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `t_sys_menu` */
 
@@ -426,8 +311,9 @@ insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`
 (29,'/test/baseManage/testDirectory','testDirectory',NULL,'testDirectory','测试目录维护','testDirectory',5,'1',0),
 (30,'/test/usecaseManage/index','usecaseManage',NULL,'usecaseManage','用例管理','usecaseManage',4,'0',0),
 (31,'/test/usecaseManage/requireRepository','requireRepository',NULL,'requireRepository','需求库','requireRepository',30,'1',0),
-(32,'/test/usecaseManage/useCaseRepository','useCaseRepository',NULL,'useCaseRepository','用例库','useCaseRepository',30,'1',0),
-(33,'/test/usecaseManage/useCaseExecution','useCaseExecution',NULL,'useCaseExecution','执行库','useCaseExecution',30,'1',0);
+(32,'/test/usecaseManage/usecaseRepository','usecaseRepository',NULL,'usecaseRepository','用例库','usecaseRepository',30,'1',0),
+(33,'/test/usecaseManage/usecaseExecution','usecaseExecution',NULL,'usecaseExecution','执行库','usecaseExecution',30,'1',0),
+(34,'/test/bugManage/bugManage','bugManage',NULL,'bugManage','缺陷管理','bugManage',4,'1',0);
 
 /*Table structure for table `t_sys_org` */
 
@@ -533,6 +419,24 @@ insert  into `t_sys_org`(`ORG_ID`,`ORG_NAME`,`PARENT_ORG_ID`,`ORG_LEVEL`,`SORT_N
 ('300072','迪思杰','3000',2,72,'A',''),
 ('300073','丁甲数据','3000',2,73,'A',''),
 ('300074','泛鹏天地','3000',2,74,'A','');
+
+/*Table structure for table `t_sys_param` */
+
+DROP TABLE IF EXISTS `t_sys_param`;
+
+CREATE TABLE `t_sys_param` (
+  `PARAM_ID` varchar(32) NOT NULL COMMENT '系统参数ID ',
+  `PARAM_NAME` varchar(100) NOT NULL COMMENT '系统参数名称 ',
+  `PARAM_VALUE` varchar(400) NOT NULL COMMENT '系统参数值 ',
+  `SORT_NO` decimal(4,0) NOT NULL COMMENT '排序号 ',
+  `REMARK` varchar(400) DEFAULT NULL COMMENT '备注 ',
+  PRIMARY KEY (`PARAM_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `t_sys_param` */
+
+insert  into `t_sys_param`(`PARAM_ID`,`PARAM_NAME`,`PARAM_VALUE`,`SORT_NO`,`REMARK`) values 
+('fileUploadPath','文件上传路径','/home/',1,'文件上传路径');
 
 /*Table structure for table `t_sys_role` */
 
@@ -764,6 +668,226 @@ insert  into `t_test_system_user`(`SYSTEM_USER_ID`,`USER_ID`,`SYSTEM_ID`) values
 (4,'libo','sys-002'),
 (5,'2','sys-002');
 
+/*Table structure for table `tf_attachment` */
+
+DROP TABLE IF EXISTS `tf_attachment`;
+
+CREATE TABLE `tf_attachment` (
+  `ATTACHMENT_ID` varchar(32) NOT NULL DEFAULT '',
+  `ORIGINAL_FILE_NAME` varchar(1000) DEFAULT NULL,
+  `SERVER_FILE_NAME` varchar(1000) DEFAULT NULL,
+  `ATTACHMENT_SIZE` int DEFAULT NULL,
+  `UPLOAD_DATE` date DEFAULT NULL,
+  `UPLOAD_USER_ID` varchar(32) DEFAULT NULL,
+  `UPLOAD_PATH` varchar(200) DEFAULT NULL,
+  `MODULE` varchar(30) DEFAULT NULL,
+  `RELATE_ID` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`ATTACHMENT_ID`),
+  KEY `I_RELATE_ID` (`RELATE_ID`),
+  KEY `I_MODULE` (`MODULE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_attachment` */
+
+insert  into `tf_attachment`(`ATTACHMENT_ID`,`ORIGINAL_FILE_NAME`,`SERVER_FILE_NAME`,`ATTACHMENT_SIZE`,`UPLOAD_DATE`,`UPLOAD_USER_ID`,`UPLOAD_PATH`,`MODULE`,`RELATE_ID`) values 
+('4262175a279741b4bf9554311ae06ef5','MySQL查找重复数据.doc','notebook_20251007205205887.doc',39936,'2025-10-07','admin','\\home\\2025\\10\\notebook\\notebook_20251007205205887.doc','notebook','33437fc7bced4a83b21e8c82ae4d5ed0'),
+('435350a9539e465e89b6c9690f24f029','关于收集参与“扬帆工程”项目群建设人员照片.pdf','notebook_20251012094412298.pdf',111183,'2025-10-12','admin','\\home\\2025\\10\\notebook\\notebook_20251012094412298.pdf','notebook','33437fc7bced4a83b21e8c82ae4d5ed0'),
+('713fc789ac324ffeb6577e06d297132b','数据库day01.txt','notebook_20251007122205934.txt',2083,'2025-10-07','admin','\\home\\2025\\10\\notebook\\notebook_20251007122205934.txt','notebook','33437fc7bced4a83b21e8c82ae4d5ed0'),
+('d67b093ea7624635884c9705246ad17b','landscape6086.jpeg','notebook_20251012172519376.jpeg',32839,'2025-10-12','admin','\\home\\2025\\10\\notebook\\notebook_20251012172519376.jpeg','notebook','33437fc7bced4a83b21e8c82ae4d5ed0');
+
+/*Table structure for table `tf_bug` */
+
+DROP TABLE IF EXISTS `tf_bug`;
+
+CREATE TABLE `tf_bug` (
+  `BUG_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷Id',
+  `BUG_NAME` varchar(200) DEFAULT NULL COMMENT '缺陷名称',
+  `SYSTEM_ID` varchar(32) NOT NULL COMMENT '测试系统ID',
+  `BUG_STATE` varchar(10) DEFAULT NULL COMMENT '缺陷状态',
+  `USECASE_ID` varchar(32) DEFAULT NULL COMMENT '关联的用例Id',
+  `BUG_SOURCE` varchar(2) DEFAULT NULL COMMENT '缺陷来源',
+  `PRORITY` varchar(2) DEFAULT NULL COMMENT '优先级',
+  `BUG_DESCRIPITION` varchar(2000) DEFAULT NULL COMMENT '缺陷描述',
+  `BUG_SEVERITY_LEVEL` int DEFAULT NULL COMMENT '缺陷严重级别',
+  `CLOSE_REASON` varchar(50) DEFAULT NULL COMMENT '缺陷关闭原因',
+  `SUBMITTER_ID` varchar(32) DEFAULT NULL COMMENT '提交人Id',
+  `DEVELOPER_ID` varchar(32) DEFAULT NULL COMMENT '开发人员Id',
+  `DEV_LEADER_ID` varchar(32) DEFAULT NULL COMMENT '开发组长Id',
+  `CHECKER_ID` varchar(30) DEFAULT NULL COMMENT '验证人Id',
+  `BUG_TYPE` varchar(2) DEFAULT NULL COMMENT '缺陷类型',
+  `DIRECTORY_ID` int DEFAULT NULL COMMENT '执行库目录Id',
+  `COMMIT_TIME` datetime DEFAULT NULL COMMENT '提交时间',
+  `CONFIRMED_TIME` datetime DEFAULT NULL COMMENT '确认时间',
+  `ASSIGNED_TIME` datetime DEFAULT NULL COMMENT '分配时间',
+  `RESOLVED_TIME` datetime DEFAULT NULL COMMENT '解决时间',
+  `WAITCHECK_TIME` datetime DEFAULT NULL COMMENT '待验证时间',
+  `CLOSE_TIME` datetime DEFAULT NULL COMMENT '关闭时间',
+  `SOLVE_VOLUME` int DEFAULT '0' COMMENT '解决次数',
+  `SUBMITTED_VOLUME` int DEFAULT '1' COMMENT '提交次数',
+  `BUG_WORKFLOW_ID` int DEFAULT NULL COMMENT '缺陷流程模板',
+  PRIMARY KEY (`BUG_ID`),
+  KEY `I_SYSTEM_ID` (`SYSTEM_ID`),
+  KEY `I_BUG_STATE` (`BUG_STATE`),
+  KEY `I_USECASE_ID` (`USECASE_ID`),
+  KEY `I_DIRECTORY_ID` (`DIRECTORY_ID`),
+  KEY `I_SUBMITTER_ID` (`SUBMITTER_ID`),
+  KEY `I_DEVELOPER_ID` (`DEVELOPER_ID`),
+  KEY `I_COMMIT_TIME` (`COMMIT_TIME`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_bug` */
+
+/*Table structure for table `tf_bug_flowlet` */
+
+DROP TABLE IF EXISTS `tf_bug_flowlet`;
+
+CREATE TABLE `tf_bug_flowlet` (
+  `BUG_FLOWLET_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷流程Id',
+  `BUG_FLOWLET_NUMBER` varchar(2) DEFAULT NULL COMMENT '缺陷流程编号',
+  `CURRENT_STATE_CODE` varchar(32) DEFAULT NULL COMMENT '缺陷当前状态码',
+  `NEXT_STATE_CODE` varchar(32) DEFAULT NULL COMMENT '缺陷下一个状态码',
+  `SORT_NO` int DEFAULT NULL COMMENT '排序号',
+  PRIMARY KEY (`BUG_FLOWLET_ID`),
+  KEY `I_BUG_FLOWLET_NUMBER` (`BUG_FLOWLET_NUMBER`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_bug_flowlet` */
+
+insert  into `tf_bug_flowlet`(`BUG_FLOWLET_ID`,`BUG_FLOWLET_NUMBER`,`CURRENT_STATE_CODE`,`NEXT_STATE_CODE`,`SORT_NO`) values 
+(1,'1','Submitted','Confirmed',1),
+(2,'1','Confirmed','Assigned',2),
+(3,'1','Assigned','Open',3),
+(4,'1','Open','Resolved',4),
+(5,'1','WaitCheck','Closed',5),
+(6,'1','Submitted','Rejected',6),
+(7,'1','Confirmed','Rejected',7),
+(8,'1','Assigned','Rejected',8),
+(9,'1','Rejected','Invalid',9),
+(10,'1','Rejected','ReSubmitted',10),
+(11,'1','Open','Postponed',11),
+(12,'1','Postponed','Open',12),
+(13,'1','Postponed','Resolved',13),
+(14,'1','Open','Confirmed',14),
+(15,'1','WaitCheck','Open',15),
+(16,'1','Closed','ReSubmitted',16),
+(17,'1','ReSubmitted','Confirmed',17),
+(18,'1','ReSubmitted','Rejected',18),
+(19,'1','Invalid','ReSubmitted',20),
+(20,'1','Resolved','WaitCheck',21),
+(21,'2','Confirmed','Assigned',1),
+(22,'2','Assigned','Open',2),
+(23,'2','Open','Resolved',3),
+(24,'2','Confirmed','Rejected',4),
+(25,'2','Assigned','Rejected',5),
+(26,'2','Rejected','Invalid',6),
+(27,'2','Rejected','ReSubmitted',7),
+(28,'2','Open','Confirmed',11),
+(29,'2','WaitCheck','Open',12),
+(30,'2','Resolved','WaitCheck',13);
+
+/*Table structure for table `tf_bug_flowlet_permission` */
+
+DROP TABLE IF EXISTS `tf_bug_flowlet_permission`;
+
+CREATE TABLE `tf_bug_flowlet_permission` (
+  `BUG_FLOWLET_PERMISSION_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷流程权限Id',
+  `BUG_FLOWLET_ID` int DEFAULT NULL COMMENT '缺陷流程Id',
+  `BUG_ROLE_CODE` varchar(12) DEFAULT NULL COMMENT '缺陷角色码',
+  `BUG_FLOWLET_NUMBER` varchar(2) DEFAULT NULL COMMENT '缺陷流程编号',
+  PRIMARY KEY (`BUG_FLOWLET_PERMISSION_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_bug_flowlet_permission` */
+
+insert  into `tf_bug_flowlet_permission`(`BUG_FLOWLET_PERMISSION_ID`,`BUG_FLOWLET_ID`,`BUG_ROLE_CODE`,`BUG_FLOWLET_NUMBER`) values 
+(1,1,'testLeader','1'),
+(2,2,'devLeader','1'),
+(3,3,'developer','1'),
+(4,4,'developer','1'),
+(5,5,'checker','1'),
+(6,6,'testLeader','1'),
+(7,7,'devLeader','1'),
+(8,8,'developer','1'),
+(9,9,'checker','1'),
+(10,10,'checker','1'),
+(11,11,'developer','1'),
+(12,12,'developer','1'),
+(13,13,'developer','1'),
+(14,14,'checker','1'),
+(15,15,'checker','1'),
+(16,16,'testLeader','1'),
+(17,17,'testLeader','1'),
+(18,18,'checker','1'),
+(19,20,'testLeader','1'),
+(20,21,'devLeader','2'),
+(21,22,'developer','2'),
+(22,23,'developer','2'),
+(23,24,'devLeader','2'),
+(24,25,'developer','2'),
+(25,26,'submitter','2'),
+(26,27,'submitter','2'),
+(27,28,'developer','2'),
+(28,29,'developer','2'),
+(29,30,'developer','2'),
+(30,31,'developer','2'),
+(31,32,'submitter','2'),
+(32,33,'devLeader','2'),
+(33,33,'developer','2');
+
+/*Table structure for table `tf_bug_history` */
+
+DROP TABLE IF EXISTS `tf_bug_history`;
+
+CREATE TABLE `tf_bug_history` (
+  `BUG_HISHORY_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷历史记录Id',
+  `BUG_ID` varchar(32) DEFAULT NULL COMMENT '缺陷Id',
+  `NEW_STATE` varchar(20) DEFAULT NULL COMMENT '新状态',
+  `OLD_STATE` varchar(20) DEFAULT NULL COMMENT '旧状态',
+  `OPERATING_TIME` datetime DEFAULT NULL COMMENT '操作时间',
+  `OPERATOR_ID` varchar(32) DEFAULT NULL COMMENT '操作人ID',
+  `SYSTEM_ID` varchar(32) NOT NULL COMMENT '测试系统ID',
+  `COMMENT` varchar(2000) DEFAULT NULL COMMENT '注释',
+  `LAST_OPERATION_TIME` datetime DEFAULT NULL COMMENT '上次操作时间',
+  PRIMARY KEY (`BUG_HISHORY_ID`),
+  KEY `I_OPERATING_TIME` (`OPERATING_TIME`),
+  KEY `I_BUG_ID` (`BUG_ID`),
+  KEY `I_SYSTEM_ID` (`SYSTEM_ID`),
+  KEY `I_New_State` (`NEW_STATE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_bug_history` */
+
+/*Table structure for table `tf_bug_state` */
+
+DROP TABLE IF EXISTS `tf_bug_state`;
+
+CREATE TABLE `tf_bug_state` (
+  `BUG_STATE_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷状态Id',
+  `BUG_FLOWLET_NUMBER` int DEFAULT NULL COMMENT '缺陷流程编号',
+  `BUG_STATE_CODE` varchar(32) DEFAULT NULL COMMENT '缺陷状态码',
+  `BUG_STATE_NAME` varchar(32) DEFAULT NULL COMMENT '缺陷状态名',
+  `SORT_NO` int DEFAULT NULL COMMENT '排序号',
+  PRIMARY KEY (`BUG_STATE_ID`),
+  KEY `I_BUG_STATE_CODE` (`BUG_STATE_CODE`),
+  KEY `I_BUG_STATE_NAME` (`BUG_STATE_NAME`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_bug_state` */
+
+insert  into `tf_bug_state`(`BUG_STATE_ID`,`BUG_FLOWLET_NUMBER`,`BUG_STATE_CODE`,`BUG_STATE_NAME`,`SORT_NO`) values 
+(1,1,'Submitted','新建',1),
+(2,1,'Confirmed','已确认',2),
+(3,1,'Assigned','已分配',3),
+(4,1,'Open','已打开',4),
+(5,1,'Resolved','已解决',5),
+(6,1,'Closed','已关闭',6),
+(7,1,'Rejected','已拒绝',7),
+(8,1,'ReSubmitted','重新提交',8),
+(9,1,'Postponed','已挂起',9),
+(10,1,'Invalid','无效缺陷',10),
+(11,1,'WaitCheck','待验证',11),
+(12,1,'BackClosed','后台关闭',12);
+
 /*Table structure for table `tf_notebook` */
 
 DROP TABLE IF EXISTS `tf_notebook`;
@@ -840,7 +964,132 @@ CREATE TABLE `tf_requirepoint` (
 
 insert  into `tf_requirepoint`(`REQUIRE_POINT_ID`,`REQUIRE_POINT_DESC`,`SYSTEM_ID`,`DIRECTORY_ID`,`REQUIRE_POINT_TYPE`,`REVIEW_STATUS`,`ANALYSIS_METHOD`,`REQUIRE_STATUS`,`DESIGNER_ID`,`CREATE_TIME`,`MODIFIER_ID`,`MODIFY_TIME`,`REMARK`,`SEND_TEST_ID`,`WORK_PACKAGE_ID`) values 
 ('sys-001-req00006','俄方的过分放大','sys-001','253cec943415413ab2c856679e3fa97c','1','1','1','1','admin','2025-09-26 16:13:01','admin','2025-09-28 14:51:00','',NULL,NULL),
-('sys-002-req00001','郭德纲的反腐败','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','1',NULL,'zhangsan','2025-09-21 16:12:07',NULL,NULL,'',NULL,NULL),
+('sys-002-req00001','郭德纲的反腐败','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','1','1','zhangsan','2025-09-21 16:12:07',NULL,NULL,'',NULL,NULL),
 ('sys-002-req00002','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','1','jianghe','2025-09-23 12:55:55',NULL,NULL,'',NULL,NULL),
 ('sys-002-req00003','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','1','jianghe','2025-09-23 13:00:21',NULL,NULL,'',NULL,NULL),
 ('sys-002-req00004','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','1','jianghe','2025-09-23 13:01:54',NULL,NULL,'',NULL,NULL);
+
+/*Table structure for table `tf_requirepoint_history` */
+
+DROP TABLE IF EXISTS `tf_requirepoint_history`;
+
+CREATE TABLE `tf_requirepoint_history` (
+  `REQUIRE_POINT_HISTORY_ID` varchar(32) NOT NULL,
+  `REQUIRE_POINT_ID` varchar(32) DEFAULT NULL COMMENT '需求点Id',
+  `OPERATING_TIME` datetime DEFAULT NULL COMMENT '操作时间',
+  `OPERATOR_ID` varchar(32) DEFAULT NULL COMMENT '操作人',
+  `MODIFIED_CONTENT` text COMMENT '修改内容',
+  PRIMARY KEY (`REQUIRE_POINT_HISTORY_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_requirepoint_history` */
+
+/*Table structure for table `tf_usecase` */
+
+DROP TABLE IF EXISTS `tf_usecase`;
+
+CREATE TABLE `tf_usecase` (
+  `USECASE_ID` varchar(32) NOT NULL DEFAULT '' COMMENT '用例Id',
+  `DIRECTORY_ID` varchar(32) DEFAULT NULL COMMENT '用例所属目录Id',
+  `USECASE_NAME` varchar(300) DEFAULT NULL COMMENT '用例名称',
+  `CREATOR_ID` varchar(32) DEFAULT NULL COMMENT '创建人Id',
+  `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
+  `MODIFIER_ID` varchar(32) DEFAULT NULL COMMENT '修改人Id',
+  `MODIFY_TIME` datetime DEFAULT NULL COMMENT '修改时间',
+  `SYSTEM_ID` varchar(32) NOT NULL COMMENT '测试系统ID',
+  `IS_SMOKE_TEST` varchar(2) DEFAULT NULL COMMENT '是否冒烟测试:0-否;1-是',
+  `USECASE_TYPE` varchar(2) DEFAULT NULL COMMENT '用例类型：功能测试、非功能测试',
+  `TEST_POINT` varchar(2) DEFAULT NULL COMMENT '测试要点：界面、功能、流程、规则......',
+  `USECASE_NATURE` varchar(2) DEFAULT NULL COMMENT '用例性质：正向用例、反向用例',
+  `PRORITY` varchar(2) DEFAULT NULL COMMENT '优先级',
+  `LATEST_EXE_STATUS` varchar(20) DEFAULT NULL COMMENT '测试集下最新执行状态',
+  `PRECONDITION` varchar(1000) DEFAULT NULL COMMENT '前置条件',
+  `TEST_DATA` varchar(2000) DEFAULT NULL COMMENT '测试数据',
+  `TEST_STEP` text COMMENT '测试步骤',
+  `EXPECTED_RESULT` varchar(5000) DEFAULT NULL COMMENT '期望结果',
+  `WORK_PACKAGE_ID` int DEFAULT NULL COMMENT '所属工作包Id',
+  PRIMARY KEY (`USECASE_ID`),
+  KEY `I_DIRECTORY_ID` (`DIRECTORY_ID`),
+  KEY `I_SYSTEM_ID` (`SYSTEM_ID`),
+  KEY `I_CREATOR_ID` (`CREATOR_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_usecase` */
+
+/*Table structure for table `tf_usecase_execution` */
+
+DROP TABLE IF EXISTS `tf_usecase_execution`;
+
+CREATE TABLE `tf_usecase_execution` (
+  `USECASE_EXECUTION_ID` int NOT NULL AUTO_INCREMENT COMMENT '用例执行Id',
+  `DIRECTORY_ID` varchar(32) DEFAULT NULL COMMENT '用例所属目录Id',
+  `USECASE_ID` varchar(32) DEFAULT NULL COMMENT '用例Id',
+  `PLAN_EXECUTION_DATE` date DEFAULT NULL COMMENT '计划执行日期',
+  `ACT_EXECUTION_TIME` datetime DEFAULT NULL COMMENT '实际执行时间',
+  `RUN_STATUS` varchar(8) DEFAULT NULL COMMENT '执行状态',
+  `PLAN_EXECUTOR_ID` varchar(32) DEFAULT NULL COMMENT '计划执行人Id',
+  `ACT_EXECUTOR_ID` varchar(32) DEFAULT NULL COMMENT '实际执行人Id',
+  `REMARK` varchar(500) DEFAULT NULL COMMENT '执行备注',
+  `LAST_EXECUTION_TIME` datetime DEFAULT NULL COMMENT '最后一次执行时间',
+  `EXECUTION_CREATOR_ID` varchar(32) DEFAULT NULL COMMENT '创建在执行库人员Id',
+  `EXECUTION_CREATE_TIME` datetime DEFAULT NULL COMMENT '创建在执行库时间',
+  PRIMARY KEY (`USECASE_EXECUTION_ID`),
+  KEY `I_DIRECTORY_ID` (`DIRECTORY_ID`),
+  KEY `I_RUN_STATUS` (`RUN_STATUS`),
+  KEY `I_ACT_EXECUTOR_ID` (`ACT_EXECUTOR_ID`),
+  KEY `I_ACT_EXECUTION_DATE` (`ACT_EXECUTION_TIME`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_usecase_execution` */
+
+/*Table structure for table `tf_usecase_execution_history` */
+
+DROP TABLE IF EXISTS `tf_usecase_execution_history`;
+
+CREATE TABLE `tf_usecase_execution_history` (
+  `USECASE_EXECUTION_HISTORY_ID` int NOT NULL AUTO_INCREMENT COMMENT '用例执行历史记录Id',
+  `DIRECTORY_ID` varchar(32) DEFAULT NULL COMMENT '用例所属目录Id',
+  `USECASE_ID` varchar(32) DEFAULT NULL COMMENT '用例Id',
+  `EXECUTION_TIME` datetime DEFAULT NULL COMMENT '实际执行时间',
+  `RUN_STATUS` varchar(8) DEFAULT NULL COMMENT '执行状态',
+  `EXECUTOR_ID` varchar(32) DEFAULT NULL COMMENT '计划人Id',
+  `REMARK` varchar(500) DEFAULT NULL COMMENT '执行备注',
+  `RUN_ATTACHMENT_ID` varchar(32) DEFAULT NULL COMMENT '执行附件Id',
+  `RUN_TYPE` varchar(4) DEFAULT NULL COMMENT '执行分类：功能、非功能、自动化',
+  PRIMARY KEY (`USECASE_EXECUTION_HISTORY_ID`),
+  KEY `I_DIRECTORY_ID` (`DIRECTORY_ID`),
+  KEY `I_USECASE_ID` (`USECASE_ID`),
+  KEY `I_EXECUTOR_ID` (`EXECUTOR_ID`),
+  KEY `I_RUN_TYPE` (`RUN_TYPE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_usecase_execution_history` */
+
+/*Table structure for table `tf_usecase_history` */
+
+DROP TABLE IF EXISTS `tf_usecase_history`;
+
+CREATE TABLE `tf_usecase_history` (
+  `USECASE_HISTORY_ID` varchar(32) NOT NULL,
+  `USECASE_ID` varchar(32) DEFAULT NULL COMMENT '用例Id',
+  `OPERATING_TIME` datetime DEFAULT NULL COMMENT '操作时间',
+  `OPERATOR_ID` varchar(32) DEFAULT NULL COMMENT '操作人',
+  `MODIFIED_CONTENT` text COMMENT '修改内容',
+  PRIMARY KEY (`USECASE_HISTORY_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_usecase_history` */
+
+/*Table structure for table `tf_usecase_require` */
+
+DROP TABLE IF EXISTS `tf_usecase_require`;
+
+CREATE TABLE `tf_usecase_require` (
+  `USECASE_REQUIER_ID` int NOT NULL AUTO_INCREMENT,
+  `USECASE_ID` varchar(32) DEFAULT NULL,
+  `REQUIRE_POINT_ID` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`USECASE_REQUIER_ID`),
+  KEY `I_REQUIRE_POINT_ID` (`REQUIRE_POINT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `tf_usecase_require` */
