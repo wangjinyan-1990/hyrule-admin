@@ -160,7 +160,7 @@ public class TfUsecase {
     private String testStep;
 
     /**
-     * 期望结果
+     * 预期结果
      */
     @TableField("EXPECTED_RESULT")
     private String expectedResult;
