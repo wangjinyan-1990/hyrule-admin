@@ -4,6 +4,8 @@ CREATE DATABASE IF NOT EXISTS hyrule DEFAULT CHARACTER SET utf8mb4;
 USE hyrule;
 
 
+/*Table structure for table `data_dictionary` */
+
 DROP TABLE IF EXISTS `data_dictionary`;
 
 CREATE TABLE `data_dictionary` (
@@ -279,7 +281,7 @@ CREATE TABLE `t_sys_menu` (
   `IS_LEAF` varchar(1) DEFAULT NULL,
   `HIDDEN` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`MENU_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `t_sys_menu` */
 
@@ -287,33 +289,30 @@ insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`
 (1,'Layout','/sys',NULL,'sysManage','系统管理','sys',NULL,'0',0),
 (2,'/sys/user','user',NULL,'user','用户管理','userManage',1,'1',0),
 (3,'/sys/role','role',NULL,'role','角色管理','roleManage',1,'1',0),
-(4,'Layout','/test',NULL,'test','测试模块','testModule',NULL,'0',0),
-(5,'/test/baseManage/index','baseManage',NULL,'baseManage','基础管理','baseManage',4,'0',0),
-(6,'/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','testSystem',5,'1',0),
-(7,'/test/baseManage/testSystemMember','testSystemMember',NULL,'testSystemMember','系统成员维护','testSystemMember',5,'1',0),
-(8,'Layout','/tools','/tools/toolset','tools','实用工具','tools',NULL,'0',0),
-(9,'/tools/toolset','toolset',NULL,'toolset','工具集','toolset',8,'1',0),
-(10,'/tools/notebook','notebook',NULL,'notebook','记事本','notebook',8,'1',0),
-(11,'Layout','/form',NULL,NULL,'Form','form',NULL,'0',0),
-(12,'/form/index','index',NULL,'Form','Form','form',11,'1',0),
-(13,'Layout','/nested','/nested/menu1','Nested','Nested','nested',NULL,'0',0),
-(14,'/nested/menu1/index','menu1',NULL,'Menu1','Menu1',NULL,13,'0',0),
-(15,'/nested/menu1/menu1-1','menu1-1',NULL,'Menu1-1','Menu1-1',NULL,14,'1',0),
-(16,'/nested/menu1/menu1-2','menu1-2',NULL,'Menu1-2','Menu1-2',NULL,14,'0',0),
-(17,'/nested/menu1/menu1-2/menu1-2-1','menu1-2-1',NULL,'Menu1-2-1','Menu1-2-1',NULL,16,'1',0),
-(18,'/nested/menu1/menu1-2/menu1-2-2','menu1-2-2',NULL,'Menu1-2-2','Menu1-2-2',NULL,16,'1',0),
-(19,'/nested/menu1/menu1-3','menu1-3',NULL,'Menu1-3','Menu1-3',NULL,14,'1',0),
-(20,'/nested/menu2/index','menu2',NULL,'Menu2','menu2',NULL,13,'1',0),
-(21,'Layout','external-link',NULL,NULL,'External Link','link',NULL,'0',0),
-(22,NULL,'https://panjiachen.github.io/vue-element-admin-site/#/',NULL,NULL,'External Link','link',21,'1',0),
-(23,'/sys/menu','menu',NULL,'menu','菜单管理','menuManage',1,'1',0),
-(26,'/sys/org','/org',NULL,'org','机构管理','orgManage',1,'1',0),
-(29,'/test/baseManage/testDirectory','testDirectory',NULL,'testDirectory','测试目录维护','testDirectory',5,'1',0),
-(30,'/test/usecaseManage/index','usecaseManage',NULL,'usecaseManage','用例管理','usecaseManage',4,'0',0),
-(31,'/test/usecaseManage/requireRepository','requireRepository',NULL,'requireRepository','需求库','requireRepository',30,'1',0),
-(32,'/test/usecaseManage/usecaseRepository','usecaseRepository',NULL,'usecaseRepository','用例库','usecaseRepository',30,'1',0),
-(33,'/test/usecaseManage/usecaseExecution','usecaseExecution',NULL,'usecaseExecution','执行库','usecaseExecution',30,'1',0),
-(34,'/test/bugManage/bugManage','bugManage',NULL,'bugManage','缺陷管理','bugManage',4,'1',0);
+(4,'/sys/menu','menu',NULL,'menu','菜单管理','menuManage',1,'1',0),
+(5,'/sys/org','org',NULL,'org','机构管理','orgManage',1,'1',0),
+(6,'Layout','/tools','/tools/toolset','tools','实用工具','tools',NULL,'0',0),
+(7,'/tools/toolset','toolset',NULL,'toolset','工具集','toolset',8,'1',0),
+(8,'/tools/notebook','notebook',NULL,'notebook','记事本','notebook',8,'1',0),
+(9,'Layout','/configuration','/configuration/menu1','configuration','配置管理','nested',NULL,'0',0),
+(10,'/configuration/deploy/index','deploy',NULL,'deploy','发版登记',NULL,13,'0',0),
+(11,'/configuration/deploy/sitDeploy','sitDeploy',NULL,'sitDeploy','SIT发版',NULL,14,'1',0),
+(12,'/configuration/deploy/sitDeploy/menu2-1','menu2-1',NULL,'Menu2-1','Menu2-1',NULL,15,'1',0),
+(13,'/configuration/deploy/patDeploy','patDeploy',NULL,'patDeploy','PAT发版',NULL,14,'0',0),
+(14,'/configuration/deploy/patDeploy/menu2-2','menu2-2',NULL,'Menu2-2','Menu2-2',NULL,16,'1',0),
+(15,'/configuration/sysConfigInfo/index','sysConfigInfo',NULL,'sysConfigInfo','系统配置信息',NULL,13,'1',0),
+(16,'Layout','/test',NULL,'test','测试模块','testModule',NULL,'0',0),
+(17,'/test/baseManage/index','baseManage',NULL,'baseManage','基础管理','baseManage',4,'0',0),
+(18,'/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','testSystem',5,'1',0),
+(19,'/test/baseManage/testSystemMember','testSystemMember',NULL,'testSystemMember','系统成员维护','testSystemMember',5,'1',0),
+(20,'/test/baseManage/testDirectory','testDirectory',NULL,'testDirectory','测试目录维护','testDirectory',5,'1',0),
+(21,'/test/usecaseManage/index','usecaseManage',NULL,'usecaseManage','用例管理','usecaseManage',4,'0',0),
+(22,'/test/usecaseManage/requireRepository','requireRepository',NULL,'requireRepository','需求库','requireRepository',30,'1',0),
+(23,'/test/usecaseManage/usecaseRepository','usecaseRepository',NULL,'usecaseRepository','用例库','usecaseRepository',30,'1',0),
+(24,'/test/usecaseManage/usecaseExecution','usecaseExecution',NULL,'usecaseExecution','执行库','usecaseExecution',30,'1',0),
+(25,'/test/bugManage/bugManage','bugManage',NULL,'bugManage','缺陷管理','bugManage',4,'1',0),
+(26,'Layout','external-link',NULL,NULL,'External Link','link',NULL,'0',0),
+(27,NULL,'https://panjiachen.github.io/vue-element-admin-site/#/',NULL,NULL,'External Link','link',21,'1',0);
 
 /*Table structure for table `t_sys_org` */
 
@@ -888,6 +887,27 @@ insert  into `tf_bug_state`(`BUG_STATE_ID`,`BUG_FLOWLET_NUMBER`,`BUG_STATE_CODE`
 (11,1,'WaitCheck','待验证',11),
 (12,1,'BackClosed','后台关闭',12);
 
+/*Table structure for table `tf_deploy_record` */
+
+DROP TABLE IF EXISTS `tf_deploy_record`;
+
+CREATE TABLE `tf_deploy_record` (
+  `DEPLOY_ID` int NOT NULL AUTO_INCREMENT COMMENT '部署Id',
+  `TEST_STAGE` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '测试阶段:SIT、PAT',
+  `SYSTEM_ID` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '系统ID',
+  `COMPONENT_INFO` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '组件信息',
+  `VERSION_CODE` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '版本号',
+  `RECORD_NUM` int NOT NULL COMMENT '版本登记数量',
+  `CODE_LIST` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '代码清单',
+  `IS_RUN_SQL` tinyint(1) NOT NULL COMMENT '是否执行sql',
+  `IS_UPDATE_CONFIG` tinyint(1) NOT NULL COMMENT '是否更新配置',
+  `DEPLOY_TIME` datetime(6) NOT NULL COMMENT '部署时间点',
+  `SEND_TEST_CODE` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '送测单编号',
+  PRIMARY KEY (`DEPLOY_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+/*Data for the table `tf_deploy_record` */
+
 /*Table structure for table `tf_notebook` */
 
 DROP TABLE IF EXISTS `tf_notebook`;
@@ -1006,7 +1026,7 @@ CREATE TABLE `tf_usecase` (
   `PRECONDITION` varchar(1000) DEFAULT NULL COMMENT '前置条件',
   `TEST_DATA` varchar(2000) DEFAULT NULL COMMENT '测试数据',
   `TEST_STEP` text COMMENT '测试步骤',
-  `EXPECTED_RESULT` varchar(5000) DEFAULT NULL COMMENT '期望结果',
+  `EXPECTED_RESULT` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '预期结果',
   `WORK_PACKAGE_ID` int DEFAULT NULL COMMENT '所属工作包Id',
   PRIMARY KEY (`USECASE_ID`),
   KEY `I_DIRECTORY_ID` (`DIRECTORY_ID`),
@@ -1091,5 +1111,3 @@ CREATE TABLE `tf_usecase_require` (
   PRIMARY KEY (`USECASE_REQUIER_ID`),
   KEY `I_REQUIRE_POINT_ID` (`REQUIRE_POINT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-/*Data for the table `tf_usecase_require` */
