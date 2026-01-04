@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.usecaseManage.usecaseRepository.mapper.UsecaseRepositoryMapper">
+
+    <sql id="CommonCondition">
+        <if test="systemId != null and systemId != ''">
+            AND u.SYSTEM_ID = #{systemId}
+        </if>
+        <if test="directoryIds != null and directoryIds.size() > 0">
+            AND u.DIRECTORY_ID IN
+            <foreach collection="directoryIds" item="directoryId" open="(" close=")" separator=",">
+                #{directoryId}
+            </foreach>
+        </if>
+        <if test="usecaseName != null and usecaseName != ''">
+            AND u.USECASE_NAME LIKE CONCAT('%', #{usecaseName}, '%')
+        </if>
+        <if test="usecaseType != null and usecaseType != ''">
+            AND u.USECASE_TYPE = #{usecaseType}
+        </if>
+        <if test="usecaseNature != null and usecaseNature != ''">
+            AND u.USECASE_NATURE = #{usecaseNature}
+        </if>
+        <if test="prority != null and prority != ''">
+            AND u.PRORITY = #{prority}
+        </if>
+        <if test="isSmokeTest != null and isSmokeTest != ''">
+            AND u.IS_SMOKE_TEST = #{isSmokeTest}
+        </if>
+        <if test="creatorId != null and creatorId != ''">
+            AND u.CREATOR_ID = #{creatorId}
+        </if>
+    </sql>
+
+    <select id="selectPageUsecases" resultType="com.king.test.usecaseManage.usecaseRepository.entity.TfUsecase">
+        SELECT
+            u.USECASE_ID AS usecaseId,
+            u.DIRECTORY_ID AS directoryId,
+            u.USECASE_NAME AS usecaseName,
+            u.CREATOR_ID AS creatorId,
+            creator.USER_NAME AS creator,
+            u.CREATE_TIME AS createTime,
+            u.MODIFIER_ID AS modifierId,
+            modifier.USER_NAME AS modifier,
+            u.MODIFY_TIME AS modifyTime,
+            u.SYSTEM_ID AS systemId,
+            u.IS_SMOKE_TEST AS isSmokeTest,
+            u.USECASE_TYPE AS usecaseType,
+            dic_type.DATA_NAME AS usecaseTypeName,
+            u.TEST_POINT AS testPoint,
+            dic_point.DATA_NAME AS testPointName,
+            u.USECASE_NATURE AS usecaseNature,
+            dic_nature.DATA_NAME AS usecaseNatureName,
+            u.PRORITY AS prority,
+            dic_priority.DATA_NAME AS prorityName,
+            u.LATEST_EXE_STATUS AS latestExeStatus,
+            dic_status.DATA_NAME AS latestExeStatusName,
+            u.PRECONDITION AS precondition,
+            u.TEST_DATA AS testData,
+            u.TEST_STEP AS testStep,
+            u.EXPECTED_RESULT AS expectedResult,
+            u.WORK_PACKAGE_ID AS workPackageId
+        FROM tf_usecase u
+        LEFT JOIN t_sys_user creator ON u.CREATOR_ID = creator.USER_ID
+        LEFT JOIN t_sys_user modifier ON u.MODIFIER_ID = modifier.USER_ID
+        LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'usecaseType' AND dic_type.DATA_VALUE = u.USECASE_TYPE
+        LEFT JOIN data_dictionary dic_point ON dic_point.DATA_TYPE = 'testPoint' AND dic_point.DATA_VALUE = u.TEST_POINT
+        LEFT JOIN data_dictionary dic_nature ON dic_nature.DATA_TYPE = 'usecaseNature' AND dic_nature.DATA_VALUE = u.USECASE_NATURE
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'usecasePriority' AND dic_priority.DATA_VALUE = u.PRORITY
+        LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'latestExeStatus' AND dic_status.DATA_VALUE = u.LATEST_EXE_STATUS
+        WHERE 1 = 1
+        <include refid="CommonCondition" />
+        ORDER BY u.CREATE_TIME DESC
+    </select>
+
+    <select id="selectUsecaseDetailById" resultType="com.king.test.usecaseManage.usecaseRepository.entity.TfUsecase">
+        SELECT
+            u.USECASE_ID AS usecaseId,
+            u.DIRECTORY_ID AS directoryId,
+            u.USECASE_NAME AS usecaseName,
+            u.CREATOR_ID AS creatorId,
+            creator.USER_NAME AS creator,
+            u.CREATE_TIME AS createTime,
+            u.MODIFIER_ID AS modifierId,
+            modifier.USER_NAME AS modifier,
+            u.MODIFY_TIME AS modifyTime,
+            u.SYSTEM_ID AS systemId,
+            u.IS_SMOKE_TEST AS isSmokeTest,
+            u.USECASE_TYPE AS usecaseType,
+            dic_type.DATA_NAME AS usecaseTypeName,
+            u.TEST_POINT AS testPoint,
+            dic_point.DATA_NAME AS testPointName,
+            u.USECASE_NATURE AS usecaseNature,
+            dic_nature.DATA_NAME AS usecaseNatureName,
+            u.PRORITY AS prority,
+            dic_priority.DATA_NAME AS prorityName,
+            u.LATEST_EXE_STATUS AS latestExeStatus,
+            dic_status.DATA_NAME AS latestExeStatusName,
+            u.PRECONDITION AS precondition,
+            u.TEST_DATA AS testData,
+            u.TEST_STEP AS testStep,
+            u.EXPECTED_RESULT AS expectedResult,
+            u.WORK_PACKAGE_ID AS workPackageId
+        FROM tf_usecase u
+        LEFT JOIN t_sys_user creator ON u.CREATOR_ID = creator.USER_ID
+        LEFT JOIN t_sys_user modifier ON u.MODIFIER_ID = modifier.USER_ID
+        LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'usecaseType' AND dic_type.DATA_VALUE = u.USECASE_TYPE
+        LEFT JOIN data_dictionary dic_point ON dic_point.DATA_TYPE = 'testPoint' AND dic_point.DATA_VALUE = u.TEST_POINT
+        LEFT JOIN data_dictionary dic_nature ON dic_nature.DATA_TYPE = 'usecaseNature' AND dic_nature.DATA_VALUE = u.USECASE_NATURE
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'usecasePriority' AND dic_priority.DATA_VALUE = u.PRORITY
+        LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'latestExeStatus' AND dic_status.DATA_VALUE = u.LATEST_EXE_STATUS
+        WHERE u.USECASE_ID = #{usecaseId}
+    </select>
+
+    <select id="selectUsecasesForExport" resultType="com.king.test.usecaseManage.usecaseRepository.entity.TfUsecase">
+        SELECT
+            u.USECASE_ID AS usecaseId,
+            u.DIRECTORY_ID AS directoryId,
+            u.USECASE_NAME AS usecaseName,
+            u.CREATOR_ID AS creatorId,
+            creator.USER_NAME AS creator,
+            u.CREATE_TIME AS createTime,
+            u.MODIFIER_ID AS modifierId,
+            modifier.USER_NAME AS modifier,
+            u.MODIFY_TIME AS modifyTime,
+            u.SYSTEM_ID AS systemId,
+            u.IS_SMOKE_TEST AS isSmokeTest,
+            u.USECASE_TYPE AS usecaseType,
+            dic_type.DATA_NAME AS usecaseTypeName,
+            u.TEST_POINT AS testPoint,
+            dic_point.DATA_NAME AS testPointName,
+            u.USECASE_NATURE AS usecaseNature,
+            dic_nature.DATA_NAME AS usecaseNatureName,
+            u.PRORITY AS prority,
+            dic_priority.DATA_NAME AS prorityName,
+            u.PRECONDITION AS precondition,
+            u.TEST_DATA AS testData,
+            u.TEST_STEP AS testStep,
+            u.EXPECTED_RESULT AS expectedResult,
+            u.WORK_PACKAGE_ID AS workPackageId
+        FROM tf_usecase u
+        LEFT JOIN t_sys_user creator ON u.CREATOR_ID = creator.USER_ID
+        LEFT JOIN t_sys_user modifier ON u.MODIFIER_ID = modifier.USER_ID
+        LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'usecaseType' AND dic_type.DATA_VALUE = u.USECASE_TYPE
+        LEFT JOIN data_dictionary dic_point ON dic_point.DATA_TYPE = 'testPoint' AND dic_point.DATA_VALUE = u.TEST_POINT
+        LEFT JOIN data_dictionary dic_nature ON dic_nature.DATA_TYPE = 'usecaseNature' AND dic_nature.DATA_VALUE = u.USECASE_NATURE
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'usecasePriority' AND dic_priority.DATA_VALUE = u.PRORITY
+        WHERE 1 = 1
+        <include refid="CommonCondition" />
+        ORDER BY u.CREATE_TIME DESC
+    </select>
+
+    <select id="selectUsecaseStatistics" resultType="java.util.Map">
+        SELECT 'TOTAL' AS metric, COUNT(*) AS count
+        FROM tf_usecase u
+        WHERE 1 = 1
+        <include refid="CommonCondition" />
+        UNION ALL
+        SELECT 'SMOKE' AS metric, COUNT(*) AS count
+        FROM tf_usecase u
+        WHERE 1 = 1
+        <include refid="CommonCondition" />
+        AND u.IS_SMOKE_TEST = '1'
+        UNION ALL
+        SELECT 'HIGH_PRIORITY' AS metric, COUNT(*) AS count
+        FROM tf_usecase u
+        WHERE 1 = 1
+        <include refid="CommonCondition" />
+        AND (UPPER(IFNULL(u.PRORITY,'')) IN ('1','P1','HIGH','H'))
+        UNION ALL
+        SELECT 'RECENT_UPDATED' AS metric, COUNT(*) AS count
+        FROM tf_usecase u
+        WHERE 1 = 1
+        <include refid="CommonCondition" />
+        AND u.MODIFY_TIME &gt;= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    </select>
+
+    <select id="selectUsecaseTypeStatistics" resultType="java.util.Map">
+        SELECT
+            u.USECASE_TYPE AS code,
+            dic_type.DATA_NAME AS name,
+            COUNT(*) AS count
+        FROM tf_usecase u
+        LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'usecaseType' AND dic_type.DATA_VALUE = u.USECASE_TYPE
+        WHERE 1 = 1
+        <include refid="CommonCondition" />
+        GROUP BY u.USECASE_TYPE, dic_type.DATA_NAME
+        ORDER BY count DESC
+    </select>
+
+    <select id="selectUsecaseStatusStatistics" resultType="java.util.Map">
+        SELECT
+            u.LATEST_EXE_STATUS AS code,
+            dic_status.DATA_NAME AS name,
+            COUNT(*) AS count
+        FROM tf_usecase u
+        LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'latestExeStatus' AND dic_status.DATA_VALUE = u.LATEST_EXE_STATUS
+        WHERE 1 = 1
+        <include refid="CommonCondition" />
+        GROUP BY u.LATEST_EXE_STATUS, dic_status.DATA_NAME
+        ORDER BY count DESC
+    </select>
+
+</mapper>
