@@ -285,34 +285,34 @@ CREATE TABLE `t_sys_menu` (
 
 /*Data for the table `t_sys_menu` */
 
-insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`,`ICON`,`PARENT_ID`,`IS_LEAF`,`HIDDEN`) values 
-(1,'Layout','/sys',NULL,'sysManage','系统管理','sys',NULL,'0',0),
+insert into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`,`ICON`,`PARENT_ID`,`IS_LEAF`,`HIDDEN`) values 
+(1,'Layout','/sys',NULL,'sys','系统管理','sys',NULL,'0',0),
 (2,'/sys/user','user',NULL,'user','用户管理','userManage',1,'1',0),
 (3,'/sys/role','role',NULL,'role','角色管理','roleManage',1,'1',0),
 (4,'/sys/menu','menu',NULL,'menu','菜单管理','menuManage',1,'1',0),
 (5,'/sys/org','org',NULL,'org','机构管理','orgManage',1,'1',0),
 (6,'Layout','/tools','/tools/toolset','tools','实用工具','tools',NULL,'0',0),
-(7,'/tools/toolset','toolset',NULL,'toolset','工具集','toolset',8,'1',0),
-(8,'/tools/notebook','notebook',NULL,'notebook','记事本','notebook',8,'1',0),
-(9,'Layout','/configuration','/configuration/menu1','configuration','配置管理','nested',NULL,'0',0),
-(10,'/configuration/deploy/index','deploy',NULL,'deploy','发版登记',NULL,13,'0',0),
-(11,'/configuration/deploy/sitDeploy','sitDeploy',NULL,'sitDeploy','SIT发版',NULL,14,'1',0),
-(12,'/configuration/deploy/sitDeploy/menu2-1','menu2-1',NULL,'Menu2-1','Menu2-1',NULL,15,'1',0),
-(13,'/configuration/deploy/patDeploy','patDeploy',NULL,'patDeploy','PAT发版',NULL,14,'0',0),
-(14,'/configuration/deploy/patDeploy/menu2-2','menu2-2',NULL,'Menu2-2','Menu2-2',NULL,16,'1',0),
-(15,'/configuration/sysConfigInfo/index','sysConfigInfo',NULL,'sysConfigInfo','系统配置信息',NULL,13,'1',0),
+(7,'/tools/toolset','toolset',NULL,'toolset','工具集','toolset',6,'1',0),
+(8,'/tools/notebook','notebook',NULL,'notebook','记事本','notebook',6,'1',0),
+(9,'Layout','/configuration',NULL,'configuration','配置管理','nested',NULL,'0',0),
+(10,'/configuration/deploy/index','deploy',NULL,'deploy','发版登记',NULL,9,'0',0),
+(11,'/configuration/deploy/sitDeploy/index','sitDeploy',NULL,'sitDeploy','SIT发版',NULL,10,'0',0),
+(12,'/configuration/deploy/sitDeploy/menu2-1/index','menu2-1',NULL,'Menu2-1','Menu2-1',NULL,11,'1',0),
+(13,'/configuration/deploy/patDeploy/index','patDeploy',NULL,'patDeploy','PAT发版',NULL,10,'0',0),
+(14,'/configuration/deploy/patDeploy/menu2-2/index','menu2-2',NULL,'Menu2-2','Menu2-2',NULL,13,'1',0),
+(15,'/configuration/sysConfigInfo/index','sysConfigInfo',NULL,'sysConfigInfo','系统配置信息',NULL,9,'1',0),
 (16,'Layout','/test',NULL,'test','测试模块','testModule',NULL,'0',0),
-(17,'/test/baseManage/index','baseManage',NULL,'baseManage','基础管理','baseManage',4,'0',0),
-(18,'/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','testSystem',5,'1',0),
-(19,'/test/baseManage/testSystemMember','testSystemMember',NULL,'testSystemMember','系统成员维护','testSystemMember',5,'1',0),
-(20,'/test/baseManage/testDirectory','testDirectory',NULL,'testDirectory','测试目录维护','testDirectory',5,'1',0),
-(21,'/test/usecaseManage/index','usecaseManage',NULL,'usecaseManage','用例管理','usecaseManage',4,'0',0),
-(22,'/test/usecaseManage/requireRepository','requireRepository',NULL,'requireRepository','需求库','requireRepository',30,'1',0),
-(23,'/test/usecaseManage/usecaseRepository','usecaseRepository',NULL,'usecaseRepository','用例库','usecaseRepository',30,'1',0),
-(24,'/test/usecaseManage/usecaseExecution','usecaseExecution',NULL,'usecaseExecution','执行库','usecaseExecution',30,'1',0),
-(25,'/test/bugManage/bugManage','bugManage',NULL,'bugManage','缺陷管理','bugManage',4,'1',0),
+(17,'/test/baseManage/index','baseManage',NULL,'baseManage','基础管理','baseManage',16,'0',0),
+(18,'/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','testSystem',17,'1',0),
+(19,'/test/baseManage/testSystemMember','testSystemMember',NULL,'testSystemMember','系统成员维护','testSystemMember',17,'1',0),
+(20,'/test/baseManage/testDirectory','testDirectory',NULL,'testDirectory','测试目录维护','testDirectory',17,'1',0),
+(21,'/test/usecaseManage/index','usecaseManage',NULL,'usecaseManage','用例管理','usecaseManage',16,'0',0),
+(22,'/test/usecaseManage/requireRepository','requireRepository',NULL,'requireRepository','需求库','requireRepository',21,'1',0),
+(23,'/test/usecaseManage/usecaseRepository','usecaseRepository',NULL,'usecaseRepository','用例库','usecaseRepository',21,'1',0),
+(24,'/test/usecaseManage/usecaseExecution','usecaseExecution',NULL,'usecaseExecution','执行库','usecaseExecution',21,'1',0),
+(25,'/test/bugManage/bugManage','bugManage',NULL,'bugManage','缺陷管理','bugManage',16,'1',0),
 (26,'Layout','external-link',NULL,NULL,'External Link','link',NULL,'0',0),
-(27,NULL,'https://panjiachen.github.io/vue-element-admin-site/#/',NULL,NULL,'External Link','link',21,'1',0);
+(27,NULL,'https://panjiachen.github.io/vue-element-admin-site/#/',NULL,NULL,'External Link','link',26,'1',0);
 
 /*Table structure for table `t_sys_org` */
 
