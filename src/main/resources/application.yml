@@ -56,7 +56,7 @@ ocr:
   tesseract:
     # Tesseract数据文件路径
     # Windows: 可以设置为项目根目录下的tessdata文件夹，如：tessdata
-    # Linux: /usr/share/tesseract-ocr/4.00/tessdata 或 /usr/share/tessdata
+    # Linux: /usr/share/tessdata
     datapath: tessdata
     # 识别语言：chi_sim(简体中文) + eng(英文)
     # 其他语言：chi_tra(繁体中文)、jpn(日语)、kor(韩语)等

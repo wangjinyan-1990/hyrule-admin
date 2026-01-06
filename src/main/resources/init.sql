@@ -3,7 +3,6 @@ CREATE DATABASE IF NOT EXISTS hyrule DEFAULT CHARACTER SET utf8mb4;
 
 USE hyrule;
 
-
 /*Table structure for table `data_dictionary` */
 
 DROP TABLE IF EXISTS `data_dictionary`;
@@ -285,7 +284,7 @@ CREATE TABLE `t_sys_menu` (
 
 /*Data for the table `t_sys_menu` */
 
-insert into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`,`ICON`,`PARENT_ID`,`IS_LEAF`,`HIDDEN`) values 
+insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`,`ICON`,`PARENT_ID`,`IS_LEAF`,`HIDDEN`) values 
 (1,'Layout','/sys',NULL,'sys','系统管理','sys',NULL,'0',0),
 (2,'/sys/user','user',NULL,'user','用户管理','userManage',1,'1',0),
 (3,'/sys/role','role',NULL,'role','角色管理','roleManage',1,'1',0),
@@ -295,12 +294,10 @@ insert into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`,
 (7,'/tools/toolset','toolset',NULL,'toolset','工具集','toolset',6,'1',0),
 (8,'/tools/notebook','notebook',NULL,'notebook','记事本','notebook',6,'1',0),
 (9,'Layout','/configuration',NULL,'configuration','配置管理','nested',NULL,'0',0),
-(10,'/configuration/deploy/index','deploy',NULL,'deploy','发版登记',NULL,9,'0',0),
-(11,'/configuration/deploy/sitDeploy/index','sitDeploy',NULL,'sitDeploy','SIT发版',NULL,10,'0',0),
-(12,'/configuration/deploy/sitDeploy/menu2-1/index','menu2-1',NULL,'Menu2-1','Menu2-1',NULL,11,'1',0),
-(13,'/configuration/deploy/patDeploy/index','patDeploy',NULL,'patDeploy','PAT发版',NULL,10,'0',0),
-(14,'/configuration/deploy/patDeploy/menu2-2/index','menu2-2',NULL,'Menu2-2','Menu2-2',NULL,13,'1',0),
-(15,'/configuration/sysConfigInfo/index','sysConfigInfo',NULL,'sysConfigInfo','系统配置信息',NULL,9,'1',0),
+(10,'/configuration/deploy/index','deploy',NULL,'deploy','发版登记','deploy',9,'0',0),
+(11,'/configuration/deploy/sitDeploy/index','sitDeploy',NULL,'sitDeploy','SIT发版','sitDeploy',10,'1',0),
+(13,'/configuration/deploy/patDeploy/index','patDeploy',NULL,'patDeploy','PAT发版','patDeploy',10,'1',0),
+(15,'/configuration/sysConfigInfo/index','sysConfigInfo',NULL,'sysConfigInfo','系统配置信息','sysConfigInfo',9,'1',0),
 (16,'Layout','/test',NULL,'test','测试模块','testModule',NULL,'0',0),
 (17,'/test/baseManage/index','baseManage',NULL,'baseManage','基础管理','baseManage',16,'0',0),
 (18,'/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','testSystem',17,'1',0),
@@ -1003,6 +1000,20 @@ CREATE TABLE `tf_requirepoint_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `tf_requirepoint_history` */
+
+/*Table structure for table `tf_system_configuration` */
+
+DROP TABLE IF EXISTS `tf_system_configuration`;
+
+CREATE TABLE `tf_system_configuration` (
+  `CONFIGURATION_ID` int NOT NULL AUTO_INCREMENT COMMENT '系统配置Id',
+  `SYSTEM_ID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '系统ID',
+  `PRIVATE_TOKEN` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '访问令牌',
+  `CONFIGURATION_PEOPLEIDS` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '配置人员',
+  PRIMARY KEY (`CONFIGURATION_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+/*Data for the table `tf_system_configuration` */
 
 /*Table structure for table `tf_usecase` */
 
