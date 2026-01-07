@@ -83,6 +83,13 @@ public class TfDeployRecord {
     private String sendTestCode;
 
     /**
+     * 系统名称（用于前端显示，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String systemName;
+
+
+    /**
      * 无参构造函数
      */
     public TfDeployRecord() {
@@ -294,5 +301,22 @@ public class TfDeployRecord {
     public void setSendTestCode(String sendTestCode) {
         this.sendTestCode = sendTestCode;
     }
+
+    /**
+     * 获取系统名称
+     * @return 系统名称
+     */
+    public String getSystemName() {
+        return systemName;
+    }
+
+    /**
+     * 设置系统名称
+     * @param systemName 系统名称
+     */
+    public void setSystemName(String systemName) {
+        this.systemName = systemName;
+    }
+
 }
 

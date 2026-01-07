@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.configuration.sysConfigInfo.mapper.SysConfigInfoMapper">
+
+    <!-- 根据配置ID查询系统配置信息详情（带关联信息） -->
+    <select id="selectSysConfigInfoDetailById" parameterType="java.lang.Integer" resultType="com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration">
+        SELECT
+            sc.CONFIGURATION_ID,
+            sc.SYSTEM_ID,
+            sc.PRIVATE_TOKEN,
+            sc.CONFIGURATION_PEOPLEIDS,
+            ts.SYSTEM_NAME,
+            (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
+             FROM t_sys_user u
+             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+               AND sc.CONFIGURATION_PEOPLEIDS != ''
+               AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
+            ) AS CONFIGURATION_PEOPLE_NAMES
+        FROM tf_system_configuration sc
+        LEFT JOIN t_test_system ts ON sc.SYSTEM_ID = ts.SYSTEM_ID
+        WHERE sc.CONFIGURATION_ID = #{configurationId}
+    </select>
+
+    <!-- 分页查询系统配置信息列表（带系统名称和配置人员名称） -->
+    <select id="selectSysConfigInfoListWithSystemName" resultType="com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration">
+        SELECT
+            sc.CONFIGURATION_ID,
+            sc.SYSTEM_ID,
+            sc.PRIVATE_TOKEN,
+            sc.CONFIGURATION_PEOPLEIDS,
+            ts.SYSTEM_NAME,
+            (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
+             FROM t_sys_user u
+             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+               AND sc.CONFIGURATION_PEOPLEIDS != ''
+               AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
+            ) AS CONFIGURATION_PEOPLE_NAMES
+        FROM tf_system_configuration sc
+        LEFT JOIN t_test_system ts ON sc.SYSTEM_ID = ts.SYSTEM_ID
+        <where>
+            <if test="systemName != null and systemName != ''">
+                AND ts.SYSTEM_NAME LIKE CONCAT('%', #{systemName}, '%')
+            </if>
+            <if test="configurationPeopleNames != null and configurationPeopleNames != ''">
+                AND EXISTS (
+                    SELECT 1
+                    FROM t_sys_user u
+                    WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+                      AND sc.CONFIGURATION_PEOPLEIDS != ''
+                      AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
+                      AND u.USER_NAME LIKE CONCAT('%', #{configurationPeopleNames}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY sc.CONFIGURATION_ID DESC
+    </select>
+
+    <!-- 根据系统ID查询系统配置信息列表（带关联信息） -->
+    <select id="selectSysConfigInfoBySystemId" parameterType="java.lang.String" resultType="com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration">
+        SELECT
+            sc.CONFIGURATION_ID,
+            sc.SYSTEM_ID,
+            sc.PRIVATE_TOKEN,
+            sc.CONFIGURATION_PEOPLEIDS,
+            ts.SYSTEM_NAME,
+            (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
+             FROM t_sys_user u
+             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+               AND sc.CONFIGURATION_PEOPLEIDS != ''
+               AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
+            ) AS CONFIGURATION_PEOPLE_NAMES
+        FROM tf_system_configuration sc
+        LEFT JOIN t_test_system ts ON sc.SYSTEM_ID = ts.SYSTEM_ID
+        WHERE sc.SYSTEM_ID = #{systemId}
+        ORDER BY sc.CONFIGURATION_ID DESC
+    </select>
+
+    <!-- 查询所有系统配置信息（带关联信息） -->
+    <select id="selectAllSysConfigInfo" resultType="com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration">
+        SELECT
+            sc.CONFIGURATION_ID,
+            sc.SYSTEM_ID,
+            sc.PRIVATE_TOKEN,
+            sc.CONFIGURATION_PEOPLEIDS,
+            ts.SYSTEM_NAME,
+            (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
+             FROM t_sys_user u
+             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+               AND sc.CONFIGURATION_PEOPLEIDS != ''
+               AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
+            ) AS CONFIGURATION_PEOPLE_NAMES
+        FROM tf_system_configuration sc
+        LEFT JOIN t_test_system ts ON sc.SYSTEM_ID = ts.SYSTEM_ID
+        ORDER BY sc.CONFIGURATION_ID DESC
+    </select>
+
+</mapper>

@@ -39,6 +39,18 @@ public class TfSystemConfiguration {
     private String configurationPeopleIds;
 
     /**
+     * 系统名称（用于前端显示，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String systemName;
+
+    /**
+     * 配置人员名称（用于前端显示，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String configurationPeopleNames;
+
+    /**
      * 无参构造函数
      */
     public TfSystemConfiguration() {
@@ -121,6 +133,38 @@ public class TfSystemConfiguration {
      */
     public void setConfigurationPeopleIds(String configurationPeopleIds) {
         this.configurationPeopleIds = configurationPeopleIds;
+    }
+
+    /**
+     * 获取系统名称
+     * @return 系统名称
+     */
+    public String getSystemName() {
+        return systemName;
+    }
+
+    /**
+     * 设置系统名称
+     * @param systemName 系统名称
+     */
+    public void setSystemName(String systemName) {
+        this.systemName = systemName;
+    }
+
+    /**
+     * 获取配置人员名称
+     * @return 配置人员名称
+     */
+    public String getConfigurationPeopleNames() {
+        return configurationPeopleNames;
+    }
+
+    /**
+     * 设置配置人员名称
+     * @param configurationPeopleNames 配置人员名称
+     */
+    public void setConfigurationPeopleNames(String configurationPeopleNames) {
+        this.configurationPeopleNames = configurationPeopleNames;
     }
 }
 
