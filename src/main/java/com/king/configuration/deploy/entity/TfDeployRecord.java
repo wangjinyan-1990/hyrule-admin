@@ -88,6 +88,17 @@ public class TfDeployRecord {
     @TableField(exist = false)
     private String systemName;
 
+    /**
+     * 合并请求（用于前端显示，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String mergeRequest;
+
+    /**
+     * 合并状态（用于前端显示，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String mergeState;
 
     /**
      * 无参构造函数
@@ -316,6 +327,38 @@ public class TfDeployRecord {
      */
     public void setSystemName(String systemName) {
         this.systemName = systemName;
+    }
+
+    /**
+     * 获取合并请求
+     * @return 合并请求
+     */
+    public String getMergeRequest() {
+        return mergeRequest;
+    }
+
+    /**
+     * 设置合并请求
+     * @param mergeRequest 合并请求
+     */
+    public void setMergeRequest(String mergeRequest) {
+        this.mergeRequest = mergeRequest;
+    }
+
+    /**
+     * 获取合并状态
+     * @return 合并状态
+     */
+    public String getMergeState() {
+        return mergeState;
+    }
+
+    /**
+     * 设置合并状态
+     * @param mergeState 合并状态
+     */
+    public void setMergeState(String mergeState) {
+        this.mergeState = mergeState;
     }
 
 }

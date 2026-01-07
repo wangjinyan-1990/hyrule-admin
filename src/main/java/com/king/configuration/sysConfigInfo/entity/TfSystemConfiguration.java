@@ -39,6 +39,12 @@ public class TfSystemConfiguration {
     private String configurationPeopleIds;
 
     /**
+     * 系统简称
+     */
+    @TableField("SYS_ABBREVIATION")
+    private String sysAbbreviation;
+
+    /**
      * 系统名称（用于前端显示，不在数据库表中）
      */
     @TableField(exist = false)
@@ -133,6 +139,22 @@ public class TfSystemConfiguration {
      */
     public void setConfigurationPeopleIds(String configurationPeopleIds) {
         this.configurationPeopleIds = configurationPeopleIds;
+    }
+
+    /**
+     * 获取系统简称
+     * @return 系统简称
+     */
+    public String getSysAbbreviation() {
+        return sysAbbreviation;
+    }
+
+    /**
+     * 设置系统简称
+     * @param sysAbbreviation 系统简称
+     */
+    public void setSysAbbreviation(String sysAbbreviation) {
+        this.sysAbbreviation = sysAbbreviation;
     }
 
     /**

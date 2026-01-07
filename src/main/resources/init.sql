@@ -3,6 +3,7 @@ CREATE DATABASE IF NOT EXISTS hyrule DEFAULT CHARACTER SET utf8mb4;
 
 USE hyrule;
 
+
 /*Table structure for table `data_dictionary` */
 
 DROP TABLE IF EXISTS `data_dictionary`;
@@ -16,7 +17,7 @@ CREATE TABLE `data_dictionary` (
   `STATUS` char(3) DEFAULT NULL,
   `COMMENT` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`DICTIONARY_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=397 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=397 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `data_dictionary` */
 
@@ -254,12 +255,12 @@ CREATE TABLE `t_sys_counter` (
   `PREFIX` varchar(30) DEFAULT NULL,
   `COUNTER_LENGTH` tinyint DEFAULT NULL,
   PRIMARY KEY (`COUNTER_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_sys_counter` */
 
 insert  into `t_sys_counter`(`COUNTER_ID`,`COUNTER_NAME`,`CURRENT_NUMBER`,`PREFIX`,`COUNTER_LENGTH`) values 
-(1,'sysCode',2,'sys-',3),
+(1,'sysCode',4,'sys-',3),
 (2,'requireCode',6,'req',5),
 (3,'testcaseCode',0,'tc',5),
 (4,'bugCode',0,'bug',6);
@@ -280,7 +281,7 @@ CREATE TABLE `t_sys_menu` (
   `IS_LEAF` varchar(1) DEFAULT NULL,
   `HIDDEN` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`MENU_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_sys_menu` */
 
@@ -294,9 +295,9 @@ insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`
 (7,'/tools/toolset','toolset',NULL,'toolset','工具集','toolset',6,'1',0),
 (8,'/tools/notebook','notebook',NULL,'notebook','记事本','notebook',6,'1',0),
 (9,'Layout','/configuration',NULL,'configuration','配置管理','nested',NULL,'0',0),
-(10,'/configuration/deploy/deployRecord','deploy','/configuration/deploy/deployRecord','deploy','发版登记','deploy',9,'0',0),
+(10,'/configuration/deploy/deployRecord','deploy',NULL,'deploy','发版登记','deploy',9,'0',0),
 (11,'/configuration/sysConfigInfo/index','sysConfigInfo',NULL,'sysConfigInfo','系统配置信息','sysConfigInfo',9,'1',0),
-(12,'/configuration/deploy/deployRecord','deploy',NULL,'deployRecord','发版记录','deploy',10,'1',0),
+(12,'/configuration/deploy/deployRecord','deployRecord',NULL,'deployRecord','发版记录','deployRecord',10,'1',0),
 (13,'/configuration/deploy/sitDeploy','sitDeploy',NULL,'sitDeploy','SIT发版','sitDeploy',10,'1',0),
 (14,'/configuration/deploy/sitDeploy','patDeploy',NULL,'patDeploy','PAT发版','patDeploy',10,'1',0),
 (16,'Layout','/test',NULL,'test','测试模块','testModule',NULL,'0',0),
@@ -325,7 +326,7 @@ CREATE TABLE `t_sys_org` (
   `ORG_STATUS` char(1) DEFAULT NULL COMMENT '机构状态 ',
   `REMARK` varchar(400) DEFAULT NULL COMMENT '备注 ',
   PRIMARY KEY (`ORG_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_sys_org` */
 
@@ -428,7 +429,7 @@ CREATE TABLE `t_sys_param` (
   `SORT_NO` decimal(4,0) NOT NULL COMMENT '排序号 ',
   `REMARK` varchar(400) DEFAULT NULL COMMENT '备注 ',
   PRIMARY KEY (`PARAM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_sys_param` */
 
@@ -445,7 +446,7 @@ CREATE TABLE `t_sys_role` (
   `SORT_NO` decimal(4,0) NOT NULL COMMENT '排序号 ',
   `REMARK` varchar(400) DEFAULT NULL COMMENT '备注 ',
   PRIMARY KEY (`ROLE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_sys_role` */
 
@@ -465,7 +466,7 @@ CREATE TABLE `t_sys_role_menu` (
   `ROLE_ID` varchar(32) DEFAULT NULL,
   `MENU_ID` int DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_sys_role_menu` */
 
@@ -517,7 +518,7 @@ CREATE TABLE `t_sys_role_user` (
   PRIMARY KEY (`ID`),
   KEY `I_t_sys_role_user_ROLE_ID` (`ROLE_ID`),
   KEY `I_t_sys_role_user_USER_ID` (`USER_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_sys_role_user` */
 
@@ -555,7 +556,7 @@ CREATE TABLE `t_sys_user` (
   `ORG_ID` varchar(30) DEFAULT NULL COMMENT '所属机构',
   `SORT_NO` decimal(8,0) NOT NULL COMMENT '排序号',
   PRIMARY KEY (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_sys_user` */
 
@@ -599,7 +600,7 @@ CREATE TABLE `t_test_directory` (
   `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
   UNIQUE KEY `PK_TF_DIRECTORY` (`DIRECTORY_ID`),
   KEY `I_SYSTEM_ID` (`SYSTEM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_test_directory` */
 
@@ -636,13 +637,15 @@ CREATE TABLE `t_test_system` (
   `SYSTEM_DEV_MANAGER_ID` varchar(32) DEFAULT NULL COMMENT '系统开发经理Id',
   `CHANGE_HISTORY` varchar(5000) DEFAULT NULL COMMENT '修改历史记录',
   PRIMARY KEY (`SYSTEM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_test_system` */
 
 insert  into `t_test_system`(`SYSTEM_ID`,`SYSTEM_NAME`,`ORG_ID`,`SYSTEM_TYPE`,`SYSTEM_STAGE`,`IS_USE`,`SYSTEM_DESCRIPTION`,`CREATOR_ID`,`CREATE_TIME`,`MENDER_ID`,`MODIFY_TIME`,`PLAN_START_TIME`,`PLAN_END_TIME`,`ACTUAL_START_TIME`,`ACTUAL_END_TIME`,`SYSTEM_TEST_MANAGER_ID`,`SYSTEM_DEV_MANAGER_ID`,`CHANGE_HISTORY`) values 
 ('sys-001','移动办公系统','10000101','1','2','1','',NULL,'2025-09-14',NULL,'2025-09-14','2025-09-01','2026-09-16','2025-09-16','2025-09-25','lili','baiyang',''),
-('sys-002','新资金系统','10000102','1','1','1','',NULL,'2025-09-14',NULL,'2025-09-14','2025-10-01','2026-04-30',NULL,NULL,'jianghe','libo','');
+('sys-002','新资金系统','10000102','1','1','1','',NULL,'2025-09-14',NULL,'2025-09-14','2025-10-01','2026-04-30',NULL,NULL,'jianghe','libo',''),
+('sys-003','分布式技术平台','10000101','2','4','1','','admin','2026-01-07',NULL,'2026-01-07','2021-01-01','2028-12-31',NULL,NULL,'fengyu','liqi',''),
+('sys-004','无卡支付前置','10000102','2','4','1','','admin','2026-01-07',NULL,'2026-01-07','2023-01-01','2030-12-31',NULL,NULL,'jianghe','anqi','');
 
 /*Table structure for table `t_test_system_user` */
 
@@ -654,7 +657,7 @@ CREATE TABLE `t_test_system_user` (
   `SYSTEM_ID` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`SYSTEM_USER_ID`),
   KEY `I_SYSTEM_ID` (`SYSTEM_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `t_test_system_user` */
 
@@ -663,7 +666,11 @@ insert  into `t_test_system_user`(`SYSTEM_USER_ID`,`USER_ID`,`SYSTEM_ID`) values
 (2,'baiyang','sys-001'),
 (3,'jianghe','sys-002'),
 (4,'libo','sys-002'),
-(5,'2','sys-002');
+(5,'2','sys-002'),
+(6,'fengyu','sys-003'),
+(7,'liqi','sys-003'),
+(8,'jianghe','sys-004'),
+(9,'anqi','sys-004');
 
 /*Table structure for table `tf_attachment` */
 
@@ -682,7 +689,7 @@ CREATE TABLE `tf_attachment` (
   PRIMARY KEY (`ATTACHMENT_ID`),
   KEY `I_RELATE_ID` (`RELATE_ID`),
   KEY `I_MODULE` (`MODULE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_attachment` */
 
@@ -730,7 +737,7 @@ CREATE TABLE `tf_bug` (
   KEY `I_SUBMITTER_ID` (`SUBMITTER_ID`),
   KEY `I_DEVELOPER_ID` (`DEVELOPER_ID`),
   KEY `I_COMMIT_TIME` (`COMMIT_TIME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_bug` */
 
@@ -746,7 +753,7 @@ CREATE TABLE `tf_bug_flowlet` (
   `SORT_NO` int DEFAULT NULL COMMENT '排序号',
   PRIMARY KEY (`BUG_FLOWLET_ID`),
   KEY `I_BUG_FLOWLET_NUMBER` (`BUG_FLOWLET_NUMBER`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_bug_flowlet` */
 
@@ -792,7 +799,7 @@ CREATE TABLE `tf_bug_flowlet_permission` (
   `BUG_ROLE_CODE` varchar(12) DEFAULT NULL COMMENT '缺陷角色码',
   `BUG_FLOWLET_NUMBER` varchar(2) DEFAULT NULL COMMENT '缺陷流程编号',
   PRIMARY KEY (`BUG_FLOWLET_PERMISSION_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_bug_flowlet_permission` */
 
@@ -850,7 +857,7 @@ CREATE TABLE `tf_bug_history` (
   KEY `I_BUG_ID` (`BUG_ID`),
   KEY `I_SYSTEM_ID` (`SYSTEM_ID`),
   KEY `I_New_State` (`NEW_STATE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_bug_history` */
 
@@ -867,7 +874,7 @@ CREATE TABLE `tf_bug_state` (
   PRIMARY KEY (`BUG_STATE_ID`),
   KEY `I_BUG_STATE_CODE` (`BUG_STATE_CODE`),
   KEY `I_BUG_STATE_NAME` (`BUG_STATE_NAME`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_bug_state` */
 
@@ -921,7 +928,7 @@ CREATE TABLE `tf_notebook` (
   UNIQUE KEY `PK_TF_NOTE` (`NOTE_ID`),
   KEY `I_USER_ID` (`USER_ID`),
   KEY `I_DIRECTORY` (`DIRECTORY_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_notebook` */
 
@@ -945,7 +952,7 @@ CREATE TABLE `tf_notebook_directory` (
   `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
   UNIQUE KEY `PK_TF_DIRECTORY` (`DIRECTORY_ID`),
   KEY `I_USER_ID` (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_notebook_directory` */
 
@@ -976,7 +983,7 @@ CREATE TABLE `tf_requirepoint` (
   PRIMARY KEY (`REQUIRE_POINT_ID`),
   KEY `I_SYSTEM_ID` (`SYSTEM_ID`),
   KEY `I_DIRECTORY_ID` (`DIRECTORY_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_requirepoint` */
 
@@ -998,7 +1005,7 @@ CREATE TABLE `tf_requirepoint_history` (
   `OPERATOR_ID` varchar(32) DEFAULT NULL COMMENT '操作人',
   `MODIFIED_CONTENT` text COMMENT '修改内容',
   PRIMARY KEY (`REQUIRE_POINT_HISTORY_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_requirepoint_history` */
 
@@ -1009,12 +1016,16 @@ DROP TABLE IF EXISTS `tf_system_configuration`;
 CREATE TABLE `tf_system_configuration` (
   `CONFIGURATION_ID` int NOT NULL AUTO_INCREMENT COMMENT '系统配置Id',
   `SYSTEM_ID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '系统ID',
+  `SYS_ABBREVIATION` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '系统简写',
   `PRIVATE_TOKEN` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '访问令牌',
   `CONFIGURATION_PEOPLEIDS` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '配置人员',
   PRIMARY KEY (`CONFIGURATION_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_system_configuration` */
+
+insert  into `tf_system_configuration`(`CONFIGURATION_ID`,`SYSTEM_ID`,`SYS_ABBREVIATION`,`PRIVATE_TOKEN`,`CONFIGURATION_PEOPLEIDS`) values 
+(1,'sys-001','YDBG','fZiPYRsu8JtKrNHWTHht','songliu,lisi');
 
 /*Table structure for table `tf_usecase` */
 
@@ -1044,7 +1055,7 @@ CREATE TABLE `tf_usecase` (
   KEY `I_DIRECTORY_ID` (`DIRECTORY_ID`),
   KEY `I_SYSTEM_ID` (`SYSTEM_ID`),
   KEY `I_CREATOR_ID` (`CREATOR_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_usecase` */
 
@@ -1070,7 +1081,7 @@ CREATE TABLE `tf_usecase_execution` (
   KEY `I_RUN_STATUS` (`RUN_STATUS`),
   KEY `I_ACT_EXECUTOR_ID` (`ACT_EXECUTOR_ID`),
   KEY `I_ACT_EXECUTION_DATE` (`ACT_EXECUTION_TIME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_usecase_execution` */
 
@@ -1093,7 +1104,7 @@ CREATE TABLE `tf_usecase_execution_history` (
   KEY `I_USECASE_ID` (`USECASE_ID`),
   KEY `I_EXECUTOR_ID` (`EXECUTOR_ID`),
   KEY `I_RUN_TYPE` (`RUN_TYPE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_usecase_execution_history` */
 
@@ -1108,7 +1119,7 @@ CREATE TABLE `tf_usecase_history` (
   `OPERATOR_ID` varchar(32) DEFAULT NULL COMMENT '操作人',
   `MODIFIED_CONTENT` text COMMENT '修改内容',
   PRIMARY KEY (`USECASE_HISTORY_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_usecase_history` */
 
@@ -1122,4 +1133,4 @@ CREATE TABLE `tf_usecase_require` (
   `REQUIRE_POINT_ID` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`USECASE_REQUIER_ID`),
   KEY `I_REQUIRE_POINT_ID` (`REQUIRE_POINT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

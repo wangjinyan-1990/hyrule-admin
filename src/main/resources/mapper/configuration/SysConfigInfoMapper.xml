@@ -9,6 +9,7 @@
             sc.SYSTEM_ID,
             sc.PRIVATE_TOKEN,
             sc.CONFIGURATION_PEOPLEIDS,
+            sc.SYS_ABBREVIATION,
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
@@ -28,6 +29,7 @@
             sc.SYSTEM_ID,
             sc.PRIVATE_TOKEN,
             sc.CONFIGURATION_PEOPLEIDS,
+            sc.SYS_ABBREVIATION,
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
@@ -62,6 +64,7 @@
             sc.SYSTEM_ID,
             sc.PRIVATE_TOKEN,
             sc.CONFIGURATION_PEOPLEIDS,
+            sc.SYS_ABBREVIATION,
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
@@ -82,6 +85,7 @@
             sc.SYSTEM_ID,
             sc.PRIVATE_TOKEN,
             sc.CONFIGURATION_PEOPLEIDS,
+            sc.SYS_ABBREVIATION,
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
