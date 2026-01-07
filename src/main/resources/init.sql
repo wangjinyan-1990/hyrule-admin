@@ -10,12 +10,12 @@ DROP TABLE IF EXISTS `data_dictionary`;
 
 CREATE TABLE `data_dictionary` (
   `DICTIONARY_ID` int NOT NULL AUTO_INCREMENT,
-  `DATA_TYPE` varchar(120) DEFAULT NULL,
-  `DATA_NAME` varchar(150) DEFAULT NULL,
-  `DATA_VALUE` varchar(1500) DEFAULT NULL,
+  `DATA_TYPE` varchar(120) COLLATE utf8mb4_bin DEFAULT NULL,
+  `DATA_NAME` varchar(150) COLLATE utf8mb4_bin DEFAULT NULL,
+  `DATA_VALUE` varchar(1500) COLLATE utf8mb4_bin DEFAULT NULL,
   `POSITION_NO` int DEFAULT NULL,
-  `STATUS` char(3) DEFAULT NULL,
-  `COMMENT` varchar(200) DEFAULT NULL,
+  `STATUS` char(3) COLLATE utf8mb4_bin DEFAULT NULL,
+  `COMMENT` varchar(200) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`DICTIONARY_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=397 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -250,9 +250,9 @@ DROP TABLE IF EXISTS `t_sys_counter`;
 
 CREATE TABLE `t_sys_counter` (
   `COUNTER_ID` int NOT NULL AUTO_INCREMENT,
-  `COUNTER_NAME` varchar(384) DEFAULT NULL,
+  `COUNTER_NAME` varchar(384) COLLATE utf8mb4_bin DEFAULT NULL,
   `CURRENT_NUMBER` int DEFAULT NULL,
-  `PREFIX` varchar(30) DEFAULT NULL,
+  `PREFIX` varchar(30) COLLATE utf8mb4_bin DEFAULT NULL,
   `COUNTER_LENGTH` tinyint DEFAULT NULL,
   PRIMARY KEY (`COUNTER_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -271,14 +271,14 @@ DROP TABLE IF EXISTS `t_sys_menu`;
 
 CREATE TABLE `t_sys_menu` (
   `MENU_ID` int NOT NULL AUTO_INCREMENT,
-  `COMPONENT` varchar(100) DEFAULT NULL,
-  `PATH` varchar(100) DEFAULT NULL,
-  `REDIRECT` varchar(100) DEFAULT NULL,
-  `NAME` varchar(100) DEFAULT NULL,
-  `TITLE` varchar(100) DEFAULT NULL,
-  `ICON` varchar(100) DEFAULT NULL,
+  `COMPONENT` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `PATH` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `REDIRECT` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `NAME` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `TITLE` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `ICON` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   `PARENT_ID` int DEFAULT NULL,
-  `IS_LEAF` varchar(1) DEFAULT NULL,
+  `IS_LEAF` varchar(1) COLLATE utf8mb4_bin DEFAULT NULL,
   `HIDDEN` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`MENU_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -318,13 +318,13 @@ insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`
 DROP TABLE IF EXISTS `t_sys_org`;
 
 CREATE TABLE `t_sys_org` (
-  `ORG_ID` varchar(32) NOT NULL COMMENT '机构ID ',
-  `ORG_NAME` varchar(100) NOT NULL COMMENT '机构名称 ',
-  `PARENT_ORG_ID` varchar(32) DEFAULT NULL COMMENT '上级机构ID ',
+  `ORG_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '机构ID ',
+  `ORG_NAME` varchar(100) COLLATE utf8mb4_bin NOT NULL COMMENT '机构名称 ',
+  `PARENT_ORG_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '上级机构ID ',
   `ORG_LEVEL` decimal(1,0) NOT NULL COMMENT '机构级次 ',
   `SORT_NO` decimal(4,0) NOT NULL COMMENT '排序号 ',
-  `ORG_STATUS` char(1) DEFAULT NULL COMMENT '机构状态 ',
-  `REMARK` varchar(400) DEFAULT NULL COMMENT '备注 ',
+  `ORG_STATUS` char(1) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '机构状态 ',
+  `REMARK` varchar(400) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '备注 ',
   PRIMARY KEY (`ORG_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -423,11 +423,11 @@ insert  into `t_sys_org`(`ORG_ID`,`ORG_NAME`,`PARENT_ORG_ID`,`ORG_LEVEL`,`SORT_N
 DROP TABLE IF EXISTS `t_sys_param`;
 
 CREATE TABLE `t_sys_param` (
-  `PARAM_ID` varchar(32) NOT NULL COMMENT '系统参数ID ',
-  `PARAM_NAME` varchar(100) NOT NULL COMMENT '系统参数名称 ',
-  `PARAM_VALUE` varchar(400) NOT NULL COMMENT '系统参数值 ',
+  `PARAM_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '系统参数ID ',
+  `PARAM_NAME` varchar(100) COLLATE utf8mb4_bin NOT NULL COMMENT '系统参数名称 ',
+  `PARAM_VALUE` varchar(400) COLLATE utf8mb4_bin NOT NULL COMMENT '系统参数值 ',
   `SORT_NO` decimal(4,0) NOT NULL COMMENT '排序号 ',
-  `REMARK` varchar(400) DEFAULT NULL COMMENT '备注 ',
+  `REMARK` varchar(400) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '备注 ',
   PRIMARY KEY (`PARAM_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -441,10 +441,10 @@ insert  into `t_sys_param`(`PARAM_ID`,`PARAM_NAME`,`PARAM_VALUE`,`SORT_NO`,`REMA
 DROP TABLE IF EXISTS `t_sys_role`;
 
 CREATE TABLE `t_sys_role` (
-  `ROLE_ID` varchar(32) NOT NULL COMMENT '角色ID ',
-  `ROLE_NAME` varchar(100) NOT NULL COMMENT '角色名称 ',
+  `ROLE_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '角色ID ',
+  `ROLE_NAME` varchar(100) COLLATE utf8mb4_bin NOT NULL COMMENT '角色名称 ',
   `SORT_NO` decimal(4,0) NOT NULL COMMENT '排序号 ',
-  `REMARK` varchar(400) DEFAULT NULL COMMENT '备注 ',
+  `REMARK` varchar(400) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '备注 ',
   PRIMARY KEY (`ROLE_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -463,7 +463,7 @@ DROP TABLE IF EXISTS `t_sys_role_menu`;
 
 CREATE TABLE `t_sys_role_menu` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `ROLE_ID` varchar(32) DEFAULT NULL,
+  `ROLE_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
   `MENU_ID` int DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -513,8 +513,8 @@ DROP TABLE IF EXISTS `t_sys_role_user`;
 
 CREATE TABLE `t_sys_role_user` (
   `ID` int NOT NULL AUTO_INCREMENT COMMENT 'UUID ',
-  `ROLE_ID` varchar(32) NOT NULL COMMENT '角色ID ',
-  `USER_ID` varchar(32) NOT NULL COMMENT '用户ID ',
+  `ROLE_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '角色ID ',
+  `USER_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '用户ID ',
   PRIMARY KEY (`ID`),
   KEY `I_t_sys_role_user_ROLE_ID` (`ROLE_ID`),
   KEY `I_t_sys_role_user_USER_ID` (`USER_ID`)
@@ -546,14 +546,14 @@ insert  into `t_sys_role_user`(`ID`,`ROLE_ID`,`USER_ID`) values
 DROP TABLE IF EXISTS `t_sys_user`;
 
 CREATE TABLE `t_sys_user` (
-  `USER_ID` varchar(32) NOT NULL,
+  `USER_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL,
   `LOGIN_NAME` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `PASSWORD` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `USER_NAME` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `EMAIL` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `PHONE` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `STATUS` int NOT NULL COMMENT '用户状态',
-  `ORG_ID` varchar(30) DEFAULT NULL COMMENT '所属机构',
+  `ORG_ID` varchar(30) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '所属机构',
   `SORT_NO` decimal(8,0) NOT NULL COMMENT '排序号',
   PRIMARY KEY (`USER_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -583,20 +583,20 @@ insert  into `t_sys_user`(`USER_ID`,`LOGIN_NAME`,`PASSWORD`,`USER_NAME`,`EMAIL`,
 DROP TABLE IF EXISTS `t_test_directory`;
 
 CREATE TABLE `t_test_directory` (
-  `DIRECTORY_ID` varchar(32) DEFAULT NULL,
-  `DIRECTORY_NAME` varchar(100) DEFAULT NULL,
-  `DIRECTORY_PARENTID` varchar(32) DEFAULT NULL,
+  `DIRECTORY_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
+  `DIRECTORY_NAME` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `DIRECTORY_PARENTID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
   `LEVEL` int DEFAULT NULL,
-  `FULLPATH` varchar(300) DEFAULT NULL,
-  `SYSTEM_ID` varchar(32) NOT NULL,
-  `FIRST_PATH` varchar(100) DEFAULT NULL,
-  `SECOND_PATH` varchar(100) DEFAULT NULL,
-  `THIRD_PATH` varchar(100) DEFAULT NULL,
+  `FULLPATH` varchar(300) COLLATE utf8mb4_bin DEFAULT NULL,
+  `SYSTEM_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL,
+  `FIRST_PATH` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `SECOND_PATH` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `THIRD_PATH` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   `IS_USE_TESTCASE` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '1' COMMENT '用例库是否使用:0-不使用;1-使用;',
-  `IS_USE_TESTSET` varchar(1) DEFAULT '1' COMMENT '测试集是否使用:0-不使用;1-使用;',
+  `IS_USE_TESTSET` varchar(1) COLLATE utf8mb4_bin DEFAULT '1' COMMENT '测试集是否使用:0-不使用;1-使用;',
   `IS_LEAF_DIRECTORY` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '1' COMMENT '是否为叶子目录:0-不是;1-是;',
   `DIRECTORY_TYPE` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '目录类型',
-  `RELATE_ID` varchar(32) DEFAULT NULL COMMENT '关联ID',
+  `RELATE_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '关联ID',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
   UNIQUE KEY `PK_TF_DIRECTORY` (`DIRECTORY_ID`),
   KEY `I_SYSTEM_ID` (`SYSTEM_ID`)
@@ -618,24 +618,24 @@ insert  into `t_test_directory`(`DIRECTORY_ID`,`DIRECTORY_NAME`,`DIRECTORY_PAREN
 DROP TABLE IF EXISTS `t_test_system`;
 
 CREATE TABLE `t_test_system` (
-  `SYSTEM_ID` varchar(32) NOT NULL COMMENT '测试系统ID',
-  `SYSTEM_NAME` varchar(200) DEFAULT NULL COMMENT '测试系统名称',
-  `ORG_ID` varchar(32) DEFAULT NULL COMMENT '负责的机构',
-  `SYSTEM_TYPE` varchar(10) DEFAULT NULL COMMENT '系统类型：1、初测; 2、优化',
-  `SYSTEM_STAGE` varchar(32) DEFAULT NULL COMMENT '系统阶段:1、准备阶段;2、实施阶段;3、收尾阶段;',
-  `IS_USE` varchar(1) DEFAULT NULL COMMENT '是否在使用:0是不使用;1是在使用;',
-  `SYSTEM_DESCRIPTION` text COMMENT '系统描述',
-  `CREATOR_ID` varchar(32) DEFAULT NULL COMMENT '创建者',
+  `SYSTEM_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '测试系统ID',
+  `SYSTEM_NAME` varchar(200) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '测试系统名称',
+  `ORG_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '负责的机构',
+  `SYSTEM_TYPE` varchar(10) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '系统类型：1、初测; 2、优化',
+  `SYSTEM_STAGE` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '系统阶段:1、准备阶段;2、实施阶段;3、收尾阶段;',
+  `IS_USE` varchar(1) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '是否在使用:0是不使用;1是在使用;',
+  `SYSTEM_DESCRIPTION` text COLLATE utf8mb4_bin COMMENT '系统描述',
+  `CREATOR_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '创建者',
   `CREATE_TIME` date DEFAULT NULL COMMENT '创建日期',
-  `MENDER_ID` varchar(32) DEFAULT NULL COMMENT '修改者',
+  `MENDER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '修改者',
   `MODIFY_TIME` date DEFAULT NULL COMMENT '修改日期',
   `PLAN_START_TIME` date DEFAULT NULL COMMENT '计划开始日期',
   `PLAN_END_TIME` date DEFAULT NULL COMMENT '计划结束日期',
   `ACTUAL_START_TIME` date DEFAULT NULL COMMENT '实际开始日期',
   `ACTUAL_END_TIME` date DEFAULT NULL COMMENT '实际结束日期',
-  `SYSTEM_TEST_MANAGER_ID` varchar(32) DEFAULT NULL COMMENT '系统测试经理Id',
-  `SYSTEM_DEV_MANAGER_ID` varchar(32) DEFAULT NULL COMMENT '系统开发经理Id',
-  `CHANGE_HISTORY` varchar(5000) DEFAULT NULL COMMENT '修改历史记录',
+  `SYSTEM_TEST_MANAGER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '系统测试经理Id',
+  `SYSTEM_DEV_MANAGER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '系统开发经理Id',
+  `CHANGE_HISTORY` varchar(5000) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '修改历史记录',
   PRIMARY KEY (`SYSTEM_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -654,7 +654,7 @@ DROP TABLE IF EXISTS `t_test_system_user`;
 CREATE TABLE `t_test_system_user` (
   `SYSTEM_USER_ID` int NOT NULL AUTO_INCREMENT,
   `USER_ID` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `SYSTEM_ID` varchar(32) DEFAULT NULL,
+  `SYSTEM_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`SYSTEM_USER_ID`),
   KEY `I_SYSTEM_ID` (`SYSTEM_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -677,15 +677,15 @@ insert  into `t_test_system_user`(`SYSTEM_USER_ID`,`USER_ID`,`SYSTEM_ID`) values
 DROP TABLE IF EXISTS `tf_attachment`;
 
 CREATE TABLE `tf_attachment` (
-  `ATTACHMENT_ID` varchar(32) NOT NULL DEFAULT '',
-  `ORIGINAL_FILE_NAME` varchar(1000) DEFAULT NULL,
-  `SERVER_FILE_NAME` varchar(1000) DEFAULT NULL,
+  `ATTACHMENT_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `ORIGINAL_FILE_NAME` varchar(1000) COLLATE utf8mb4_bin DEFAULT NULL,
+  `SERVER_FILE_NAME` varchar(1000) COLLATE utf8mb4_bin DEFAULT NULL,
   `ATTACHMENT_SIZE` int DEFAULT NULL,
   `UPLOAD_DATE` date DEFAULT NULL,
-  `UPLOAD_USER_ID` varchar(32) DEFAULT NULL,
-  `UPLOAD_PATH` varchar(200) DEFAULT NULL,
-  `MODULE` varchar(30) DEFAULT NULL,
-  `RELATE_ID` varchar(32) DEFAULT NULL,
+  `UPLOAD_USER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
+  `UPLOAD_PATH` varchar(200) COLLATE utf8mb4_bin DEFAULT NULL,
+  `MODULE` varchar(30) COLLATE utf8mb4_bin DEFAULT NULL,
+  `RELATE_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`ATTACHMENT_ID`),
   KEY `I_RELATE_ID` (`RELATE_ID`),
   KEY `I_MODULE` (`MODULE`)
@@ -705,20 +705,20 @@ DROP TABLE IF EXISTS `tf_bug`;
 
 CREATE TABLE `tf_bug` (
   `BUG_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷Id',
-  `BUG_NAME` varchar(200) DEFAULT NULL COMMENT '缺陷名称',
-  `SYSTEM_ID` varchar(32) NOT NULL COMMENT '测试系统ID',
-  `BUG_STATE` varchar(10) DEFAULT NULL COMMENT '缺陷状态',
-  `USECASE_ID` varchar(32) DEFAULT NULL COMMENT '关联的用例Id',
-  `BUG_SOURCE` varchar(2) DEFAULT NULL COMMENT '缺陷来源',
-  `PRORITY` varchar(2) DEFAULT NULL COMMENT '优先级',
-  `BUG_DESCRIPITION` varchar(2000) DEFAULT NULL COMMENT '缺陷描述',
+  `BUG_NAME` varchar(200) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷名称',
+  `SYSTEM_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '测试系统ID',
+  `BUG_STATE` varchar(10) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷状态',
+  `USECASE_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '关联的用例Id',
+  `BUG_SOURCE` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷来源',
+  `PRORITY` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '优先级',
+  `BUG_DESCRIPITION` varchar(2000) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷描述',
   `BUG_SEVERITY_LEVEL` int DEFAULT NULL COMMENT '缺陷严重级别',
-  `CLOSE_REASON` varchar(50) DEFAULT NULL COMMENT '缺陷关闭原因',
-  `SUBMITTER_ID` varchar(32) DEFAULT NULL COMMENT '提交人Id',
-  `DEVELOPER_ID` varchar(32) DEFAULT NULL COMMENT '开发人员Id',
-  `DEV_LEADER_ID` varchar(32) DEFAULT NULL COMMENT '开发组长Id',
-  `CHECKER_ID` varchar(30) DEFAULT NULL COMMENT '验证人Id',
-  `BUG_TYPE` varchar(2) DEFAULT NULL COMMENT '缺陷类型',
+  `CLOSE_REASON` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷关闭原因',
+  `SUBMITTER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '提交人Id',
+  `DEVELOPER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '开发人员Id',
+  `DEV_LEADER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '开发组长Id',
+  `CHECKER_ID` varchar(30) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '验证人Id',
+  `BUG_TYPE` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷类型',
   `DIRECTORY_ID` int DEFAULT NULL COMMENT '执行库目录Id',
   `COMMIT_TIME` datetime DEFAULT NULL COMMENT '提交时间',
   `CONFIRMED_TIME` datetime DEFAULT NULL COMMENT '确认时间',
@@ -747,9 +747,9 @@ DROP TABLE IF EXISTS `tf_bug_flowlet`;
 
 CREATE TABLE `tf_bug_flowlet` (
   `BUG_FLOWLET_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷流程Id',
-  `BUG_FLOWLET_NUMBER` varchar(2) DEFAULT NULL COMMENT '缺陷流程编号',
-  `CURRENT_STATE_CODE` varchar(32) DEFAULT NULL COMMENT '缺陷当前状态码',
-  `NEXT_STATE_CODE` varchar(32) DEFAULT NULL COMMENT '缺陷下一个状态码',
+  `BUG_FLOWLET_NUMBER` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷流程编号',
+  `CURRENT_STATE_CODE` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷当前状态码',
+  `NEXT_STATE_CODE` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷下一个状态码',
   `SORT_NO` int DEFAULT NULL COMMENT '排序号',
   PRIMARY KEY (`BUG_FLOWLET_ID`),
   KEY `I_BUG_FLOWLET_NUMBER` (`BUG_FLOWLET_NUMBER`)
@@ -796,8 +796,8 @@ DROP TABLE IF EXISTS `tf_bug_flowlet_permission`;
 CREATE TABLE `tf_bug_flowlet_permission` (
   `BUG_FLOWLET_PERMISSION_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷流程权限Id',
   `BUG_FLOWLET_ID` int DEFAULT NULL COMMENT '缺陷流程Id',
-  `BUG_ROLE_CODE` varchar(12) DEFAULT NULL COMMENT '缺陷角色码',
-  `BUG_FLOWLET_NUMBER` varchar(2) DEFAULT NULL COMMENT '缺陷流程编号',
+  `BUG_ROLE_CODE` varchar(12) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷角色码',
+  `BUG_FLOWLET_NUMBER` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷流程编号',
   PRIMARY KEY (`BUG_FLOWLET_PERMISSION_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -844,13 +844,13 @@ DROP TABLE IF EXISTS `tf_bug_history`;
 
 CREATE TABLE `tf_bug_history` (
   `BUG_HISHORY_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷历史记录Id',
-  `BUG_ID` varchar(32) DEFAULT NULL COMMENT '缺陷Id',
-  `NEW_STATE` varchar(20) DEFAULT NULL COMMENT '新状态',
-  `OLD_STATE` varchar(20) DEFAULT NULL COMMENT '旧状态',
+  `BUG_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷Id',
+  `NEW_STATE` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '新状态',
+  `OLD_STATE` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '旧状态',
   `OPERATING_TIME` datetime DEFAULT NULL COMMENT '操作时间',
-  `OPERATOR_ID` varchar(32) DEFAULT NULL COMMENT '操作人ID',
-  `SYSTEM_ID` varchar(32) NOT NULL COMMENT '测试系统ID',
-  `COMMENT` varchar(2000) DEFAULT NULL COMMENT '注释',
+  `OPERATOR_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '操作人ID',
+  `SYSTEM_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '测试系统ID',
+  `COMMENT` varchar(2000) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '注释',
   `LAST_OPERATION_TIME` datetime DEFAULT NULL COMMENT '上次操作时间',
   PRIMARY KEY (`BUG_HISHORY_ID`),
   KEY `I_OPERATING_TIME` (`OPERATING_TIME`),
@@ -868,8 +868,8 @@ DROP TABLE IF EXISTS `tf_bug_state`;
 CREATE TABLE `tf_bug_state` (
   `BUG_STATE_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷状态Id',
   `BUG_FLOWLET_NUMBER` int DEFAULT NULL COMMENT '缺陷流程编号',
-  `BUG_STATE_CODE` varchar(32) DEFAULT NULL COMMENT '缺陷状态码',
-  `BUG_STATE_NAME` varchar(32) DEFAULT NULL COMMENT '缺陷状态名',
+  `BUG_STATE_CODE` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷状态码',
+  `BUG_STATE_NAME` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷状态名',
   `SORT_NO` int DEFAULT NULL COMMENT '排序号',
   PRIMARY KEY (`BUG_STATE_ID`),
   KEY `I_BUG_STATE_CODE` (`BUG_STATE_CODE`),
@@ -918,12 +918,12 @@ CREATE TABLE `tf_deploy_record` (
 DROP TABLE IF EXISTS `tf_notebook`;
 
 CREATE TABLE `tf_notebook` (
-  `NOTE_ID` varchar(32) DEFAULT NULL,
-  `DIRECTORY_ID` varchar(32) DEFAULT NULL,
-  `NOTE_TITLE` varchar(100) DEFAULT NULL,
-  `NOTE_CONTENT` longtext,
+  `NOTE_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
+  `DIRECTORY_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
+  `NOTE_TITLE` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `NOTE_CONTENT` longtext COLLATE utf8mb4_bin,
   `FILESIZE` int DEFAULT NULL COMMENT '文件大小',
-  `USER_ID` varchar(32) NOT NULL,
+  `USER_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL,
   `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
   UNIQUE KEY `PK_TF_NOTE` (`NOTE_ID`),
   KEY `I_USER_ID` (`USER_ID`),
@@ -944,10 +944,10 @@ insert  into `tf_notebook`(`NOTE_ID`,`DIRECTORY_ID`,`NOTE_TITLE`,`NOTE_CONTENT`,
 DROP TABLE IF EXISTS `tf_notebook_directory`;
 
 CREATE TABLE `tf_notebook_directory` (
-  `DIRECTORY_ID` varchar(32) DEFAULT NULL,
-  `DIRECTORY_NAME` varchar(100) DEFAULT NULL,
-  `DIRECTORY_PARENTID` varchar(32) DEFAULT NULL,
-  `USER_ID` varchar(32) NOT NULL,
+  `DIRECTORY_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
+  `DIRECTORY_NAME` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `DIRECTORY_PARENTID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
+  `USER_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL,
   `IS_LEAF_DIRECTORY` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '1' COMMENT '是否为叶子目录:0-不是;1-是;',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
   UNIQUE KEY `PK_TF_DIRECTORY` (`DIRECTORY_ID`),
@@ -965,20 +965,20 @@ insert  into `tf_notebook_directory`(`DIRECTORY_ID`,`DIRECTORY_NAME`,`DIRECTORY_
 DROP TABLE IF EXISTS `tf_requirepoint`;
 
 CREATE TABLE `tf_requirepoint` (
-  `REQUIRE_POINT_ID` varchar(32) NOT NULL COMMENT '需求点Id',
-  `REQUIRE_POINT_DESC` text COMMENT '需求点概述',
-  `SYSTEM_ID` varchar(32) NOT NULL COMMENT '测试系统ID',
+  `REQUIRE_POINT_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '需求点Id',
+  `REQUIRE_POINT_DESC` text COLLATE utf8mb4_bin COMMENT '需求点概述',
+  `SYSTEM_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '测试系统ID',
   `DIRECTORY_ID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '目录Id',
-  `REQUIRE_POINT_TYPE` varchar(1) DEFAULT NULL COMMENT '需求点类型',
-  `REVIEW_STATUS` varchar(1) DEFAULT '0' COMMENT '评审状态',
-  `ANALYSIS_METHOD` varchar(1) DEFAULT NULL COMMENT '分析方法',
-  `REQUIRE_STATUS` char(1) DEFAULT NULL COMMENT '需求状态',
-  `DESIGNER_ID` varchar(30) DEFAULT NULL COMMENT '设计人Id',
+  `REQUIRE_POINT_TYPE` varchar(1) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '需求点类型',
+  `REVIEW_STATUS` varchar(1) COLLATE utf8mb4_bin DEFAULT '0' COMMENT '评审状态',
+  `ANALYSIS_METHOD` varchar(1) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '分析方法',
+  `REQUIRE_STATUS` char(1) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '需求状态',
+  `DESIGNER_ID` varchar(30) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '设计人Id',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
-  `MODIFIER_ID` varchar(30) DEFAULT NULL COMMENT '修改人Id',
+  `MODIFIER_ID` varchar(30) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '修改人Id',
   `MODIFY_TIME` datetime DEFAULT NULL COMMENT '修改时间',
-  `REMARK` text COMMENT '备注',
-  `SEND_TEST_ID` varchar(32) DEFAULT NULL COMMENT '所属送测单Id',
+  `REMARK` text COLLATE utf8mb4_bin COMMENT '备注',
+  `SEND_TEST_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '所属送测单Id',
   `WORK_PACKAGE_ID` int DEFAULT NULL COMMENT '所属工作包Id',
   PRIMARY KEY (`REQUIRE_POINT_ID`),
   KEY `I_SYSTEM_ID` (`SYSTEM_ID`),
@@ -999,11 +999,11 @@ insert  into `tf_requirepoint`(`REQUIRE_POINT_ID`,`REQUIRE_POINT_DESC`,`SYSTEM_I
 DROP TABLE IF EXISTS `tf_requirepoint_history`;
 
 CREATE TABLE `tf_requirepoint_history` (
-  `REQUIRE_POINT_HISTORY_ID` varchar(32) NOT NULL,
-  `REQUIRE_POINT_ID` varchar(32) DEFAULT NULL COMMENT '需求点Id',
+  `REQUIRE_POINT_HISTORY_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL,
+  `REQUIRE_POINT_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '需求点Id',
   `OPERATING_TIME` datetime DEFAULT NULL COMMENT '操作时间',
-  `OPERATOR_ID` varchar(32) DEFAULT NULL COMMENT '操作人',
-  `MODIFIED_CONTENT` text COMMENT '修改内容',
+  `OPERATOR_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '操作人',
+  `MODIFIED_CONTENT` text COLLATE utf8mb4_bin COMMENT '修改内容',
   PRIMARY KEY (`REQUIRE_POINT_HISTORY_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -1020,35 +1020,37 @@ CREATE TABLE `tf_system_configuration` (
   `PRIVATE_TOKEN` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '访问令牌',
   `CONFIGURATION_PEOPLEIDS` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '配置人员',
   PRIMARY KEY (`CONFIGURATION_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*Data for the table `tf_system_configuration` */
 
 insert  into `tf_system_configuration`(`CONFIGURATION_ID`,`SYSTEM_ID`,`SYS_ABBREVIATION`,`PRIVATE_TOKEN`,`CONFIGURATION_PEOPLEIDS`) values 
-(1,'sys-001','YDBG','fZiPYRsu8JtKrNHWTHht','songliu,lisi');
+(1,'sys-001','YDBG','fZiPYRsu8JtKrNHWTHht','liqi,lisi'),
+(2,'sys-004','ncp','PsbreHypFVFx7tUvQx32','zhaoer'),
+(3,'sys-003','DTP','7Mh5y4DNvDbjqJs3t8ke','');
 
 /*Table structure for table `tf_usecase` */
 
 DROP TABLE IF EXISTS `tf_usecase`;
 
 CREATE TABLE `tf_usecase` (
-  `USECASE_ID` varchar(32) NOT NULL DEFAULT '' COMMENT '用例Id',
-  `DIRECTORY_ID` varchar(32) DEFAULT NULL COMMENT '用例所属目录Id',
-  `USECASE_NAME` varchar(300) DEFAULT NULL COMMENT '用例名称',
-  `CREATOR_ID` varchar(32) DEFAULT NULL COMMENT '创建人Id',
+  `USECASE_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT '用例Id',
+  `DIRECTORY_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用例所属目录Id',
+  `USECASE_NAME` varchar(300) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用例名称',
+  `CREATOR_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '创建人Id',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
-  `MODIFIER_ID` varchar(32) DEFAULT NULL COMMENT '修改人Id',
+  `MODIFIER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '修改人Id',
   `MODIFY_TIME` datetime DEFAULT NULL COMMENT '修改时间',
-  `SYSTEM_ID` varchar(32) NOT NULL COMMENT '测试系统ID',
-  `IS_SMOKE_TEST` varchar(2) DEFAULT NULL COMMENT '是否冒烟测试:0-否;1-是',
-  `USECASE_TYPE` varchar(2) DEFAULT NULL COMMENT '用例类型：功能测试、非功能测试',
-  `TEST_POINT` varchar(2) DEFAULT NULL COMMENT '测试要点：界面、功能、流程、规则......',
-  `USECASE_NATURE` varchar(2) DEFAULT NULL COMMENT '用例性质：正向用例、反向用例',
-  `PRORITY` varchar(2) DEFAULT NULL COMMENT '优先级',
-  `LATEST_EXE_STATUS` varchar(20) DEFAULT NULL COMMENT '测试集下最新执行状态',
-  `PRECONDITION` varchar(1000) DEFAULT NULL COMMENT '前置条件',
-  `TEST_DATA` varchar(2000) DEFAULT NULL COMMENT '测试数据',
-  `TEST_STEP` text COMMENT '测试步骤',
+  `SYSTEM_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '测试系统ID',
+  `IS_SMOKE_TEST` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '是否冒烟测试:0-否;1-是',
+  `USECASE_TYPE` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用例类型：功能测试、非功能测试',
+  `TEST_POINT` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '测试要点：界面、功能、流程、规则......',
+  `USECASE_NATURE` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用例性质：正向用例、反向用例',
+  `PRORITY` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '优先级',
+  `LATEST_EXE_STATUS` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '测试集下最新执行状态',
+  `PRECONDITION` varchar(1000) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '前置条件',
+  `TEST_DATA` varchar(2000) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '测试数据',
+  `TEST_STEP` text COLLATE utf8mb4_bin COMMENT '测试步骤',
   `EXPECTED_RESULT` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '预期结果',
   `WORK_PACKAGE_ID` int DEFAULT NULL COMMENT '所属工作包Id',
   PRIMARY KEY (`USECASE_ID`),
@@ -1065,16 +1067,16 @@ DROP TABLE IF EXISTS `tf_usecase_execution`;
 
 CREATE TABLE `tf_usecase_execution` (
   `USECASE_EXECUTION_ID` int NOT NULL AUTO_INCREMENT COMMENT '用例执行Id',
-  `DIRECTORY_ID` varchar(32) DEFAULT NULL COMMENT '用例所属目录Id',
-  `USECASE_ID` varchar(32) DEFAULT NULL COMMENT '用例Id',
+  `DIRECTORY_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用例所属目录Id',
+  `USECASE_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用例Id',
   `PLAN_EXECUTION_DATE` date DEFAULT NULL COMMENT '计划执行日期',
   `ACT_EXECUTION_TIME` datetime DEFAULT NULL COMMENT '实际执行时间',
-  `RUN_STATUS` varchar(8) DEFAULT NULL COMMENT '执行状态',
-  `PLAN_EXECUTOR_ID` varchar(32) DEFAULT NULL COMMENT '计划执行人Id',
-  `ACT_EXECUTOR_ID` varchar(32) DEFAULT NULL COMMENT '实际执行人Id',
-  `REMARK` varchar(500) DEFAULT NULL COMMENT '执行备注',
+  `RUN_STATUS` varchar(8) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '执行状态',
+  `PLAN_EXECUTOR_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '计划执行人Id',
+  `ACT_EXECUTOR_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '实际执行人Id',
+  `REMARK` varchar(500) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '执行备注',
   `LAST_EXECUTION_TIME` datetime DEFAULT NULL COMMENT '最后一次执行时间',
-  `EXECUTION_CREATOR_ID` varchar(32) DEFAULT NULL COMMENT '创建在执行库人员Id',
+  `EXECUTION_CREATOR_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '创建在执行库人员Id',
   `EXECUTION_CREATE_TIME` datetime DEFAULT NULL COMMENT '创建在执行库时间',
   PRIMARY KEY (`USECASE_EXECUTION_ID`),
   KEY `I_DIRECTORY_ID` (`DIRECTORY_ID`),
@@ -1091,14 +1093,14 @@ DROP TABLE IF EXISTS `tf_usecase_execution_history`;
 
 CREATE TABLE `tf_usecase_execution_history` (
   `USECASE_EXECUTION_HISTORY_ID` int NOT NULL AUTO_INCREMENT COMMENT '用例执行历史记录Id',
-  `DIRECTORY_ID` varchar(32) DEFAULT NULL COMMENT '用例所属目录Id',
-  `USECASE_ID` varchar(32) DEFAULT NULL COMMENT '用例Id',
+  `DIRECTORY_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用例所属目录Id',
+  `USECASE_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用例Id',
   `EXECUTION_TIME` datetime DEFAULT NULL COMMENT '实际执行时间',
-  `RUN_STATUS` varchar(8) DEFAULT NULL COMMENT '执行状态',
-  `EXECUTOR_ID` varchar(32) DEFAULT NULL COMMENT '计划人Id',
-  `REMARK` varchar(500) DEFAULT NULL COMMENT '执行备注',
-  `RUN_ATTACHMENT_ID` varchar(32) DEFAULT NULL COMMENT '执行附件Id',
-  `RUN_TYPE` varchar(4) DEFAULT NULL COMMENT '执行分类：功能、非功能、自动化',
+  `RUN_STATUS` varchar(8) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '执行状态',
+  `EXECUTOR_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '计划人Id',
+  `REMARK` varchar(500) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '执行备注',
+  `RUN_ATTACHMENT_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '执行附件Id',
+  `RUN_TYPE` varchar(4) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '执行分类：功能、非功能、自动化',
   PRIMARY KEY (`USECASE_EXECUTION_HISTORY_ID`),
   KEY `I_DIRECTORY_ID` (`DIRECTORY_ID`),
   KEY `I_USECASE_ID` (`USECASE_ID`),
@@ -1113,11 +1115,11 @@ CREATE TABLE `tf_usecase_execution_history` (
 DROP TABLE IF EXISTS `tf_usecase_history`;
 
 CREATE TABLE `tf_usecase_history` (
-  `USECASE_HISTORY_ID` varchar(32) NOT NULL,
-  `USECASE_ID` varchar(32) DEFAULT NULL COMMENT '用例Id',
+  `USECASE_HISTORY_ID` varchar(32) COLLATE utf8mb4_bin NOT NULL,
+  `USECASE_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用例Id',
   `OPERATING_TIME` datetime DEFAULT NULL COMMENT '操作时间',
-  `OPERATOR_ID` varchar(32) DEFAULT NULL COMMENT '操作人',
-  `MODIFIED_CONTENT` text COMMENT '修改内容',
+  `OPERATOR_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '操作人',
+  `MODIFIED_CONTENT` text COLLATE utf8mb4_bin COMMENT '修改内容',
   PRIMARY KEY (`USECASE_HISTORY_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -1129,8 +1131,8 @@ DROP TABLE IF EXISTS `tf_usecase_require`;
 
 CREATE TABLE `tf_usecase_require` (
   `USECASE_REQUIER_ID` int NOT NULL AUTO_INCREMENT,
-  `USECASE_ID` varchar(32) DEFAULT NULL,
-  `REQUIRE_POINT_ID` varchar(32) DEFAULT NULL,
+  `USECASE_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
+  `REQUIRE_POINT_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`USECASE_REQUIER_ID`),
   KEY `I_REQUIRE_POINT_ID` (`REQUIRE_POINT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
