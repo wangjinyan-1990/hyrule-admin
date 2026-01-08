@@ -42,5 +42,27 @@
         ORDER BY dr.DEPLOY_ID DESC
     </select>
 
+    <!-- 查询当天同一系统同一测试阶段的最后一条记录（按部署时间倒序） -->
+    <select id="selectLastDeployRecordBySystemAndStageAndDate" resultType="com.king.configuration.deploy.entity.TfDeployRecord">
+        SELECT
+            dr.DEPLOY_ID,
+            dr.TEST_STAGE,
+            dr.SYSTEM_ID,
+            dr.COMPONENT_INFO,
+            dr.VERSION_CODE,
+            dr.RECORD_NUM,
+            dr.CODE_LIST,
+            dr.IS_RUN_SQL,
+            dr.IS_UPDATE_CONFIG,
+            dr.DEPLOY_TIME,
+            dr.SEND_TEST_CODE
+        FROM tf_deploy_record dr
+        WHERE dr.SYSTEM_ID = #{systemId}
+          AND dr.TEST_STAGE = #{testStage}
+          AND DATE_FORMAT(dr.DEPLOY_TIME, '%Y%m%d') = #{dateStr}
+        ORDER BY dr.DEPLOY_TIME DESC
+        LIMIT 1
+    </select>
+
 </mapper>
 

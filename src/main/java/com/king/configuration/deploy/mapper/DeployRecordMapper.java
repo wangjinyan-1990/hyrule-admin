@@ -27,5 +27,16 @@ public interface DeployRecordMapper extends BaseMapper<TfDeployRecord> {
      * @return 分页结果
      */
     IPage<TfDeployRecord> selectDeployRecordListWithSystemName(Page<TfDeployRecord> page);
+    
+    /**
+     * 查询当天同一系统同一测试阶段的最后一条记录（按部署时间倒序）
+     * @param systemId 系统ID
+     * @param testStage 测试阶段
+     * @param dateStr 日期字符串（YYYYMMDD格式）
+     * @return 发版登记信息
+     */
+    TfDeployRecord selectLastDeployRecordBySystemAndStageAndDate(@Param("systemId") String systemId, 
+                                                                  @Param("testStage") String testStage,
+                                                                  @Param("dateStr") String dateStr);
 }
 
