@@ -101,6 +101,24 @@ public class TfDeployRecord {
     private String mergeState;
 
     /**
+     * GitLab仓库地址（用于前端传递，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String gitlabUrl;
+
+    /**
+     * 源分支（用于前端传递，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String sourceBranch;
+
+    /**
+     * 目标分支（用于前端传递，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String targetBranch;
+
+    /**
      * 无参构造函数
      */
     public TfDeployRecord() {
@@ -359,6 +377,54 @@ public class TfDeployRecord {
      */
     public void setMergeState(String mergeState) {
         this.mergeState = mergeState;
+    }
+
+    /**
+     * 获取GitLab仓库地址
+     * @return GitLab仓库地址
+     */
+    public String getGitlabUrl() {
+        return gitlabUrl;
+    }
+
+    /**
+     * 设置GitLab仓库地址
+     * @param gitlabUrl GitLab仓库地址
+     */
+    public void setGitlabUrl(String gitlabUrl) {
+        this.gitlabUrl = gitlabUrl;
+    }
+
+    /**
+     * 获取源分支
+     * @return 源分支
+     */
+    public String getSourceBranch() {
+        return sourceBranch;
+    }
+
+    /**
+     * 设置源分支
+     * @param sourceBranch 源分支
+     */
+    public void setSourceBranch(String sourceBranch) {
+        this.sourceBranch = sourceBranch;
+    }
+
+    /**
+     * 获取目标分支
+     * @return 目标分支
+     */
+    public String getTargetBranch() {
+        return targetBranch;
+    }
+
+    /**
+     * 设置目标分支
+     * @param targetBranch 目标分支
+     */
+    public void setTargetBranch(String targetBranch) {
+        this.targetBranch = targetBranch;
     }
 
 }

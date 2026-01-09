@@ -98,4 +98,25 @@
         ORDER BY sc.CONFIGURATION_ID DESC
     </select>
 
+    <!-- 根据系统简称查询系统配置信息 -->
+    <select id="selectSysConfigInfoBySysAbbreviation" parameterType="java.lang.String" resultType="com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration">
+        SELECT
+            sc.CONFIGURATION_ID,
+            sc.SYSTEM_ID,
+            sc.PRIVATE_TOKEN,
+            sc.CONFIGURATION_PEOPLEIDS,
+            sc.SYS_ABBREVIATION,
+            ts.SYSTEM_NAME,
+            (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
+             FROM t_sys_user u
+             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+               AND sc.CONFIGURATION_PEOPLEIDS != ''
+               AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
+            ) AS CONFIGURATION_PEOPLE_NAMES
+        FROM tf_system_configuration sc
+        LEFT JOIN t_test_system ts ON sc.SYSTEM_ID = ts.SYSTEM_ID
+        WHERE sc.SYS_ABBREVIATION = #{sysAbbreviation}
+        ORDER BY sc.CONFIGURATION_ID DESC
+    </select>
+
 </mapper>

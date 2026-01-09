@@ -314,6 +314,36 @@ public class SITDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
         String sysAbbreviation = sysConfig.getSysAbbreviation();
         Assert.isTrue(StringUtils.hasText(sysAbbreviation), "系统简称不能为空");
         
+        // 判断 mergeState，如果不等于 'merged'，则调用 GitLab /merge 接口进行合并
+        String mergeState = deployRecord.getMergeState();
+        String mergeRequest = deployRecord.getMergeRequest();
+        
+        if (StringUtils.hasText(mergeState) && !"merged".equals(mergeState) && StringUtils.hasText(mergeRequest)) {
+            logger.info("mergeState 不等于 'merged'，开始调用 GitLab /merge 接口进行合并: {}", mergeRequest);
+            
+            try {
+                // 解析 Merge Request URL
+                MergeRequestInfo mrInfo = parseMergeRequestUrl(mergeRequest);
+                if (mrInfo == null) {
+                    throw new RuntimeException("Merge Request URL格式不正确: " + mergeRequest);
+                }
+                
+                // 获取 privateToken
+                String privateToken = sysConfig.getPrivateToken();
+                if (!StringUtils.hasText(privateToken)) {
+                    throw new RuntimeException("系统配置中访问令牌为空，无法进行合并操作");
+                }
+                
+                // 调用 GitLab API 接受 Merge Request
+                acceptMergeRequest(mrInfo.getGitLabUrl(), mrInfo.getProjectPath(), mrInfo.getMrIid(), privateToken);
+                
+                logger.info("成功接受 Merge Request: {}", mergeRequest);
+            } catch (Exception e) {
+                logger.error("接受 Merge Request 失败: {}", e.getMessage(), e);
+                throw new RuntimeException("接受 Merge Request 失败: " + e.getMessage(), e);
+            }
+        }
+        
         // 获取当前日期（YYYYMMDD格式）
         String currentDate = DateUtil.getDateFormatYMD();
         
@@ -361,8 +391,53 @@ public class SITDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
         // 更新 recordNum 为最终计算的值
         deployRecord.setRecordNum(currentRecordNum);
         
-        // 保存发版登记信息
+        // 合并成功后，保存发版登记信息
         this.save(deployRecord);
+    }
+    
+    /**
+     * 接受 Merge Request（调用 GitLab API 的 /merge 接口）
+     */
+    private void acceptMergeRequest(String gitLabUrl, String projectPath, String mrIid, String token) {
+        try {
+            // GitLab API要求项目路径使用斜杠分隔，需要对每个部分进行URL编码
+            String[] pathParts = projectPath.split("/");
+            StringBuilder encodedPath = new StringBuilder();
+            for (int i = 0; i < pathParts.length; i++) {
+                if (i > 0) {
+                    encodedPath.append("%2F");
+                }
+                encodedPath.append(URLEncoder.encode(pathParts[i], StandardCharsets.UTF_8.toString())
+                        .replace("+", "%20"));
+            }
+            
+            // 构建API URL: PUT /projects/:id/merge_requests/:merge_request_iid/merge
+            String apiUrl = gitLabUrl + "/api/v4/projects/" + encodedPath.toString() + "/merge_requests/" + mrIid + "/merge";
+            
+            Request request = new Request.Builder()
+                    .url(apiUrl)
+                    .header("PRIVATE-TOKEN", token)
+                    .put(okhttp3.RequestBody.create("", okhttp3.MediaType.parse("application/json")))
+                    .build();
+            
+            try (Response response = httpClient.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    String errorBody = response.body() != null ? response.body().string() : "";
+                    logger.error("GitLab API接受Merge Request失败，HTTP状态码: {}, URL: {}, 响应: {}", 
+                            response.code(), apiUrl, errorBody);
+                    throw new RuntimeException("GitLab API接受Merge Request失败，HTTP状态码: " + response.code() + ", 响应: " + errorBody);
+                }
+                
+                String responseBody = response.body() != null ? response.body().string() : "";
+                logger.info("成功接受 Merge Request: {}, 响应: {}", apiUrl, responseBody);
+            }
+        } catch (RuntimeException e) {
+            // 如果是 RuntimeException，直接抛出
+            throw e;
+        } catch (Exception e) {
+            logger.error("调用GitLab API接受Merge Request失败: {}", e.getMessage(), e);
+            throw new RuntimeException("调用GitLab API接受Merge Request失败: " + e.getMessage(), e);
+        }
     }
 
     @Override

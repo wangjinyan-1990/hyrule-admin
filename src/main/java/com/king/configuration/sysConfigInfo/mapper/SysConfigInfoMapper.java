@@ -46,5 +46,12 @@ public interface SysConfigInfoMapper extends BaseMapper<TfSystemConfiguration> {
      * @return 系统配置信息列表
      */
     List<TfSystemConfiguration> selectAllSysConfigInfo();
+    
+    /**
+     * 根据系统简称查询系统配置信息
+     * @param sysAbbreviation 系统简称
+     * @return 系统配置信息列表
+     */
+    List<TfSystemConfiguration> selectSysConfigInfoBySysAbbreviation(@Param("sysAbbreviation") String sysAbbreviation);
 }
 

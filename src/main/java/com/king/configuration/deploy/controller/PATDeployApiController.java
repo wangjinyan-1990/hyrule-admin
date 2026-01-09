@@ -1,32 +1,32 @@
 package com.king.configuration.deploy.controller;
 
 import com.king.common.Result;
-import com.king.configuration.deploy.entity.TfDeployRecord;
-import com.king.configuration.deploy.service.IPATDeployService;
+import com.king.configuration.deploy.dto.PATDeployRecordDTO;
+import com.king.configuration.deploy.service.IPATDeployApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * PAT部署Controller
+ * PAT部署外部API Controller
  */
 @RestController
-@RequestMapping("/configuration/deploy/pat")
-public class PATDeployController {
+@RequestMapping("/api/deploy")
+public class PATDeployApiController {
     
     @Autowired
-    @Qualifier("patDeployServiceImpl")
-    private IPATDeployService patDeployService;
+    @Qualifier("patDeployApiServiceImpl")
+    private IPATDeployApiService patDeployApiService;
     
     /**
-     * 创建发版登记（PAT）
-     * @param deployRecord 发版登记信息
+     * 创建PAT发版登记（外部API接口）
+     * @param dto PAT发版登记DTO
      * @return 创建结果
      */
-    @PostMapping("/record")
-    public Result<?> createPATDeployRecord(@RequestBody TfDeployRecord deployRecord) {
+    @PostMapping("/patRecord")
+    public Result<?> createPATDeployRecordByApi(@RequestBody PATDeployRecordDTO dto) {
         try {
-            patDeployService.createPATDeployRecord(deployRecord);
+            patDeployApiService.createPATDeployRecordByApi(dto);
             return Result.success("PAT发版登记创建成功");
         } catch (IllegalArgumentException e) {
             return Result.error(0, e.getMessage());
@@ -34,5 +34,5 @@ public class PATDeployController {
             return Result.error("创建PAT发版登记失败: " + e.getMessage());
         }
     }
-    
 }
+
