@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.environment.environmentList.mapper.EnvironmentListMapper">
+
+    <!-- 环境结果映射 -->
+    <resultMap id="EnvironmentResultMap" type="com.king.environment.environmentList.entity.TfEnvironment">
+        <id column="ENV_ID" property="envId" />
+        <result column="ENV_NAME" property="envName" />
+        <result column="TEST_STAGE" property="testStage" />
+        <result column="REMARK" property="remark" />
+    </resultMap>
+
+    <!-- 环境清单结果映射（带关联信息） -->
+    <resultMap id="EnvironmentListResultMap" type="com.king.environment.environmentList.entity.TfEnvironmentList">
+        <id column="ENV_LIST_ID" property="envListId" />
+        <result column="ENV_ID" property="envId" />
+        <result column="SYSTEM_ID" property="systemId" />
+        <result column="SERVER_NAME" property="serverName" />
+        <result column="IP_ADDRESS" property="ipAddress" />
+        <result column="PORT_INFO" property="portInfo" />
+        <result column="LINK_ADDRESS" property="linkAddress" />
+        <result column="CONFIGURATION_PEOPLEIDS" property="configurationPeopleIds" />
+        <result column="REMARK" property="remark" />
+        <result column="ENV_NAME" property="envName" />
+        <result column="SYSTEM_NAME" property="systemName" />
+    </resultMap>
+
+    <!-- 查询环境列表 -->
+    <select id="selectEnvironmentList" resultMap="EnvironmentResultMap">
+        SELECT
+            ENV_ID,
+            ENV_NAME,
+            TEST_STAGE,
+            REMARK
+        FROM tf_environment
+        <where>
+            <if test="testStage != null and testStage != ''">
+                AND TEST_STAGE = #{testStage}
+            </if>
+        </where>
+        ORDER BY ENV_ID ASC
+    </select>
+
+    <!-- 查询环境清单列表（带关联信息） -->
+    <select id="selectEnvironmentListWithJoin" resultMap="EnvironmentListResultMap">
+        SELECT
+            el.ENV_LIST_ID,
+            el.ENV_ID,
+            el.SYSTEM_ID,
+            el.SERVER_NAME,
+            el.IP_ADDRESS,
+            el.PORT_INFO,
+            el.LINK_ADDRESS,
+            el.CONFIGURATION_PEOPLEIDS,
+            el.REMARK,
+            e.ENV_NAME,
+            ts.SYSTEM_NAME
+        FROM tf_environment_list el
+        LEFT JOIN tf_environment e ON el.ENV_ID = e.ENV_ID
+        LEFT JOIN t_test_system ts ON el.SYSTEM_ID = ts.SYSTEM_ID
+        <where>
+            <if test="envId != null">
+                AND el.ENV_ID = #{envId}
+            </if>
+            <if test="systemId != null and systemId != ''">
+                AND el.SYSTEM_ID = #{systemId}
+            </if>
+            <if test="serverName != null and serverName != ''">
+                AND el.SERVER_NAME LIKE CONCAT('%', #{serverName}, '%')
+            </if>
+        </where>
+        ORDER BY el.ENV_LIST_ID DESC
+    </select>
+
+    <!-- 根据ID查询环境清单详情（带关联信息） -->
+    <select id="selectEnvironmentListDetailById" resultMap="EnvironmentListResultMap">
+        SELECT
+            el.ENV_LIST_ID,
+            el.ENV_ID,
+            el.SYSTEM_ID,
+            el.SERVER_NAME,
+            el.IP_ADDRESS,
+            el.PORT_INFO,
+            el.LINK_ADDRESS,
+            el.CONFIGURATION_PEOPLEIDS,
+            el.REMARK,
+            e.ENV_NAME,
+            ts.SYSTEM_NAME
+        FROM tf_environment_list el
+        LEFT JOIN tf_environment e ON el.ENV_ID = e.ENV_ID
+        LEFT JOIN t_test_system ts ON el.SYSTEM_ID = ts.SYSTEM_ID
+        WHERE el.ENV_LIST_ID = #{envListId}
+    </select>
+
+    <!-- 根据系统ID、服务名称、主机地址查询环境清单（用于唯一性校验） -->
+    <select id="selectBySystemIdAndServerNameAndIpAddress" resultType="com.king.environment.environmentList.entity.TfEnvironmentList">
+        SELECT
+            ENV_LIST_ID,
+            ENV_ID,
+            SYSTEM_ID,
+            SERVER_NAME,
+            IP_ADDRESS,
+            PORT_INFO,
+            LINK_ADDRESS,
+            CONFIGURATION_PEOPLEIDS,
+            REMARK
+        FROM tf_environment_list
+        WHERE SYSTEM_ID = #{systemId}
+          AND SERVER_NAME = #{serverName}
+          AND IP_ADDRESS = #{ipAddress}
+        <if test="excludeEnvListId != null">
+            AND ENV_LIST_ID != #{excludeEnvListId}
+        </if>
+    </select>
+
+</mapper>

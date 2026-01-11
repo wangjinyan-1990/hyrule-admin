@@ -13,7 +13,7 @@
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
-             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL
                AND sc.CONFIGURATION_PEOPLEIDS != ''
                AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
             ) AS CONFIGURATION_PEOPLE_NAMES
@@ -33,7 +33,7 @@
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
-             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL
                AND sc.CONFIGURATION_PEOPLEIDS != ''
                AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
             ) AS CONFIGURATION_PEOPLE_NAMES
@@ -47,7 +47,7 @@
                 AND EXISTS (
                     SELECT 1
                     FROM t_sys_user u
-                    WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+                    WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL
                       AND sc.CONFIGURATION_PEOPLEIDS != ''
                       AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
                       AND u.USER_NAME LIKE CONCAT('%', #{configurationPeopleNames}, '%')
@@ -68,7 +68,7 @@
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
-             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL
                AND sc.CONFIGURATION_PEOPLEIDS != ''
                AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
             ) AS CONFIGURATION_PEOPLE_NAMES
@@ -89,7 +89,7 @@
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
-             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL
                AND sc.CONFIGURATION_PEOPLEIDS != ''
                AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
             ) AS CONFIGURATION_PEOPLE_NAMES
@@ -109,7 +109,7 @@
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
-             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL 
+             WHERE sc.CONFIGURATION_PEOPLEIDS IS NOT NULL
                AND sc.CONFIGURATION_PEOPLEIDS != ''
                AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
             ) AS CONFIGURATION_PEOPLE_NAMES

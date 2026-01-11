@@ -4,21 +4,21 @@ server:
 spring:
   datasource:
     username: root
-    password: DtpLove@520
-    url: jdbc:mysql://9.1.60.21:3306/hyrule?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    password: 1234
+    url: jdbc:mysql://localhost:3306/hyrule?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     host: 127.0.0.1
     port: 6379
-    password: abc123
+    password:
     database: 0
     timeout: 5000ms
     lettuce:
       pool:
         max-active: 8
+        max-wait: -1ms
         max-idle: 8
         min-idle: 0
-        max-wait: -1
 # JWT配置
 jwt:
   # JWT密钥，建议使用复杂字符串，至少32位
@@ -31,7 +31,7 @@ jwt:
 # 日志（使用 Log4j2 配置文件 log4j2-spring.xml）
 logging:
   file:
-    path: logs/hyrule-logs
+    path: E:/hyrule-logs
   level:
     root: info
     com.king: info
@@ -50,14 +50,14 @@ mybatis-plus:
 ocr:
   # 默认OCR引擎：aliyun（阿里云） / tesseract（本地）
   default:
-    engine: tesseract
+    engine: aliyun
 
   # Tesseract OCR配置（本地识别）
   tesseract:
     # Tesseract数据文件路径
     # Windows: 可以设置为项目根目录下的tessdata文件夹，如：tessdata
     # Linux: /usr/share/tessdata
-    datapath: /usr/share/tessdata
+    datapath: tessdata
     # 识别语言：chi_sim(简体中文) + eng(英文)
     # 其他语言：chi_tra(繁体中文)、jpn(日语)、kor(韩语)等
     language: chi_sim+eng
