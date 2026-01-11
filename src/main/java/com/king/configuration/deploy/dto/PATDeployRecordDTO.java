@@ -35,6 +35,11 @@ public class PATDeployRecordDTO {
      * 版本登记数量
      */
     private Integer recordNum;
+    
+    /**
+     * 代码清单
+     */
+    private String codeList;
 
     public String getSysAbbreviation() {
         return sysAbbreviation;
@@ -82,6 +87,14 @@ public class PATDeployRecordDTO {
 
     public void setRecordNum(Integer recordNum) {
         this.recordNum = recordNum;
+    }
+
+    public String getCodeList() {
+        return codeList;
+    }
+
+    public void setCodeList(String codeList) {
+        this.codeList = codeList;
     }
 }
 

@@ -7,16 +7,10 @@ import com.king.configuration.deploy.entity.TfDeployRecord;
  * PAT部署Service接口
  */
 public interface IPATDeployService {
-    
+
     /**
      * 创建发版登记（PAT）
      * @param deployRecord 发版登记信息
      */
     void createPATDeployRecord(TfDeployRecord deployRecord);
-    
-    /**
-     * 创建PAT发版登记（外部API接口）
-     * @param dto PAT发版登记DTO
-     */
-    void createPATDeployRecordByApi(PATDeployRecordDTO dto);
 }

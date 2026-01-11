@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.configuration.deploy.dto.MergeRequestInfo;
 import com.king.configuration.deploy.entity.TfDeployRecord;
 import com.king.configuration.deploy.mapper.DeployRecordMapper;
+import com.king.configuration.deploy.service.AcceptMergeRequestService;
 import com.king.configuration.deploy.service.ISITDeployService;
 import com.king.common.utils.DateUtil;
 import com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration;
@@ -41,6 +42,9 @@ public class SITDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
 
     @Resource
     private SysConfigInfoMapper sysConfigInfoMapper;
+
+    @Resource
+    private AcceptMergeRequestService acceptMergeRequestService;
 
     private final OkHttpClient httpClient;
 
@@ -80,7 +84,7 @@ public class SITDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
             }
 
             // 3. 调用GitLab API获取MR信息
-            JSONObject mrData = getMergeRequestFromGitLab(mrInfo.getGitLabUrl(), mrInfo.getProjectPath(),
+            JSONObject mrData = acceptMergeRequestService.getMergeRequestFromGitLab(mrInfo.getGitLabUrl(), mrInfo.getProjectPath(),
                     mrInfo.getMrIid(), privateToken);
 
             if (mrData == null) {
@@ -148,46 +152,6 @@ public class SITDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
         return null;
     }
 
-    /**
-     * 从GitLab获取Merge Request信息
-     */
-    private JSONObject getMergeRequestFromGitLab(String gitLabUrl, String projectPath, String mrIid, String token) {
-        try {
-            // GitLab API要求项目路径使用斜杠分隔，需要对每个部分进行URL编码
-            // 例如: group/project -> group%2Fproject
-            String[] pathParts = projectPath.split("/");
-            StringBuilder encodedPath = new StringBuilder();
-            for (int i = 0; i < pathParts.length; i++) {
-                if (i > 0) {
-                    encodedPath.append("%2F");
-                }
-                encodedPath.append(URLEncoder.encode(pathParts[i], StandardCharsets.UTF_8.toString())
-                        .replace("+", "%20"));
-            }
-
-            // 构建API URL
-            String apiUrl = gitLabUrl + "/api/v4/projects/" + encodedPath.toString() + "/merge_requests/" + mrIid;
-
-            Request request = new Request.Builder()
-                    .url(apiUrl)
-                    .header("PRIVATE-TOKEN", token)
-                    .get()
-                    .build();
-
-            try (Response response = httpClient.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
-                    logger.error("GitLab API调用失败，HTTP状态码: {}, URL: {}", response.code(), apiUrl);
-                    throw new RuntimeException("GitLab API调用失败，HTTP状态码: " + response.code());
-                }
-
-                String responseBody = response.body().string();
-                return JSON.parseObject(responseBody);
-            }
-        } catch (Exception e) {
-            logger.error("调用GitLab API获取Merge Request失败: {}", e.getMessage(), e);
-            throw new RuntimeException("调用GitLab API失败: " + e.getMessage(), e);
-        }
-    }
 
     /**
      * 获取代码清单（变更文件列表）
@@ -314,33 +278,52 @@ public class SITDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
         String sysAbbreviation = sysConfig.getSysAbbreviation();
         Assert.isTrue(StringUtils.hasText(sysAbbreviation), "系统简称不能为空");
         
-        // 判断 mergeState，如果不等于 'merged'，则调用 GitLab /merge 接口进行合并
+        // 判断是否需要合并：如果有mergeRequest且状态不是'merged'，则调用 GitLab /merge 接口进行合并
         String mergeState = deployRecord.getMergeState();
         String mergeRequest = deployRecord.getMergeRequest();
         
-        if (StringUtils.hasText(mergeState) && !"merged".equals(mergeState) && StringUtils.hasText(mergeRequest)) {
-            logger.info("mergeState 不等于 'merged'，开始调用 GitLab /merge 接口进行合并: {}", mergeRequest);
+        // 如果有mergeRequest，且状态不是'merged'，则进行合并
+        if (StringUtils.hasText(mergeRequest)) {
+            // 如果mergeState为null或不是'merged'，则需要合并
+            boolean needMerge = mergeState == null || !"merged".equals(mergeState);
             
-            try {
-                // 解析 Merge Request URL
-                MergeRequestInfo mrInfo = parseMergeRequestUrl(mergeRequest);
-                if (mrInfo == null) {
-                    throw new RuntimeException("Merge Request URL格式不正确: " + mergeRequest);
+            if (needMerge) {
+                logger.info("开始调用 GitLab /merge 接口进行合并，当前状态: {}, URL: {}", 
+                        mergeState != null ? mergeState : "null", mergeRequest);
+                
+                try {
+                    // 解析 Merge Request URL
+                    MergeRequestInfo mrInfo = parseMergeRequestUrl(mergeRequest);
+                    if (mrInfo == null) {
+                        throw new RuntimeException("Merge Request URL格式不正确: " + mergeRequest);
+                    }
+                    
+                    // 获取 privateToken
+                    String privateToken = sysConfig.getPrivateToken();
+                    if (!StringUtils.hasText(privateToken)) {
+                        throw new RuntimeException("系统配置中访问令牌为空，无法进行合并操作");
+                    }
+                    
+                    // 调用 GitLab API 接受 Merge Request
+                    String mergedState = acceptMergeRequestService.acceptMergeRequest(
+                            mrInfo.getGitLabUrl(), mrInfo.getProjectPath(), mrInfo.getMrIid(), privateToken);
+                    
+                    // 验证合并是否成功
+                    if (!"merged".equals(mergedState)) {
+                        logger.error("Merge Request合并失败，最终状态: {}, URL: {}", mergedState, mergeRequest);
+                        throw new RuntimeException("Merge Request合并失败，最终状态: " + mergedState);
+                    }
+                    
+                    // 更新deployRecord中的mergeState
+                    deployRecord.setMergeState("merged");
+                    
+                    logger.info("成功合并 Merge Request: {}, 状态: {}", mergeRequest, mergedState);
+                } catch (Exception e) {
+                    logger.error("接受 Merge Request 失败: {}", e.getMessage(), e);
+                    throw new RuntimeException("接受 Merge Request 失败: " + e.getMessage(), e);
                 }
-                
-                // 获取 privateToken
-                String privateToken = sysConfig.getPrivateToken();
-                if (!StringUtils.hasText(privateToken)) {
-                    throw new RuntimeException("系统配置中访问令牌为空，无法进行合并操作");
-                }
-                
-                // 调用 GitLab API 接受 Merge Request
-                acceptMergeRequest(mrInfo.getGitLabUrl(), mrInfo.getProjectPath(), mrInfo.getMrIid(), privateToken);
-                
-                logger.info("成功接受 Merge Request: {}", mergeRequest);
-            } catch (Exception e) {
-                logger.error("接受 Merge Request 失败: {}", e.getMessage(), e);
-                throw new RuntimeException("接受 Merge Request 失败: " + e.getMessage(), e);
+            } else {
+                logger.info("Merge Request状态已经是 'merged'，跳过合并操作: {}", mergeRequest);
             }
         }
         
@@ -395,50 +378,6 @@ public class SITDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
         this.save(deployRecord);
     }
     
-    /**
-     * 接受 Merge Request（调用 GitLab API 的 /merge 接口）
-     */
-    private void acceptMergeRequest(String gitLabUrl, String projectPath, String mrIid, String token) {
-        try {
-            // GitLab API要求项目路径使用斜杠分隔，需要对每个部分进行URL编码
-            String[] pathParts = projectPath.split("/");
-            StringBuilder encodedPath = new StringBuilder();
-            for (int i = 0; i < pathParts.length; i++) {
-                if (i > 0) {
-                    encodedPath.append("%2F");
-                }
-                encodedPath.append(URLEncoder.encode(pathParts[i], StandardCharsets.UTF_8.toString())
-                        .replace("+", "%20"));
-            }
-            
-            // 构建API URL: PUT /projects/:id/merge_requests/:merge_request_iid/merge
-            String apiUrl = gitLabUrl + "/api/v4/projects/" + encodedPath.toString() + "/merge_requests/" + mrIid + "/merge";
-            
-            Request request = new Request.Builder()
-                    .url(apiUrl)
-                    .header("PRIVATE-TOKEN", token)
-                    .put(okhttp3.RequestBody.create("", okhttp3.MediaType.parse("application/json")))
-                    .build();
-            
-            try (Response response = httpClient.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
-                    String errorBody = response.body() != null ? response.body().string() : "";
-                    logger.error("GitLab API接受Merge Request失败，HTTP状态码: {}, URL: {}, 响应: {}", 
-                            response.code(), apiUrl, errorBody);
-                    throw new RuntimeException("GitLab API接受Merge Request失败，HTTP状态码: " + response.code() + ", 响应: " + errorBody);
-                }
-                
-                String responseBody = response.body() != null ? response.body().string() : "";
-                logger.info("成功接受 Merge Request: {}, 响应: {}", apiUrl, responseBody);
-            }
-        } catch (RuntimeException e) {
-            // 如果是 RuntimeException，直接抛出
-            throw e;
-        } catch (Exception e) {
-            logger.error("调用GitLab API接受Merge Request失败: {}", e.getMessage(), e);
-            throw new RuntimeException("调用GitLab API接受Merge Request失败: " + e.getMessage(), e);
-        }
-    }
 
     @Override
     public void updateSITDeployRecord(TfDeployRecord deployRecord) {
