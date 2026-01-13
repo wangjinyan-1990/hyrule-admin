@@ -2,10 +2,10 @@ package com.king.configuration.deploy.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.common.utils.DateUtil;
-import com.king.configuration.deploy.dto.PATDeployRecordDTO;
+import com.king.configuration.deploy.dto.DeployRecordApiDTO;
 import com.king.configuration.deploy.entity.TfDeployRecord;
 import com.king.configuration.deploy.mapper.DeployRecordMapper;
-import com.king.configuration.deploy.service.IPATDeployApiService;
+import com.king.configuration.deploy.service.IDeployApiService;
 import com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration;
 import com.king.configuration.sysConfigInfo.mapper.SysConfigInfoMapper;
 import org.slf4j.Logger;
@@ -19,18 +19,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * PAT部署Service实现类
+ * 外部api部署登记Service实现类
  */
-@Service("patDeployApiServiceImpl")
-public class PATDeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfDeployRecord> implements IPATDeployApiService {
+@Service("deployApiServiceImpl")
+public class DeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfDeployRecord> implements IDeployApiService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PATDeployApiServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeployApiServiceImpl.class);
 
     @Resource
     private SysConfigInfoMapper sysConfigInfoMapper;
 
     @Override
-    public void createPATDeployRecordByApi(PATDeployRecordDTO dto) {
+    public void createDeployRecordByApi(DeployRecordApiDTO dto) {
         Assert.notNull(dto, "发版登记信息不能为空");
 
         // 校验必填字段
@@ -45,10 +45,11 @@ public class PATDeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfD
         String systemId = sysConfig.getSystemId();
         String sysAbbreviation = sysConfig.getSysAbbreviation();
         Assert.isTrue(StringUtils.hasText(sysAbbreviation), "系统简称不能为空");
-
+        String testStage = dto.getTestStage();
+        Assert.isTrue(StringUtils.hasText(dto.getTestStage()), "测试阶段不能为空");
         // 创建发版登记对象
         TfDeployRecord deployRecord = new TfDeployRecord();
-        deployRecord.setTestStage("PAT");  // testStage固定为PAT
+        deployRecord.setTestStage(testStage);
         deployRecord.setSystemId(systemId);
         deployRecord.setComponentInfo(dto.getComponentInfo());
         deployRecord.setSendTestCode(dto.getSendTestCode());
@@ -66,7 +67,7 @@ public class PATDeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfD
 
         // 查询当天同一系统同一测试阶段的最后一条记录（按部署时间倒序）
         TfDeployRecord lastRecord = this.baseMapper.selectLastDeployRecordBySystemAndStageAndDate(
-                systemId, "PAT", currentDate);
+                systemId, testStage, currentDate);
 
         // 获取本次发版登记的版本登记数量，如果为空则默认为1
         Integer currentRecordNum = deployRecord.getRecordNum();
@@ -110,8 +111,8 @@ public class PATDeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfD
 
         // 保存发版登记信息（gitlabUrl为"1"，componentInfo、sendTestCode正常登记）
         this.save(deployRecord);
-        logger.info("PAT发版登记创建成功（外部API）: versionCode={}, componentInfo={}, sendTestCode={}",
-                versionCode, deployRecord.getComponentInfo(), deployRecord.getSendTestCode());
+        logger.info("合并登记创建成功（外部API）: versionCode={}, componentInfo={}, testStage={}, sendTestCode={}",
+                versionCode, deployRecord.getComponentInfo(), deployRecord.getTestStage(), deployRecord.getSendTestCode());
     }
 
 }

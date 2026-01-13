@@ -57,12 +57,6 @@ public class TfEnvironmentList {
     private String linkAddress;
 
     /**
-     * 配置人员
-     */
-    @TableField("CONFIGURATION_PEOPLEIDS")
-    private String configurationPeopleIds;
-
-    /**
      * 备注
      */
     @TableField("REMARK")
@@ -81,6 +75,11 @@ public class TfEnvironmentList {
     private String systemName;
 
     /**
+     * 配置人员名称（用于前端显示，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String configurationPeopleNames;
+    /**
      * 无参构造函数
      */
     public TfEnvironmentList() {
@@ -95,12 +94,10 @@ public class TfEnvironmentList {
      * @param ipAddress 主机地址
      * @param portInfo 端口信息
      * @param linkAddress 链接地址
-     * @param configurationPeopleIds 配置人员
      * @param remark 备注
      */
     public TfEnvironmentList(Integer envListId, Integer envId, String systemId, String serverName,
-                              String ipAddress, String portInfo, String linkAddress,
-                              String configurationPeopleIds, String remark) {
+                              String ipAddress, String portInfo, String linkAddress, String remark) {
         this.envListId = envListId;
         this.envId = envId;
         this.systemId = systemId;
@@ -108,7 +105,6 @@ public class TfEnvironmentList {
         this.ipAddress = ipAddress;
         this.portInfo = portInfo;
         this.linkAddress = linkAddress;
-        this.configurationPeopleIds = configurationPeopleIds;
         this.remark = remark;
     }
 
@@ -226,22 +222,6 @@ public class TfEnvironmentList {
     }
 
     /**
-     * 获取配置人员
-     * @return 配置人员
-     */
-    public String getConfigurationPeopleIds() {
-        return configurationPeopleIds;
-    }
-
-    /**
-     * 设置配置人员
-     * @param configurationPeopleIds 配置人员
-     */
-    public void setConfigurationPeopleIds(String configurationPeopleIds) {
-        this.configurationPeopleIds = configurationPeopleIds;
-    }
-
-    /**
      * 获取备注
      * @return 备注
      */
@@ -287,5 +267,21 @@ public class TfEnvironmentList {
      */
     public void setSystemName(String systemName) {
         this.systemName = systemName;
+    }
+
+    /**
+     * 获取配置人员名称
+     * @return 配置人员名称
+     */
+    public String getConfigurationPeopleNames() {
+        return configurationPeopleNames;
+    }
+
+    /**
+     * 设置配置人员名称
+     * @param configurationPeopleNames 配置人员名称
+     */
+    public void setConfigurationPeopleNames(String configurationPeopleNames) {
+        this.configurationPeopleNames = configurationPeopleNames;
     }
 }

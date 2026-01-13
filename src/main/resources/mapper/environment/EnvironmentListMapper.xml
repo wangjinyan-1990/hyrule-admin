@@ -19,10 +19,10 @@
         <result column="IP_ADDRESS" property="ipAddress" />
         <result column="PORT_INFO" property="portInfo" />
         <result column="LINK_ADDRESS" property="linkAddress" />
-        <result column="CONFIGURATION_PEOPLEIDS" property="configurationPeopleIds" />
         <result column="REMARK" property="remark" />
         <result column="ENV_NAME" property="envName" />
         <result column="SYSTEM_NAME" property="systemName" />
+        <result column="CONFIGURATION_PEOPLE_NAMES" property="configurationPeopleNames" />
     </resultMap>
 
     <!-- 查询环境列表 -->
@@ -51,10 +51,16 @@
             el.IP_ADDRESS,
             el.PORT_INFO,
             el.LINK_ADDRESS,
-            el.CONFIGURATION_PEOPLEIDS,
             el.REMARK,
             e.ENV_NAME,
-            ts.SYSTEM_NAME
+            ts.SYSTEM_NAME,
+            (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
+             FROM tf_system_configuration sc
+             LEFT JOIN t_sys_user u ON sc.CONFIGURATION_PEOPLEIDS IS NOT NULL
+               AND sc.CONFIGURATION_PEOPLEIDS != ''
+               AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
+             WHERE sc.SYSTEM_ID = el.SYSTEM_ID
+            ) AS CONFIGURATION_PEOPLE_NAMES
         FROM tf_environment_list el
         LEFT JOIN tf_environment e ON el.ENV_ID = e.ENV_ID
         LEFT JOIN t_test_system ts ON el.SYSTEM_ID = ts.SYSTEM_ID
@@ -82,10 +88,16 @@
             el.IP_ADDRESS,
             el.PORT_INFO,
             el.LINK_ADDRESS,
-            el.CONFIGURATION_PEOPLEIDS,
             el.REMARK,
             e.ENV_NAME,
-            ts.SYSTEM_NAME
+            ts.SYSTEM_NAME,
+            (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
+             FROM tf_system_configuration sc
+             LEFT JOIN t_sys_user u ON sc.CONFIGURATION_PEOPLEIDS IS NOT NULL
+               AND sc.CONFIGURATION_PEOPLEIDS != ''
+               AND FIND_IN_SET(u.USER_ID, sc.CONFIGURATION_PEOPLEIDS) > 0
+             WHERE sc.SYSTEM_ID = el.SYSTEM_ID
+            ) AS CONFIGURATION_PEOPLE_NAMES
         FROM tf_environment_list el
         LEFT JOIN tf_environment e ON el.ENV_ID = e.ENV_ID
         LEFT JOIN t_test_system ts ON el.SYSTEM_ID = ts.SYSTEM_ID
@@ -102,7 +114,6 @@
             IP_ADDRESS,
             PORT_INFO,
             LINK_ADDRESS,
-            CONFIGURATION_PEOPLEIDS,
             REMARK
         FROM tf_environment_list
         WHERE SYSTEM_ID = #{systemId}

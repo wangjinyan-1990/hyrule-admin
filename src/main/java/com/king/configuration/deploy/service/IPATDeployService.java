@@ -1,6 +1,5 @@
 package com.king.configuration.deploy.service;
 
-import com.king.configuration.deploy.dto.PATDeployRecordDTO;
 import com.king.configuration.deploy.entity.TfDeployRecord;
 
 /**

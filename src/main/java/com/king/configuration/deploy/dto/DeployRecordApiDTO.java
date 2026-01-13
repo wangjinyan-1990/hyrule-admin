@@ -1,41 +1,48 @@
 package com.king.configuration.deploy.dto;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+
 /**
  * PAT发版登记DTO
  * 用于接收外部API参数
  */
-public class PATDeployRecordDTO {
-    
+public class DeployRecordApiDTO {
+
     /**
      * 系统简称
      */
     private String sysAbbreviation;
-    
+
+    /**
+     * 测试阶段:SIT、PAT
+     */
+    private String testStage;
+
     /**
      * 送测单编号
      */
     private String sendTestCode;
-    
+
     /**
      * 组件信息
      */
     private String componentInfo;
-    
+
     /**
      * 是否执行SQL
      */
     private Boolean isRunSql;
-    
+
     /**
      * 是否更新配置
      */
     private Boolean isUpdateConfig;
-    
+
     /**
      * 版本登记数量
      */
     private Integer recordNum;
-    
+
     /**
      * 代码清单
      */
@@ -47,6 +54,14 @@ public class PATDeployRecordDTO {
 
     public void setSysAbbreviation(String sysAbbreviation) {
         this.sysAbbreviation = sysAbbreviation;
+    }
+
+    public String getTestStage() {
+        return testStage;
+    }
+
+    public void setTestStage(String testStage) {
+        this.testStage = testStage;
     }
 
     public String getSendTestCode() {
