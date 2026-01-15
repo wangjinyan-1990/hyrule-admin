@@ -15,7 +15,7 @@
             dr.IS_RUN_SQL,
             dr.IS_UPDATE_CONFIG,
             dr.DEPLOY_TIME,
-            dr.SEND_TEST_CODE,
+            dr.SEND_TEST_INFO,
             ts.SYSTEM_NAME
         FROM tf_deploy_record dr
         LEFT JOIN t_test_system ts ON dr.SYSTEM_ID = ts.SYSTEM_ID
@@ -35,10 +35,18 @@
             dr.IS_RUN_SQL,
             dr.IS_UPDATE_CONFIG,
             dr.DEPLOY_TIME,
-            dr.SEND_TEST_CODE,
+            dr.SEND_TEST_INFO,
             ts.SYSTEM_NAME
         FROM tf_deploy_record dr
         LEFT JOIN t_test_system ts ON dr.SYSTEM_ID = ts.SYSTEM_ID
+        <where>
+            <if test="sendTestInfo != null and sendTestInfo != ''">
+                AND dr.SEND_TEST_INFO LIKE CONCAT('%', #{sendTestInfo}, '%')
+            </if>
+            <if test="systemName != null and systemName != ''">
+                AND ts.SYSTEM_NAME LIKE CONCAT('%', #{systemName}, '%')
+            </if>
+        </where>
         ORDER BY dr.DEPLOY_ID DESC
     </select>
 
@@ -55,7 +63,7 @@
             dr.IS_RUN_SQL,
             dr.IS_UPDATE_CONFIG,
             dr.DEPLOY_TIME,
-            dr.SEND_TEST_CODE
+            dr.SEND_TEST_INFO
         FROM tf_deploy_record dr
         WHERE dr.SYSTEM_ID = #{systemId}
           AND dr.TEST_STAGE = #{testStage}

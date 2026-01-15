@@ -30,7 +30,7 @@ public class DeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
     private SysConfigInfoMapper sysConfigInfoMapper;
 
     @Override
-    public void createDeployRecordByApi(DeployRecordApiDTO dto) {
+    public String createDeployRecordByApi(DeployRecordApiDTO dto) {
         Assert.notNull(dto, "发版登记信息不能为空");
 
         // 校验必填字段
@@ -47,12 +47,17 @@ public class DeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
         Assert.isTrue(StringUtils.hasText(sysAbbreviation), "系统简称不能为空");
         String testStage = dto.getTestStage();
         Assert.isTrue(StringUtils.hasText(dto.getTestStage()), "测试阶段不能为空");
+        
+        // 转换 testStage 为大写：sit -> SIT, pat -> PAT
+        if (testStage != null) {
+            testStage = testStage.toUpperCase();
+        }
         // 创建发版登记对象
         TfDeployRecord deployRecord = new TfDeployRecord();
         deployRecord.setTestStage(testStage);
         deployRecord.setSystemId(systemId);
         deployRecord.setComponentInfo(dto.getComponentInfo());
-        deployRecord.setSendTestCode(dto.getSendTestCode());
+        deployRecord.setSendTestInfo(dto.getSendTestInfo());
         // 将Boolean转换为数据库中的1/0：true -> 1, false -> 0
         // MyBatis Plus会自动将Boolean的true/false转换为数据库的1/0
         deployRecord.setIsRunSql(dto.getIsRunSql() != null ? dto.getIsRunSql() : false);
@@ -103,16 +108,19 @@ public class DeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
         }
 
         // 拼接版本号：系统简写-测试阶段-年月日-版本登记数量
-        // 格式：sysAbbreviation-PAT-YYYYMMDD-recordNum
-        String versionCode = String.format("%s-PAT-%s-%d", sysAbbreviation, currentDate, finalRecordNum);
+        // 格式：sysAbbreviation-TEST_STAGE-YYYYMMDD-recordNum
+        String versionCode = String.format("%s-%s-%s-%d", sysAbbreviation, testStage, currentDate, finalRecordNum);
         deployRecord.setVersionCode(versionCode);
         // 更新 recordNum 为最终计算的值
         deployRecord.setRecordNum(currentRecordNum);
 
-        // 保存发版登记信息（gitlabUrl为"1"，componentInfo、sendTestCode正常登记）
+        // 保存发版登记信息（gitlabUrl为"1"，componentInfo、sendTestInfo正常登记）
         this.save(deployRecord);
-        logger.info("合并登记创建成功（外部API）: versionCode={}, componentInfo={}, testStage={}, sendTestCode={}",
-                versionCode, deployRecord.getComponentInfo(), deployRecord.getTestStage(), deployRecord.getSendTestCode());
+        logger.info("合并登记创建成功（外部API）: versionCode={}, componentInfo={}, testStage={}, sendTestInfo={}",
+                versionCode, deployRecord.getComponentInfo(), deployRecord.getTestStage(), deployRecord.getSendTestInfo());
+        
+        // 返回生成的版本号
+        return versionCode;
     }
 
 }

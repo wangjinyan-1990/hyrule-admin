@@ -294,7 +294,7 @@ insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`
 (6,'Layout','/tools','/tools/toolset','tools','实用工具','tools',NULL,'0',0),
 (7,'/tools/toolset','toolset',NULL,'toolset','工具集','toolset',6,'1',0),
 (8,'/tools/notebook','notebook',NULL,'notebook','记事本','notebook',6,'1',0),
-(9,'Layout','/configuration',NULL,'configuration','配置管理','nested',NULL,'0',0),
+(9,'Layout','/configuration',NULL,'configuration','配置管理','configuration',NULL,'0',0),
 (10,'/configuration/deploy/deployRecord','deploy',NULL,'deploy','发版登记','deploy',9,'0',0),
 (11,'/configuration/sysConfigInfo/index','sysConfigInfo',NULL,'sysConfigInfo','系统配置信息','sysConfigInfo',9,'1',0),
 (12,'/configuration/deploy/deployRecord','deployRecord',NULL,'deployRecord','发版记录','deployRecord',10,'1',0),
@@ -899,15 +899,15 @@ DROP TABLE IF EXISTS `tf_deploy_record`;
 CREATE TABLE `tf_deploy_record` (
   `DEPLOY_ID` int NOT NULL AUTO_INCREMENT COMMENT '部署Id',
   `TEST_STAGE` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '测试阶段:SIT、PAT',
-  `SYSTEM_ID` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '系统ID',
-  `COMPONENT_INFO` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '组件信息',
+  `SYSTEM_ID` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '系统ID',
+  `COMPONENT_INFO` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '组件信息',
   `VERSION_CODE` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '版本号',
   `RECORD_NUM` int NOT NULL COMMENT '版本登记数量',
   `CODE_LIST` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '代码清单',
   `IS_RUN_SQL` tinyint(1) NOT NULL COMMENT '是否执行sql',
   `IS_UPDATE_CONFIG` tinyint(1) NOT NULL COMMENT '是否更新配置',
   `DEPLOY_TIME` datetime(6) NOT NULL COMMENT '部署时间点',
-  `SEND_TEST_CODE` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '送测单编号',
+  `SEND_TEST_INFO` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '送测单信息',
   PRIMARY KEY (`DEPLOY_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 

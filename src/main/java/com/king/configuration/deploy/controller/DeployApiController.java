@@ -21,13 +21,13 @@ public class DeployApiController {
     /**
      * 创建发版登记（外部API接口）
      * @param dto 发版登记DTO
-     * @return 创建结果
+     * @return 创建结果，包含生成的版本号（versionCode）
      */
     @PostMapping("/record")
-    public Result<?> createPATDeployRecordByApi(@RequestBody DeployRecordApiDTO dto) {
+    public Result<String> createPATDeployRecordByApi(@RequestBody DeployRecordApiDTO dto) {
         try {
-            deployApiService.createDeployRecordByApi(dto);
-            return Result.success("发版登记创建成功");
+            String versionCode = deployApiService.createDeployRecordByApi(dto);
+            return Result.success(versionCode, "发版登记创建成功");
         } catch (IllegalArgumentException e) {
             return Result.error(0, e.getMessage());
         } catch (Exception e) {

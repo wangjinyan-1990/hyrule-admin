@@ -14,9 +14,11 @@ public interface IDeployRecordService extends IService<TfDeployRecord> {
      * 分页查询发版登记列表
      * @param pageNo 页码
      * @param pageSize 每页大小
+     * @param sendTestInfo 送测单信息（可选，模糊查询）
+     * @param systemName 系统名称（可选，模糊查询）
      * @return 分页结果
      */
-    Map<String, Object> getDeployRecordList(Integer pageNo, Integer pageSize);
+    Map<String, Object> getDeployRecordList(Integer pageNo, Integer pageSize, String sendTestInfo, String systemName);
     
     /**
      * 根据部署ID获取发版登记详情

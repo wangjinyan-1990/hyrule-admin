@@ -59,10 +59,10 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
         Assert.isTrue(StringUtils.hasText(sysAbbreviation), "系统简称不能为空");
 
         // 先判断 gitlabUrl 是否为 "1"，如果是则跳过合并操作
-        // 注意：即使 gitlabUrl 为 "1"，componentInfo、sendTestCode 等其他字段仍会正常登记保存
+        // 注意：即使 gitlabUrl 为 "1"，componentInfo、sendTestInfo 等其他字段仍会正常登记保存
         String gitlabUrl = deployRecord.getGitlabUrl();
         if (!StringUtils.hasText(gitlabUrl) || "1".equals(gitlabUrl)) {
-            logger.info("gitlabUrl 为 '1' 或为空，跳过代码合并，但其他字段（componentInfo、sendTestCode等）仍会正常登记");
+            logger.info("gitlabUrl 为 '1' 或为空，跳过代码合并，但其他字段（componentInfo、sendTestInfo等）仍会正常登记");
         } else {
             logger.info("开始处理代码合并，gitlabUrl: {}", gitlabUrl);
             // gitlabUrl 不为 "1"，需要获取分支信息进行合并操作

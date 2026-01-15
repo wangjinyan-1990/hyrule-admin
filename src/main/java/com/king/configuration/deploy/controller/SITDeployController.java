@@ -24,7 +24,7 @@ public class SITDeployController {
      * 解析Merge Request，获取代码清单和标题
      * @param mergeRequest Merge Request URL
      * @param systemId 系统ID
-     * @return 包含codeList和sendTestCode的结果
+     * @return 包含codeList和sendTestInfo的结果
      */
     @PostMapping("/parseMR")
     public Result<Map<String, String>> parseMergeRequest(@RequestBody Map<String, String> params) {

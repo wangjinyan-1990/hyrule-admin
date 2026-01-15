@@ -24,9 +24,13 @@ public interface DeployRecordMapper extends BaseMapper<TfDeployRecord> {
     /**
      * 分页查询发版登记列表（带系统名称）
      * @param page 分页对象
+     * @param sendTestInfo 送测单信息（可选，模糊查询）
+     * @param systemName 系统名称（可选，模糊查询）
      * @return 分页结果
      */
-    IPage<TfDeployRecord> selectDeployRecordListWithSystemName(Page<TfDeployRecord> page);
+    IPage<TfDeployRecord> selectDeployRecordListWithSystemName(Page<TfDeployRecord> page,
+                                                               @Param("sendTestInfo") String sendTestInfo,
+                                                               @Param("systemName") String systemName);
     
     /**
      * 查询当天同一系统同一测试阶段的最后一条记录（按部署时间倒序）

@@ -77,10 +77,10 @@ public class TfDeployRecord {
     private LocalDateTime deployTime;
 
     /**
-     * 送测单编号
+     * 送测单信息
      */
-    @TableField("SEND_TEST_CODE")
-    private String sendTestCode;
+    @TableField("SEND_TEST_INFO")
+    private String sendTestInfo;
 
     /**
      * 系统名称（用于前端显示，不在数据库表中）
@@ -136,11 +136,11 @@ public class TfDeployRecord {
      * @param isRunSql 是否执行sql
      * @param isUpdateConfig 是否更新配置
      * @param deployTime 部署时间点
-     * @param sendTestCode 送测单编号
+     * @param sendTestInfo 送测单信息
      */
     public TfDeployRecord(Integer deployId, String testStage, String systemId, String componentInfo,
                           String versionCode, Integer recordNum, String codeList, Boolean isRunSql,
-                          Boolean isUpdateConfig, LocalDateTime deployTime, String sendTestCode) {
+                          Boolean isUpdateConfig, LocalDateTime deployTime, String sendTestInfo) {
         this.deployId = deployId;
         this.testStage = testStage;
         this.systemId = systemId;
@@ -151,7 +151,7 @@ public class TfDeployRecord {
         this.isRunSql = isRunSql;
         this.isUpdateConfig = isUpdateConfig;
         this.deployTime = deployTime;
-        this.sendTestCode = sendTestCode;
+        this.sendTestInfo = sendTestInfo;
     }
 
     // Getter和Setter方法
@@ -316,19 +316,19 @@ public class TfDeployRecord {
     }
 
     /**
-     * 获取送测单编号
-     * @return 送测单编号
+     * 获取送测单信息
+     * @return 送测单信息
      */
-    public String getSendTestCode() {
-        return sendTestCode;
+    public String getSendTestInfo() {
+        return sendTestInfo;
     }
 
     /**
-     * 设置送测单编号
-     * @param sendTestCode 送测单编号
+     * 设置送测单信息
+     * @param sendTestInfo 送测单信息
      */
-    public void setSendTestCode(String sendTestCode) {
-        this.sendTestCode = sendTestCode;
+    public void setSendTestInfo(String sendTestInfo) {
+        this.sendTestInfo = sendTestInfo;
     }
 
     /**

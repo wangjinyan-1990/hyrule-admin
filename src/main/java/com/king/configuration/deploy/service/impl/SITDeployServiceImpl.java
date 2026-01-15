@@ -93,7 +93,7 @@ public class SITDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
 
             // 4. 提取标题
             String title = mrData.getString("title");
-            result.put("sendTestCode", title != null ? title : "");
+            result.put("sendTestInfo", title != null ? title : "");
 
             // 5. 提取合并状态
             String state = mrData.getString("state");

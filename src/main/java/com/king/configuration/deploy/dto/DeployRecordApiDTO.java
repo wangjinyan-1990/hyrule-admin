@@ -19,9 +19,9 @@ public class DeployRecordApiDTO {
     private String testStage;
 
     /**
-     * 送测单编号
+     * 送测单信息
      */
-    private String sendTestCode;
+    private String sendTestInfo;
 
     /**
      * 组件信息
@@ -64,12 +64,12 @@ public class DeployRecordApiDTO {
         this.testStage = testStage;
     }
 
-    public String getSendTestCode() {
-        return sendTestCode;
+    public String getSendTestInfo() {
+        return sendTestInfo;
     }
 
-    public void setSendTestCode(String sendTestCode) {
-        this.sendTestCode = sendTestCode;
+    public void setSendTestInfo(String sendTestInfo) {
+        this.sendTestInfo = sendTestInfo;
     }
 
     public String getComponentInfo() {

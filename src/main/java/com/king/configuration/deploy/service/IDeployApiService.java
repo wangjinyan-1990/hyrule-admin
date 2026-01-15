@@ -10,6 +10,7 @@ public interface IDeployApiService {
     /**
      * 创建发版登记（外部API接口）
      * @param dto 发版登记DTO
+     * @return 生成的版本号（versionCode）
      */
-    void createDeployRecordByApi(DeployRecordApiDTO dto);
+    String createDeployRecordByApi(DeployRecordApiDTO dto);
 }
