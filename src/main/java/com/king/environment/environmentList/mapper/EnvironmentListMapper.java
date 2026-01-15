@@ -26,13 +26,15 @@ public interface EnvironmentListMapper extends BaseMapper<TfEnvironmentList> {
     /**
      * 查询环境清单列表（带关联信息）
      * @param envId 环境Id（可选）
-     * @param systemId 系统ID（可选）
+     * @param systemName 系统名称（可选，模糊查询）
      * @param serverName 服务名称（可选，模糊查询）
+     * @param ipAddress 主机地址（可选，模糊查询）
      * @return 环境清单列表
      */
     List<TfEnvironmentList> selectEnvironmentListWithJoin(@Param("envId") Integer envId,
-                                                           @Param("systemId") String systemId,
-                                                           @Param("serverName") String serverName);
+                                                           @Param("systemName") String systemName,
+                                                           @Param("serverName") String serverName,
+                                                           @Param("ipAddress") String ipAddress);
 
     /**
      * 根据ID查询环境清单详情（带关联信息）
@@ -53,5 +55,14 @@ public interface EnvironmentListMapper extends BaseMapper<TfEnvironmentList> {
                                                                        @Param("serverName") String serverName,
                                                                        @Param("ipAddress") String ipAddress,
                                                                        @Param("excludeEnvListId") Integer excludeEnvListId);
+
+    /**
+     * 根据系统ID和主机地址查询环境清单（用于导入时的覆盖更新判断）
+     * @param systemId 系统ID
+     * @param ipAddress 主机地址
+     * @return 环境清单列表
+     */
+    List<TfEnvironmentList> selectBySystemIdAndIpAddress(@Param("systemId") String systemId,
+                                                          @Param("ipAddress") String ipAddress);
 }
 

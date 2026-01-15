@@ -1,5 +1,6 @@
 package com.king.test.baseManage.testSystem.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -154,20 +155,37 @@ public class TestSystemServiceImpl extends ServiceImpl<TestSystemMapper, TTestSy
      */
     private void saveSystemUserRelations(TTestSystem testSystem) {
         List<String> userIds = new ArrayList<>();
-        
+
         // 添加测试经理
         if (StringUtils.hasText(testSystem.getSystemTestManagerId())) {
             userIds.add(testSystem.getSystemTestManagerId());
         }
-        
+
         // 添加开发经理
         if (StringUtils.hasText(testSystem.getSystemDevManagerId())) {
             userIds.add(testSystem.getSystemDevManagerId());
         }
-        
+
         // 如果有用户ID，则保存用户关系
         if (!userIds.isEmpty()) {
             testSystemUserService.saveOrUpdateSystemUsers(testSystem.getSystemId(), userIds);
         }
+    }
+
+    /**
+     * 根据系统名称获取系统ID
+     * @param systemName 系统名称
+     * @return 系统ID，如果不存在则返回null
+     */
+    @Override
+    public String getSystemIdByName(String systemName) {
+        if (!StringUtils.hasText(systemName)) {
+            return null;
+        }
+        LambdaQueryWrapper<TTestSystem> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TTestSystem::getSystemName, systemName);
+        wrapper.eq(TTestSystem::getIsUse, "1");
+        TTestSystem system = this.getOne(wrapper);
+        return system != null ? system.getSystemId() : null;
     }
 }

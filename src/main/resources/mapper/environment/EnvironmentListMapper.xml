@@ -68,11 +68,14 @@
             <if test="envId != null">
                 AND el.ENV_ID = #{envId}
             </if>
-            <if test="systemId != null and systemId != ''">
-                AND el.SYSTEM_ID = #{systemId}
+            <if test="systemName != null and systemName != ''">
+                AND ts.SYSTEM_NAME LIKE CONCAT('%', #{systemName}, '%')
             </if>
             <if test="serverName != null and serverName != ''">
                 AND el.SERVER_NAME LIKE CONCAT('%', #{serverName}, '%')
+            </if>
+            <if test="ipAddress != null and ipAddress != ''">
+                AND el.IP_ADDRESS LIKE CONCAT('%', #{ipAddress}, '%')
             </if>
         </where>
         ORDER BY el.ENV_LIST_ID DESC
@@ -122,6 +125,23 @@
         <if test="excludeEnvListId != null">
             AND ENV_LIST_ID != #{excludeEnvListId}
         </if>
+    </select>
+
+    <!-- 根据系统ID和主机地址查询环境清单（用于导入时的覆盖更新判断） -->
+    <select id="selectBySystemIdAndIpAddress" resultType="com.king.environment.environmentList.entity.TfEnvironmentList">
+        SELECT
+            ENV_LIST_ID,
+            ENV_ID,
+            SYSTEM_ID,
+            SERVER_NAME,
+            IP_ADDRESS,
+            PORT_INFO,
+            LINK_ADDRESS,
+            REMARK
+        FROM tf_environment_list
+        WHERE SYSTEM_ID = #{systemId}
+          AND IP_ADDRESS = #{ipAddress}
+        LIMIT 1
     </select>
 
 </mapper>

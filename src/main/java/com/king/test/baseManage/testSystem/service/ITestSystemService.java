@@ -65,4 +65,11 @@ public interface ITestSystemService extends IService<TTestSystem> {
      * @return 是否删除成功
      */
     boolean batchDeleteTestSystem(List<String> systemIds);
+
+    /**
+     * 根据系统名称获取系统ID
+     * @param systemName 系统名称
+     * @return 系统ID，如果不存在则返回null
+     */
+    String getSystemIdByName(String systemName);
 }
