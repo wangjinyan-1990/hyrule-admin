@@ -35,7 +35,7 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
     private SysConfigInfoMapper sysConfigInfoMapper;
 
     @Resource
-    private CreateMergeRequestService gitLabMergeService;
+    private CreateMergeRequestService createMergeRequestService;
 
     @Resource
     GitLabUrlParseService gitLabUrlParseService;
@@ -70,7 +70,7 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
             String targetBranch = deployRecord.getTargetBranch();
             String codeList = deployRecord.getCodeList();
 
-            logger.info("合并参数 - sourceBranch: {}, targetBranch: {}, codeList长度: {}", 
+            logger.info("合并参数 - sourceBranch: {}, targetBranch: {}, codeList长度: {}",
                     sourceBranch, targetBranch, codeList != null ? codeList.length() : 0);
 
             // 校验 GitLab URL 格式：http://开头，.git结尾
@@ -131,21 +131,22 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
                 mergeDTO.setSourceBranch(sourceBranch);
                 mergeDTO.setTargetBranch(targetBranch);
                 mergeDTO.setFilePaths(files);
-                
-                logger.info("准备调用createMergeRequest，参数: gitlabUrl={}, projectId={}, sourceBranch={}, targetBranch={}, files数量={}", 
+
+                logger.info("准备调用createMergeRequest，参数: gitlabUrl={}, projectId={}, sourceBranch={}, targetBranch={}, files数量={}",
                         gitlabUrl, projectId, sourceBranch, targetBranch, files.size());
-                
+
                 //调用创建合并请求的方法，创建合并请求mergeRequest
-                MergeRequest mergeRequest = gitLabMergeService.createMergeRequest(mergeDTO);
-                
+                MergeRequest mergeRequest = createMergeRequestService.createMergeRequest(mergeDTO);
+
                 if (mergeRequest != null) {
-                    logger.info("成功创建合并请求: MR ID={}, URL={}", 
+                    logger.info("成功创建合并请求: MR ID={}, URL={}",
                             mergeRequest.getIid(), mergeRequest.getWebUrl());
                 } else {
                     logger.warn("createMergeRequest返回null");
                 }
-                
-                logger.info("成功完成代码合并");
+
+                logger.info("等待合并");
+
             } catch (Exception e) {
                 logger.error("代码合并失败: {}", e.getMessage(), e);
                 throw new RuntimeException("代码合并失败: " + e.getMessage(), e);
