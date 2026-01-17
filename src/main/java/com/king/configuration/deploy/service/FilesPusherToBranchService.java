@@ -12,6 +12,7 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import java.io.File;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -24,6 +25,8 @@ import org.eclipse.jgit.util.io.DisabledOutputStream;
 public class FilesPusherToBranchService {
 
     private static final Logger logger = LoggerFactory.getLogger(FilesPusherToBranchService.class);
+
+    private static final String PARENT_DIR = "/home/hyrule/tmp";   // 固定父路径
 
     /**
      * 使用JGit推送文件到分支
@@ -108,9 +111,9 @@ public class FilesPusherToBranchService {
             // 构建成功结果信息：新增X个,删除Y个,修改Z个
             String successMsg = String.format("新增%d个,删除%d个,修改%d个", addedFiles, deletedFiles, modifiedFiles);
 
-            logger.info("JGit推送文件到分支成功: 源分支={}, 目标分支={}, 文件数={}, 差异统计={}", 
+            logger.info("JGit推送文件到分支成功: 源分支={}, 目标分支={}, 文件数={}, 差异统计={}",
                     sourceBranch, targetBranch, filePaths.size(), successMsg);
-            
+
             return Result.success(successMsg, "文件推送成功");
 
         } catch (Exception e) {
@@ -127,12 +130,13 @@ public class FilesPusherToBranchService {
         }
     }
 
-    /* 生成线程唯一目录名：/tmpBranch_20260117230345123_t-42_857 */
+    /* 生成线程唯一子目录：/home/hyrule/tmp/tmpBranch_20260117230345123_857 */
     private static String genTempCloneDir() {
-        String ts = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").format(LocalDateTime.now());
-        long threadId = Thread.currentThread().getId();
-        int random = ThreadLocalRandom.current().nextInt(100, 1000);
-        return String.format("/tmpBranch_%s_t-%d_%d", ts, threadId, random);
+        String ts   = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")
+                .format(LocalDateTime.now());
+        int random  = ThreadLocalRandom.current().nextInt(100, 1000);
+        String dir  = "tmpBranch_" + ts + "_" + random;   // 子目录名
+        return Paths.get(PARENT_DIR, dir).toString();     // 拼成完整路径
     }
 
     /* 统计两个提交之间的新增/删除/修改文件数 */
