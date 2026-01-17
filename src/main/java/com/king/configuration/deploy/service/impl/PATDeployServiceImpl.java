@@ -83,6 +83,7 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
             // gitlabUrl 不为 "1"，需要获取分支信息进行合并操作
             String sourceBranch = deployRecord.getSourceBranch();
             String targetBranch = deployRecord.getTargetBranch();
+            String sendTestInfo = deployRecord.getSendTestInfo();
             String codeList = deployRecord.getCodeList();
 
             logger.info("合并参数 - sourceBranch: {}, targetBranch: {}, codeList长度: {}",
@@ -117,10 +118,10 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
                 List<String> files = parseCodeList(codeList);
 
                 // 方式1：调用JGit 把目标分支拉下来 → 把源分支里指定文件覆盖进来 → 提交并直接推回目标分支
-                pushFilesToBranch(gitlabUrl, privateToken, sourceBranch, targetBranch, files);
+                pushFilesToBranch(gitlabUrl, privateToken, sourceBranch, targetBranch, sendTestInfo, files);
 
                 // 方式2：调用 gitlab4j-api 创建合并请求的方法，创建合并请求mergeRequest
-                // createAndAcceptMergeRequest(gitlabUrl, privateToken, sourceBranch, targetBranch, files);
+                // createAndAcceptMergeRequest(gitlabUrl, privateToken, sourceBranch, targetBranch, sendTestInfo, files);
             } catch (Exception e) {
                 logger.error("代码合并失败: {}", e.getMessage(), e);
                 throw new RuntimeException("代码合并失败: " + e.getMessage(), e);
@@ -180,12 +181,12 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
      * @param files 要推送的文件列表
      */
     public void pushFilesToBranch(String gitlabUrl, String privateToken, String sourceBranch,
-                                  String targetBranch, List<String> files) {
+                                  String targetBranch, String sendTestInfo, List<String> files) {
         logger.info("开始使用JGit推送文件到分支: gitlabUrl={}, sourceBranch={}, targetBranch={}, files数量={}",
                 gitlabUrl, sourceBranch, targetBranch, files != null ? files.size() : 0);
 
         try {
-            FilesPusherToBranchService.pushFiles(gitlabUrl, privateToken, sourceBranch, targetBranch, files);
+            FilesPusherToBranchService.pushFiles(gitlabUrl, privateToken, sourceBranch, targetBranch, sendTestInfo, files);
             logger.info("JGit推送文件到分支成功");
         } catch (Exception e) {
             logger.error("JGit推送文件到分支失败: {}", e.getMessage(), e);
@@ -206,7 +207,7 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
      */
     public MergeRequest createAndAcceptMergeRequest(String gitlabUrl, String privateToken,
                                                     String sourceBranch, String targetBranch,
-                                                    List<String> files) {
+                                                    String sendTestInfo, List<String> files) {
         logger.info("开始创建并接受合并请求: gitlabUrl={}, sourceBranch={}, targetBranch={}, files数量={}",
                 gitlabUrl, sourceBranch, targetBranch, files != null ? files.size() : 0);
 
@@ -223,6 +224,7 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
             mergeDTO.setPrivateToken(privateToken);
             mergeDTO.setSourceBranch(sourceBranch);
             mergeDTO.setTargetBranch(targetBranch);
+            mergeDTO.setTitle(sendTestInfo);
             mergeDTO.setFilePaths(files);
 
             // 调用 gitlab4j-api 创建合并请求的方法，创建合并请求mergeRequest

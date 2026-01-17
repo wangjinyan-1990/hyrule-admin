@@ -32,6 +32,7 @@ public class FilesPusherToBranchService {
                                  String privateToken,
                                  String sourceBranch,
                                  String targetBranch,
+                                 String sendTestInfo,
                                  List<String> filePaths) throws Exception {
 
         String tempDir = genTempCloneDir();
@@ -68,7 +69,7 @@ public class FilesPusherToBranchService {
             /* 4. 提交 */
             git.add().addFilepattern(".").call();
             git.commit()
-                    .setMessage("chore: sync " + filePaths + " from " + sourceBranch)
+                    .setMessage(sendTestInfo + ": " + filePaths + " from " + sourceBranch)
                     .setAllowEmpty(false)
                     .call();
 
