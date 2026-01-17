@@ -1,11 +1,11 @@
 package com.king.configuration.deploy.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.king.common.utils.DateUtil;
 import com.king.configuration.deploy.dto.DeployRecordApiDTO;
 import com.king.configuration.deploy.entity.TfDeployRecord;
 import com.king.configuration.deploy.mapper.DeployRecordMapper;
 import com.king.configuration.deploy.service.IDeployApiService;
+import com.king.configuration.deploy.service.SaveDeployRecordService;
 import com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration;
 import com.king.configuration.sysConfigInfo.mapper.SysConfigInfoMapper;
 import org.slf4j.Logger;
@@ -15,7 +15,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -28,6 +27,9 @@ public class DeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
 
     @Resource
     private SysConfigInfoMapper sysConfigInfoMapper;
+
+    @Resource
+    private SaveDeployRecordService saveDeployRecordService;
 
     @Override
     public String createDeployRecordByApi(DeployRecordApiDTO dto) {
@@ -43,8 +45,6 @@ public class DeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
 
         TfSystemConfiguration sysConfig = sysConfigList.get(0);
         String systemId = sysConfig.getSystemId();
-        String sysAbbreviation = sysConfig.getSysAbbreviation();
-        Assert.isTrue(StringUtils.hasText(sysAbbreviation), "系统简称不能为空");
         String testStage = dto.getTestStage();
         Assert.isTrue(StringUtils.hasText(dto.getTestStage()), "测试阶段不能为空");
         
@@ -52,72 +52,21 @@ public class DeployApiServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
         if (testStage != null) {
             testStage = testStage.toUpperCase();
         }
-        // 创建发版登记对象
-        TfDeployRecord deployRecord = new TfDeployRecord();
-        deployRecord.setTestStage(testStage);
-        deployRecord.setSystemId(systemId);
-        deployRecord.setComponentInfo(dto.getComponentInfo());
-        deployRecord.setSendTestInfo(dto.getSendTestInfo());
-        // 将Boolean转换为数据库中的1/0：true -> 1, false -> 0
-        // MyBatis Plus会自动将Boolean的true/false转换为数据库的1/0
-        deployRecord.setIsRunSql(dto.getIsRunSql() != null ? dto.getIsRunSql() : false);
-        deployRecord.setIsUpdateConfig(dto.getIsUpdateConfig() != null ? dto.getIsUpdateConfig() : false);
-        deployRecord.setRecordNum(dto.getRecordNum());
-        // 设置代码清单，如果为null则设置为空字符串，避免数据库插入错误
-        deployRecord.setCodeList(dto.getCodeList() != null ? dto.getCodeList() : "");
-        deployRecord.setDeployTime(LocalDateTime.now());
 
-        // 获取当前日期（YYYYMMDD格式）
-        String currentDate = DateUtil.getDateFormatYMD();
-
-        // 查询当天同一系统同一测试阶段的最后一条记录（按部署时间倒序）
-        TfDeployRecord lastRecord = this.baseMapper.selectLastDeployRecordBySystemAndStageAndDate(
-                systemId, testStage, currentDate);
-
-        // 获取本次发版登记的版本登记数量，如果为空则默认为1
-        Integer currentRecordNum = deployRecord.getRecordNum();
-        if (currentRecordNum == null || currentRecordNum < 1) {
-            currentRecordNum = 1;
-        }
-
-        // 计算最终的版本登记数量
-        Integer finalRecordNum;
-        if (lastRecord != null && StringUtils.hasText(lastRecord.getVersionCode())) {
-            // 从最后一条记录的 versionCode 中提取 recordNum
-            // versionCode 格式：sysAbbreviation-PAT-YYYYMMDD-recordNum
-            String lastVersionCode = lastRecord.getVersionCode();
-            try {
-                // 按最后一个 "-" 分割，取最后一部分作为 recordNum
-                int lastDashIndex = lastVersionCode.lastIndexOf("-");
-                if (lastDashIndex >= 0 && lastDashIndex < lastVersionCode.length() - 1) {
-                    String lastRecordNumStr = lastVersionCode.substring(lastDashIndex + 1);
-                    Integer lastRecordNum = Integer.parseInt(lastRecordNumStr);
-                    // 最终的 recordNum = 最后一条的 recordNum + 本次的 recordNum
-                    finalRecordNum = lastRecordNum + currentRecordNum;
-                } else {
-                    // 如果解析失败，使用本次的 recordNum
-                    finalRecordNum = currentRecordNum;
-                }
-            } catch (NumberFormatException e) {
-                logger.warn("解析最后一条记录的版本号失败: {}, 使用本次的版本登记数量", lastVersionCode);
-                finalRecordNum = currentRecordNum;
-            }
-        } else {
-            // 如果没有找到最后一条记录，使用本次的 recordNum
-            finalRecordNum = currentRecordNum;
-        }
-
-        // 拼接版本号：系统简写-测试阶段-年月日-版本登记数量
-        // 格式：sysAbbreviation-TEST_STAGE-YYYYMMDD-recordNum
-        String versionCode = String.format("%s-%s-%s-%d", sysAbbreviation, testStage, currentDate, finalRecordNum);
-        deployRecord.setVersionCode(versionCode);
-        // 更新 recordNum 为最终计算的值
-        deployRecord.setRecordNum(currentRecordNum);
-
-        // 保存发版登记信息（gitlabUrl为"1"，componentInfo、sendTestInfo正常登记）
-        this.save(deployRecord);
+        // 调用 SaveDeployRecordService 保存发版登记信息
+        String versionCode = saveDeployRecordService.saveDeployRecord(
+                systemId,
+                testStage,
+                dto.getSendTestInfo(),
+                dto.getRecordNum(),
+                dto.getIsRunSql(),
+                dto.getIsUpdateConfig(),
+                dto.getCodeList() != null ? dto.getCodeList() : "",
+                dto.getComponentInfo()
+        );
+        
         logger.info("合并登记创建成功（外部API）: versionCode={}, componentInfo={}, testStage={}, sendTestInfo={}",
-                versionCode, deployRecord.getComponentInfo(), deployRecord.getTestStage(), deployRecord.getSendTestInfo());
+                versionCode, dto.getComponentInfo(), testStage, dto.getSendTestInfo());
         
         // 返回生成的版本号
         return versionCode;
