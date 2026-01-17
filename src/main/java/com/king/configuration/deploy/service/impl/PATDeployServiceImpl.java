@@ -1,6 +1,7 @@
 package com.king.configuration.deploy.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.king.common.Result;
 import com.king.configuration.deploy.dto.MergeRequestInfo;
 import com.king.configuration.deploy.dto.MergeToTargetBranchDTO;
 import com.king.configuration.deploy.entity.TfDeployRecord;
@@ -56,7 +57,7 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
     private SaveDeployRecordService saveDeployRecordService;
 
     @Override
-    public void createPATDeployRecord(TfDeployRecord deployRecord) {
+    public Result<String> createPATDeployRecord(TfDeployRecord deployRecord) {
         Assert.notNull(deployRecord, "发版登记信息不能为空");
 
         // 设置测试阶段为PAT
@@ -118,7 +119,15 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
                 List<String> files = parseCodeList(codeList);
 
                 // 方式1：调用JGit 把目标分支拉下来 → 把源分支里指定文件覆盖进来 → 提交并直接推回目标分支
-                pushFilesToBranch(gitlabUrl, privateToken, sourceBranch, targetBranch, sendTestInfo, files);
+                Result<String> pushResult = pushFilesToBranch(
+                        gitlabUrl, privateToken, sourceBranch, targetBranch, sendTestInfo, files);
+                
+                // 检查推送结果
+                if (pushResult.getCode() != 20000) {
+                    throw new RuntimeException("JGit推送文件到分支失败: " + pushResult.getMessage());
+                }
+                
+                logger.info("JGit推送文件到分支成功: {}", pushResult.getData());
 
                 // 方式2：调用 gitlab4j-api 创建合并请求的方法，创建合并请求mergeRequest
                 // createAndAcceptMergeRequest(gitlabUrl, privateToken, sourceBranch, targetBranch, sendTestInfo, files);
@@ -141,6 +150,9 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
                 deployRecord.getComponentInfo()
         );
         logger.info("PAT发版登记创建成功: versionCode={}", versionCode);
+        
+        // 返回成功结果
+        return Result.success(versionCode, "PAT发版登记创建成功");
     }
 
     /**
@@ -178,20 +190,25 @@ public class PATDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
      * @param privateToken 访问令牌
      * @param sourceBranch 源分支
      * @param targetBranch 目标分支
+     * @param sendTestInfo 送测单信息
      * @param files 要推送的文件列表
+     * @return Result<String> 成功时返回"新增X个,删除Y个,修改Z个"，失败时返回失败原因
      */
-    public void pushFilesToBranch(String gitlabUrl, String privateToken, String sourceBranch,
+    public Result<String> pushFilesToBranch(String gitlabUrl, String privateToken, String sourceBranch,
                                   String targetBranch, String sendTestInfo, List<String> files) {
         logger.info("开始使用JGit推送文件到分支: gitlabUrl={}, sourceBranch={}, targetBranch={}, files数量={}",
                 gitlabUrl, sourceBranch, targetBranch, files != null ? files.size() : 0);
 
-        try {
-            FilesPusherToBranchService.pushFiles(gitlabUrl, privateToken, sourceBranch, targetBranch, sendTestInfo, files);
-            logger.info("JGit推送文件到分支成功");
-        } catch (Exception e) {
-            logger.error("JGit推送文件到分支失败: {}", e.getMessage(), e);
-            throw new RuntimeException("JGit推送文件到分支失败: " + e.getMessage(), e);
+        Result<String> result = FilesPusherToBranchService.pushFiles(
+                gitlabUrl, privateToken, sourceBranch, targetBranch, sendTestInfo, files);
+        
+        if (result.getCode() == 20000) {
+            logger.info("JGit推送文件到分支成功: {}", result.getData());
+        } else {
+            logger.error("JGit推送文件到分支失败: {}", result.getMessage());
         }
+        
+        return result;
     }
 
     /**
