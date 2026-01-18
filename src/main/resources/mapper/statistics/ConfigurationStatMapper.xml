@@ -6,8 +6,8 @@
     <select id="selectDeployBySysStat" resultType="com.king.statistics.configurationStat.dto.DeployBySysStatDTO">
         SELECT
             COALESCE(ts.SYSTEM_NAME, '未知系统') AS systemName,
-            COUNT(CASE WHEN dr.TEST_STAGE = 'SIT' THEN 1 END) AS sitCount,
-            COUNT(CASE WHEN dr.TEST_STAGE = 'PAT' THEN 1 END) AS patCount
+            SUM(CASE WHEN dr.TEST_STAGE = 'SIT' THEN dr.RECORD_NUM ELSE 0 END) AS sitCount,
+            SUM(CASE WHEN dr.TEST_STAGE = 'PAT' THEN dr.RECORD_NUM ELSE 0 END) AS patCount
         FROM tf_deploy_record dr
         LEFT JOIN t_test_system ts ON dr.SYSTEM_ID = ts.SYSTEM_ID
         <where>
