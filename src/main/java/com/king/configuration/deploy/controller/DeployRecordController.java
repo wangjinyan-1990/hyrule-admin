@@ -26,6 +26,8 @@ public class DeployRecordController {
      * @param pageSize 每页大小（可选，默认10）
      * @param sendTestInfo 送测单信息（可选，模糊查询）
      * @param systemName 系统名称（可选，模糊查询）
+     * @param startDate 开始日期（可选）
+     * @param endDate 结束日期（可选）
      * @return 发版登记列表
      */
     @GetMapping("/list")
@@ -33,9 +35,11 @@ public class DeployRecordController {
             @RequestParam(value = "pageNo", required = false) Integer pageNo,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @RequestParam(value = "sendTestInfo", required = false) String sendTestInfo,
-            @RequestParam(value = "systemName", required = false) String systemName) {
+            @RequestParam(value = "systemName", required = false) String systemName,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) {
         try {
-            Map<String, Object> data = deployRecordService.getDeployRecordList(pageNo, pageSize, sendTestInfo, systemName);
+            Map<String, Object> data = deployRecordService.getDeployRecordList(pageNo, pageSize, sendTestInfo, systemName, startDate, endDate);
             return Result.success(data);
         } catch (IllegalArgumentException e) {
             return Result.error(0, e.getMessage());

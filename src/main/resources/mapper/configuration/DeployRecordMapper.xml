@@ -46,6 +46,12 @@
             <if test="systemName != null and systemName != ''">
                 AND ts.SYSTEM_NAME LIKE CONCAT('%', #{systemName}, '%')
             </if>
+            <if test="startDate != null and startDate != ''">
+                AND DATE(dr.DEPLOY_TIME) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE(dr.DEPLOY_TIME) &lt;= #{endDate}
+            </if>
         </where>
         ORDER BY dr.DEPLOY_ID DESC
     </select>
