@@ -31,7 +31,7 @@ jwt:
 # 日志（使用 Log4j2 配置文件 log4j2-spring.xml）
 logging:
   file:
-    path: logs/hyrule-logs
+    path: /home/hyrule/logs
   level:
     root: info
     com.king: info
@@ -56,8 +56,8 @@ ocr:
   tesseract:
     # Tesseract数据文件路径
     # Windows: 可以设置为项目根目录下的tessdata文件夹，如：tessdata
-    # Linux: /usr/share/tessdata
-    datapath: /usr/share/tessdata
+    # Linux: /home/hyrule/tessdata
+    datapath: /home/hyrule/tessdata
     # 识别语言：chi_sim(简体中文) + eng(英文)
     # 其他语言：chi_tra(繁体中文)、jpn(日语)、kor(韩语)等
     language: chi_sim+eng
