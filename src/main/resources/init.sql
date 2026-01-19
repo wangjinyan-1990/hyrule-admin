@@ -285,33 +285,38 @@ CREATE TABLE `t_sys_menu` (
 
 /*Data for the table `t_sys_menu` */
 
-insert  into `t_sys_menu`(`MENU_ID`,`COMPONENT`,`PATH`,`REDIRECT`,`NAME`,`TITLE`,`ICON`,`PARENT_ID`,`IS_LEAF`,`HIDDEN`) values 
-(1,'Layout','/sys',NULL,'sys','系统管理','sys',NULL,'0',0),
-(2,'/sys/user','user',NULL,'user','用户管理','userManage',1,'1',0),
-(3,'/sys/role','role',NULL,'role','角色管理','roleManage',1,'1',0),
-(4,'/sys/menu','menu',NULL,'menu','菜单管理','menuManage',1,'1',0),
-(5,'/sys/org','org',NULL,'org','机构管理','orgManage',1,'1',0),
-(6,'Layout','/tools','/tools/toolset','tools','实用工具','tools',NULL,'0',0),
-(7,'/tools/toolset','toolset',NULL,'toolset','工具集','toolset',6,'1',0),
-(8,'/tools/notebook','notebook',NULL,'notebook','记事本','notebook',6,'1',0),
-(9,'Layout','/configuration',NULL,'configuration','配置管理','configuration',NULL,'0',0),
-(10,'/configuration/deploy/deployRecord','deploy',NULL,'deploy','发版登记','deploy',9,'0',0),
-(11,'/configuration/sysConfigInfo/index','sysConfigInfo',NULL,'sysConfigInfo','系统配置信息','sysConfigInfo',9,'1',0),
-(12,'/configuration/deploy/deployRecord','deployRecord',NULL,'deployRecord','发版记录','deployRecord',10,'1',0),
-(13,'/configuration/deploy/sitDeploy','sitDeploy',NULL,'sitDeploy','SIT发版','sitDeploy',10,'1',0),
-(14,'/configuration/deploy/sitDeploy','patDeploy',NULL,'patDeploy','PAT发版','patDeploy',10,'1',0),
-(16,'Layout','/test',NULL,'test','测试模块','testModule',NULL,'0',0),
-(17,'/test/baseManage/index','baseManage',NULL,'baseManage','基础管理','baseManage',16,'0',0),
-(18,'/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','testSystem',17,'1',0),
-(19,'/test/baseManage/testSystemMember','testSystemMember',NULL,'testSystemMember','系统成员维护','testSystemMember',17,'1',0),
-(20,'/test/baseManage/testDirectory','testDirectory',NULL,'testDirectory','测试目录维护','testDirectory',17,'1',0),
-(21,'/test/usecaseManage/index','usecaseManage',NULL,'usecaseManage','用例管理','usecaseManage',16,'0',0),
-(22,'/test/usecaseManage/requireRepository','requireRepository',NULL,'requireRepository','需求库','requireRepository',21,'1',0),
-(23,'/test/usecaseManage/usecaseRepository','usecaseRepository',NULL,'usecaseRepository','用例库','usecaseRepository',21,'1',0),
-(24,'/test/usecaseManage/usecaseExecution','usecaseExecution',NULL,'usecaseExecution','执行库','usecaseExecution',21,'1',0),
-(25,'/test/bugManage/bugManage','bugManage',NULL,'bugManage','缺陷管理','bugManage',16,'1',0),
-(26,'Layout','external-link',NULL,NULL,'External Link','link',NULL,'0',0),
-(27,NULL,'https://panjiachen.github.io/vue-element-admin-site/#/',NULL,NULL,'External Link','link',26,'1',0);
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('1','Layout','/sys',NULL,'sys','系统管理','sys',NULL,'0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('2','/sys/user','user',NULL,'user','用户管理','userManage','1','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('3','/sys/role','role',NULL,'role','角色管理','roleManage','1','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('4','/sys/menu','menu',NULL,'menu','菜单管理','menuManage','1','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('5','/sys/org','org',NULL,'org','机构管理','orgManage','1','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('6','Layout','/tools','/tools/toolset','tools','实用工具','tools',NULL,'0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('7','/tools/toolset','toolset',NULL,'toolset','工具广场','toolset','6','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('8','/tools/notebook','notebook',NULL,'notebook','记事本','notebook','6','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('9','Layout','/configuration',NULL,'configuration','配置管理','configuration',NULL,'0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('10','/configuration/deploy/deployRecord','deploy',NULL,'deploy','发版登记','deploy','9','0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('11','/configuration/sysConfigInfo/index','sysConfigInfo',NULL,'sysConfigInfo','系统配置信息','sysConfigInfo','9','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('12','/configuration/deploy/deployRecord','deployRecord',NULL,'deployRecord','发版记录','deployRecord','10','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('13','/configuration/deploy/sitDeploy','sitDeploy',NULL,'sitDeploy','SIT发版','sitDeploy','10','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('14','/configuration/deploy/sitDeploy','patDeploy',NULL,'patDeploy','PAT发版','patDeploy','10','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('16','Layout','/test',NULL,'test','测试模块','testModule',NULL,'0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('17','/test/baseManage/index','baseManage',NULL,'baseManage','基础管理','baseManage','16','0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('18','/test/baseManage/testSystem','testSystem',NULL,'testSystem','测试系统维护','testSystem','17','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('19','/test/baseManage/testSystemMember','testSystemMember',NULL,'testSystemMember','系统成员维护','testSystemMember','17','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('20','/test/baseManage/testDirectory','testDirectory',NULL,'testDirectory','测试目录维护','testDirectory','17','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('21','/test/usecaseManage/index','usecaseManage',NULL,'usecaseManage','用例管理','usecaseManage','16','0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('22','/test/usecaseManage/requireRepository','requireRepository',NULL,'requireRepository','需求库','requireRepository','21','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('23','/test/usecaseManage/usecaseRepository','usecaseRepository',NULL,'usecaseRepository','用例库','usecaseRepository','21','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('24','/test/usecaseManage/usecaseExecution','usecaseExecution',NULL,'usecaseExecution','执行库','usecaseExecution','21','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('25','/test/bugManage/bugManage','bugManage',NULL,'bugManage','缺陷管理','bugManage','16','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('26','Layout','external-link',NULL,NULL,'External Link','link',NULL,'0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('27',NULL,'https://panjiachen.github.io/vue-element-admin-site/#/',NULL,NULL,'External Link','link','26','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('28','Layout','/environment',NULL,'environment','环境管理','environment',NULL,'0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('29','/environment/environmentList/index','environmentList',NULL,'environmentList','环境清单','environmentList','28','1','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('30','Layout','/statistics',NULL,'statistics','统计分析','statistics',NULL,'0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('31','/statistics/configurationStat','configurationStat',NULL,'configurationStat','配置相关','arrow','30','0','0');
+insert into `t_sys_menu` (`MENU_ID`, `COMPONENT`, `PATH`, `REDIRECT`, `NAME`, `TITLE`, `ICON`, `PARENT_ID`, `IS_LEAF`, `HIDDEN`) values('32','/statistics/configurationStat/deployBySysStat','deployBySysStat',NULL,'deployBySysStat','各系统发版数统计','star','31','1','0');
+
 
 /*Table structure for table `t_sys_org` */
 
