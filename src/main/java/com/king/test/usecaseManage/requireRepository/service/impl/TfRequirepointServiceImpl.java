@@ -1,11 +1,9 @@
 package com.king.test.usecaseManage.requireRepository.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.common.utils.CounterUtil;
 import com.king.common.utils.SecurityUtils;
-import com.king.test.baseManage.testDirectory.entity.TTestDirectory;
 import com.king.test.baseManage.testDirectory.service.ITestDirectoryService;
 import com.king.test.usecaseManage.requireRepository.entity.TfRequirepoint;
 import com.king.test.usecaseManage.requireRepository.mapper.TfRequirepointMapper;
@@ -49,7 +47,7 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         // 获取目录及其子目录ID列表
         List<String> directoryIds = null;
         if (StringUtils.hasText(directoryId)) {
-            directoryIds = getDirectoryAndChildrenIds(directoryId);
+            directoryIds = testDirectoryService.getAllChildrenDirectoryIds(directoryId, systemId);
         }
         
         // 执行分页查询
@@ -208,7 +206,7 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         // 获取目录及其子目录ID列表
         List<String> directoryIds = null;
         if (StringUtils.hasText(directoryId)) {
-            directoryIds = getDirectoryAndChildrenIds(directoryId);
+            directoryIds = testDirectoryService.getAllChildrenDirectoryIds(directoryId, systemId);
         }
         
         // 查询所有符合条件的数据
@@ -217,44 +215,18 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
     }
 
     @Override
+    @Deprecated
     public List<String> getDirectoryAndChildrenIds(String directoryId) {
-        List<String> allDirectoryIds = new java.util.ArrayList<>();
-        
+        // 注意：此方法已废弃，建议直接使用 ITestDirectoryService.getAllChildrenDirectoryIds(directoryId, systemId)
+        // 为了兼容性保留此方法，但此方法无法获取 systemId，因此无法正确查询子目录
+        // 请使用 testDirectoryService.getAllChildrenDirectoryIds(directoryId, systemId) 替代
         if (!StringUtils.hasText(directoryId)) {
-            return allDirectoryIds;
+            return new java.util.ArrayList<>();
         }
-        
-        // 添加当前目录ID
-        allDirectoryIds.add(directoryId);
-        
-        // 递归获取所有子目录ID
-        getAllChildrenDirectoryIds(directoryId, allDirectoryIds);
-        
-        return allDirectoryIds;
-    }
-    
-    /**
-     * 递归获取所有子目录ID
-     * @param parentDirectoryId 父目录ID
-     * @param allDirectoryIds 所有目录ID列表
-     */
-    private void getAllChildrenDirectoryIds(String parentDirectoryId, List<String> allDirectoryIds) {
-        try {
-            // 查询直接子目录
-            LambdaQueryWrapper<TTestDirectory> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(TTestDirectory::getDirectoryParentId, parentDirectoryId);
-            List<TTestDirectory> children = testDirectoryService.list(wrapper);
-            
-            for (TTestDirectory child : children) {
-                String childId = child.getDirectoryId();
-                allDirectoryIds.add(childId);
-                // 递归查询子目录的子目录
-                getAllChildrenDirectoryIds(childId, allDirectoryIds);
-            }
-        } catch (Exception e) {
-            // 查询失败时记录日志，但不影响主流程
-            System.err.println("查询子目录失败: " + e.getMessage());
-        }
+        // 返回只包含当前目录的列表（因为无法获取 systemId）
+        List<String> result = new java.util.ArrayList<>();
+        result.add(directoryId);
+        return result;
     }
 
     /**

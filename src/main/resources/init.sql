@@ -262,7 +262,7 @@ CREATE TABLE `t_sys_counter` (
 insert  into `t_sys_counter`(`COUNTER_ID`,`COUNTER_NAME`,`CURRENT_NUMBER`,`PREFIX`,`COUNTER_LENGTH`) values 
 (1,'sysCode',4,'sys-',3),
 (2,'requireCode',6,'req',5),
-(3,'testcaseCode',0,'tc',5),
+(3,'usecaseCode',0,'tc',5),
 (4,'bugCode',0,'bug',6);
 
 /*Table structure for table `t_sys_menu` */

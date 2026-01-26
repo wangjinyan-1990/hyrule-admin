@@ -40,4 +40,19 @@ public class DataDictionaryServiceImpl extends ServiceImpl<DataDictionaryMapper,
         
         return dataDictionary != null ? dataDictionary.getDataValue() : null;
     }
+    
+    @Override
+    public String getDataNameByTypeAndValue(String dataType, String dataValue) {
+        if (!StringUtils.hasText(dataType) || !StringUtils.hasText(dataValue)) {
+            return null;
+        }
+        
+        LambdaQueryWrapper<DataDictionary> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(DataDictionary::getDataType, dataType)
+               .eq(DataDictionary::getDataValue, dataValue);
+        
+        DataDictionary dataDictionary = this.baseMapper.selectOne(wrapper);
+        
+        return dataDictionary != null ? dataDictionary.getDataName() : null;
+    }
 }

@@ -32,6 +32,18 @@
         </if>
     </sql>
 
+    <!--
+        分页查询用例列表
+        参数说明：
+        - systemId: 系统ID（可选）
+        - directoryIds: 目录ID列表（可选，包含当前目录及其所有子目录）
+        - usecaseName: 用例名称（可选，模糊查询）
+        - usecaseType: 用例类型（可选）
+        - usecaseNature: 用例性质（可选）
+        - prority: 优先级（可选）
+        - isSmokeTest: 是否冒烟测试（可选）
+        - creatorId: 创建人ID（可选）
+    -->
     <select id="selectPageUsecases" resultType="com.king.test.usecaseManage.usecaseRepository.entity.TfUsecase">
         SELECT
             u.USECASE_ID AS usecaseId,
@@ -66,7 +78,7 @@
         LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'usecaseType' AND dic_type.DATA_VALUE = u.USECASE_TYPE
         LEFT JOIN data_dictionary dic_point ON dic_point.DATA_TYPE = 'testPoint' AND dic_point.DATA_VALUE = u.TEST_POINT
         LEFT JOIN data_dictionary dic_nature ON dic_nature.DATA_TYPE = 'usecaseNature' AND dic_nature.DATA_VALUE = u.USECASE_NATURE
-        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'usecasePriority' AND dic_priority.DATA_VALUE = u.PRORITY
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = u.PRORITY
         LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'latestExeStatus' AND dic_status.DATA_VALUE = u.LATEST_EXE_STATUS
         WHERE 1 = 1
         <include refid="CommonCondition" />
@@ -107,7 +119,7 @@
         LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'usecaseType' AND dic_type.DATA_VALUE = u.USECASE_TYPE
         LEFT JOIN data_dictionary dic_point ON dic_point.DATA_TYPE = 'testPoint' AND dic_point.DATA_VALUE = u.TEST_POINT
         LEFT JOIN data_dictionary dic_nature ON dic_nature.DATA_TYPE = 'usecaseNature' AND dic_nature.DATA_VALUE = u.USECASE_NATURE
-        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'usecasePriority' AND dic_priority.DATA_VALUE = u.PRORITY
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = u.PRORITY
         LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'latestExeStatus' AND dic_status.DATA_VALUE = u.LATEST_EXE_STATUS
         WHERE u.USECASE_ID = #{usecaseId}
     </select>
@@ -144,7 +156,7 @@
         LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'usecaseType' AND dic_type.DATA_VALUE = u.USECASE_TYPE
         LEFT JOIN data_dictionary dic_point ON dic_point.DATA_TYPE = 'testPoint' AND dic_point.DATA_VALUE = u.TEST_POINT
         LEFT JOIN data_dictionary dic_nature ON dic_nature.DATA_TYPE = 'usecaseNature' AND dic_nature.DATA_VALUE = u.USECASE_NATURE
-        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'usecasePriority' AND dic_priority.DATA_VALUE = u.PRORITY
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = u.PRORITY
         WHERE 1 = 1
         <include refid="CommonCondition" />
         ORDER BY u.CREATE_TIME DESC

@@ -19,7 +19,7 @@ import java.util.Map;
 public class DeployRecordServiceImpl extends ServiceImpl<DeployRecordMapper, TfDeployRecord> implements IDeployRecordService {
 
     @Override
-    public Map<String, Object> getDeployRecordList(Integer pageNo, Integer pageSize, String sendTestInfo, String systemName, String startDate, String endDate) {
+    public Map<String, Object> getDeployRecordList(Integer pageNo, Integer pageSize, String sendTestInfo, String systemName, String testStage, String startDate, String endDate) {
         // 设置默认分页参数
         if (pageNo == null || pageNo < 1) {
             pageNo = 1;
@@ -35,6 +35,9 @@ public class DeployRecordServiceImpl extends ServiceImpl<DeployRecordMapper, TfD
         if (systemName != null && systemName.trim().isEmpty()) {
             systemName = null;
         }
+        if (testStage != null && testStage.trim().isEmpty()) {
+            testStage = null;
+        }
         if (startDate != null && startDate.trim().isEmpty()) {
             startDate = null;
         }
@@ -44,7 +47,7 @@ public class DeployRecordServiceImpl extends ServiceImpl<DeployRecordMapper, TfD
         
         // 使用自定义查询方法，包含系统名称
         Page<TfDeployRecord> page = new Page<>(pageNo, pageSize);
-        IPage<TfDeployRecord> result = this.baseMapper.selectDeployRecordListWithSystemName(page, sendTestInfo, systemName, startDate, endDate);
+        IPage<TfDeployRecord> result = this.baseMapper.selectDeployRecordListWithSystemName(page, sendTestInfo, systemName, testStage, startDate, endDate);
         
         // 构建返回结果
         Map<String, Object> data = new HashMap<>();

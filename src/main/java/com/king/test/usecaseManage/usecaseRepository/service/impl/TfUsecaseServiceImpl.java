@@ -7,7 +7,6 @@ import com.king.common.utils.CounterUtil;
 import com.king.common.utils.SecurityUtils;
 import com.king.framework.dataDictionary.service.IDataDictionaryService;
 import com.king.sys.user.service.IUserService;
-import com.king.test.baseManage.testDirectory.entity.TTestDirectory;
 import com.king.test.baseManage.testDirectory.service.ITestDirectoryService;
 import com.king.test.usecaseManage.requireRepository.entity.TfRequirepoint;
 import com.king.test.usecaseManage.usecaseRepository.entity.TfUsecase;
@@ -19,9 +18,13 @@ import com.king.test.usecaseManage.usecaseRequireLink.entity.TfUsecaseRequire;
 import com.king.test.usecaseManage.usecaseRequireLink.mapper.TfUsecaseRequireMapper;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -34,12 +37,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("tfUsecaseServiceImpl")
 public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, TfUsecase> implements ITfUsecaseService {
+
+    private static final Logger logger = LoggerFactory.getLogger(TfUsecaseServiceImpl.class);
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -60,9 +66,11 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
     private IUserService userService;
 
     @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private TfUsecaseHistoryMapper usecaseHistoryMapper;
 
     @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private TfUsecaseRequireMapper usecaseRequireMapper;
 
     private static final String TEMPLATE_PATH = "templates/UsecaseTemplate.xlsx";
@@ -79,8 +87,17 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
                                               String isSmokeTest,
                                               String creatorId) {
         Page<TfUsecase> page = new Page<>(pageNo, pageSize);
-        List<String> directoryIds = fetchDirectoryHierarchy(directoryId);
+        // 获取目录及其所有子目录的ID列表（包含当前目录）
+        List<String> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
         Page<TfUsecase> result = this.baseMapper.selectPageUsecases(page, systemId, directoryIds, usecaseName, usecaseType, usecaseNature, prority, isSmokeTest, creatorId);
+
+        // 填充 prorityName（如果 SQL 关联失败，手动查询数据字典）
+        for (TfUsecase usecase : result.getRecords()) {
+            if (StringUtils.hasText(usecase.getPrority()) && !StringUtils.hasText(usecase.getProrityName())) {
+                String prorityName = dataDictionaryService.getDataNameByTypeAndValue("prority", usecase.getPrority());
+                usecase.setProrityName(prorityName);
+            }
+        }
 
         Map<String, Object> data = new HashMap<>(8);
         data.put("rows", result.getRecords());
@@ -98,6 +115,13 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
         if (usecase == null) {
             throw new IllegalArgumentException("用例不存在");
         }
+
+        // 填充 prorityName（如果 SQL 关联失败，手动查询数据字典）
+        if (StringUtils.hasText(usecase.getPrority()) && !StringUtils.hasText(usecase.getProrityName())) {
+            String prorityName = dataDictionaryService.getDataNameByTypeAndValue("prority", usecase.getPrority());
+            usecase.setProrityName(prorityName);
+        }
+
         return usecase;
     }
 
@@ -191,7 +215,7 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
                                                  String prority,
                                                  String isSmokeTest,
                                                  String creatorId) {
-        List<String> directoryIds = fetchDirectoryHierarchy(directoryId);
+        List<String> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
         return this.baseMapper.selectUsecasesForExport(systemId, directoryIds, usecaseName, usecaseType, usecaseNature, prority, isSmokeTest, creatorId);
     }
 
@@ -250,19 +274,37 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
 
     @Override
     public void downloadTemplate(HttpServletResponse response) {
-        try (InputStream inputStream = Objects.requireNonNull(getClass().getClassLoader()).getResourceAsStream(TEMPLATE_PATH)) {
-            if (inputStream == null) {
+        try {
+            // 从classpath读取模板文件
+            Resource resource = new ClassPathResource(TEMPLATE_PATH);
+
+            if (!resource.exists()) {
                 throw new IllegalStateException("模板文件不存在: " + TEMPLATE_PATH);
             }
+
+            // 设置响应头
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=UsecaseTemplate.xlsx");
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buffer)) != -1) {
-                response.getOutputStream().write(buffer, 0, len);
+
+            // 对文件名进行URL编码，支持中文
+            String fileName = "UsecaseTemplate.xlsx";
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString())
+                    .replaceAll("\\+", "%20");
+            response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFileName);
+
+            // 读取文件并写入响应流
+            try (InputStream inputStream = resource.getInputStream()) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    response.getOutputStream().write(buffer, 0, bytesRead);
+                }
+                response.getOutputStream().flush();
             }
-            response.getOutputStream().flush();
+
+            logger.info("用例模板下载成功: {}", TEMPLATE_PATH);
+
         } catch (IOException e) {
+            logger.error("下载用例模板失败: {}", e.getMessage(), e);
             throw new RuntimeException("下载模板失败: " + e.getMessage(), e);
         }
     }
@@ -274,8 +316,14 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
             throw new IllegalArgumentException("上传文件不能为空");
         }
 
+        if (!StringUtils.hasText(systemId)) {
+            throw new IllegalArgumentException("系统ID不能为空");
+        }
+
         List<String> errors = new ArrayList<>();
         List<TfUsecase> usecases = new ArrayList<>();
+
+        logger.info("开始导入用例: systemId={}, directoryId={}, fileName={}", systemId, directoryId, file.getOriginalFilename());
 
         try (InputStream inputStream = file.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
@@ -302,28 +350,75 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
             }
         }
 
-        int successCount = 0;
-        for (TfUsecase usecase : usecases) {
-            try {
-                if (this.save(usecase)) {
-                    successCount++;
-                    recordUsecaseHistory(usecase.getUsecaseId(), "IMPORT", null, "导入用例", usecase.getCreatorId());
-                }
-            } catch (Exception e) {
-                errors.add(String.format("用例[%s]保存失败: %s", Optional.ofNullable(usecase.getUsecaseName()).orElse("未知"), e.getMessage()));
+        // 验证所有用例，只要有一条验证不通过，则均不保存
+        for (int i = 0; i < usecases.size(); i++) {
+            TfUsecase usecase = usecases.get(i);
+            // 验证必需字段
+            if (!StringUtils.hasText(usecase.getUsecaseId())) {
+                String errorMsg = String.format("第%d行: 用例ID不能为空", i + 2); // i+2 因为第一行是表头，从第二行开始
+                errors.add(errorMsg);
+                logger.error("用例验证失败: {}", errorMsg);
             }
+            if (!StringUtils.hasText(usecase.getSystemId())) {
+                String errorMsg = String.format("第%d行: 系统ID不能为空", i + 2);
+                errors.add(errorMsg);
+                logger.error("用例验证失败: {}", errorMsg);
+            }
+            if (!StringUtils.hasText(usecase.getUsecaseName())) {
+                String errorMsg = String.format("第%d行: 用例名称不能为空", i + 2);
+                errors.add(errorMsg);
+                logger.error("用例验证失败: {}", errorMsg);
+            }
+        }
+
+        // 如果有任何验证错误，抛出异常，不保存任何数据
+        if (!errors.isEmpty()) {
+            String errorSummary = String.format("验证失败，共%d条错误，所有数据均不保存", errors.size());
+            logger.error("用例导入验证失败: {}", errorSummary);
+            throw new IllegalArgumentException(errorSummary + "。错误详情: " + String.join("; ", errors));
+        }
+
+        // 所有验证通过，批量保存所有用例
+        int successCount = 0;
+        try {
+            // 使用批量保存
+            boolean batchSaved = this.saveBatch(usecases);
+            if (batchSaved) {
+                successCount = usecases.size();
+                logger.info("批量保存用例成功: 数量={}", successCount);
+
+                // 批量记录历史
+                for (TfUsecase usecase : usecases) {
+                    try {
+                        recordUsecaseHistory(usecase.getUsecaseId(), "IMPORT", null, "导入用例", usecase.getCreatorId());
+                    } catch (Exception e) {
+                        logger.warn("记录用例历史失败: usecaseId={}, error={}", usecase.getUsecaseId(), e.getMessage());
+                        // 历史记录失败不影响主流程
+                    }
+                }
+            } else {
+                String errorMsg = "批量保存用例失败: saveBatch方法返回false";
+                errors.add(errorMsg);
+                logger.error("批量保存用例失败: 数量={}", usecases.size());
+                throw new RuntimeException(errorMsg);
+            }
+        } catch (Exception e) {
+            logger.error("批量保存用例异常: 数量={}, error={}", usecases.size(), e.getMessage(), e);
+            // 重新抛出异常以触发事务回滚
+            throw new RuntimeException("批量保存用例失败: " + e.getMessage(), e);
         }
 
         Map<String, Object> result = new HashMap<>(8);
         result.put("successCount", successCount);
         result.put("failCount", errors.size());
         result.put("errors", errors);
+        logger.info("用例导入完成: 成功={}, 失败={}, 总行数={}", successCount, errors.size(), usecases.size());
         return result;
     }
 
     @Override
     public Map<String, Object> getUsecaseStatistics(String systemId, String directoryId) {
-        List<String> directoryIds = fetchDirectoryHierarchy(directoryId);
+        List<String> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
         List<Map<String, Object>> rows = this.baseMapper.selectUsecaseStatistics(systemId, directoryIds);
         long total = rows.stream().mapToLong(row -> ((Number) row.getOrDefault("count", 0)).longValue()).sum();
 
@@ -335,13 +430,13 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
 
     @Override
     public List<Map<String, Object>> getUsecaseTypeStatistics(String systemId, String directoryId) {
-        List<String> directoryIds = fetchDirectoryHierarchy(directoryId);
+        List<String> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
         return this.baseMapper.selectUsecaseTypeStatistics(systemId, directoryIds);
     }
 
     @Override
     public List<Map<String, Object>> getUsecaseStatusStatistics(String systemId, String directoryId) {
-        List<String> directoryIds = fetchDirectoryHierarchy(directoryId);
+        List<String> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
         return this.baseMapper.selectUsecaseStatusStatistics(systemId, directoryIds);
     }
 
@@ -453,23 +548,22 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
         return true;
     }
 
-    private List<String> fetchDirectoryHierarchy(String directoryId) {
+    /**
+     * 获取目录及其所有子目录的ID列表
+     * 当传递了directoryId和systemId时，会递归查询该目录下的所有子目录，
+     * 返回包含当前目录及其所有子目录的ID列表，用于查询该目录及其子目录下的所有用例
+     * @param directoryId 目录ID
+     * @param systemId 系统ID
+     * @return 目录ID列表（包含当前目录及其所有子目录），如果directoryId为空则返回null（不限制目录）
+     */
+    private List<String>  fetchDirectoryHierarchy(String directoryId, String systemId) {
         if (!StringUtils.hasText(directoryId)) {
             return null;
         }
-        List<String> ids = new ArrayList<>();
-        ids.add(directoryId);
-        collectChildrenDirectoryIds(directoryId, ids);
+        // 调用目录服务获取当前目录及其所有子目录的ID列表
+        List<String> ids = testDirectoryService.getAllChildrenDirectoryIds(directoryId, systemId);
+        logger.debug("查询目录层级: directoryId={}, systemId={}, 包含的目录数量={}, 目录IDs={}", directoryId, systemId, ids != null ? ids.size() : 0, ids);
         return ids;
-    }
-
-    private void collectChildrenDirectoryIds(String parentId, List<String> collector) {
-        List<TTestDirectory> children = testDirectoryService.list(new LambdaQueryWrapper<TTestDirectory>()
-                .eq(TTestDirectory::getDirectoryParentId, parentId));
-        for (TTestDirectory child : children) {
-            collector.add(child.getDirectoryId());
-            collectChildrenDirectoryIds(child.getDirectoryId(), collector);
-        }
     }
 
     private String generateUsecaseId(String systemId) {
@@ -518,27 +612,54 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
         usecase.setUsecaseId(generateUsecaseId(systemId));
         usecase.setSystemId(systemId);
         usecase.setDirectoryId(directoryId);
-        usecase.setUsecaseName(getCellValueByHeader(row, headerRow, "用例名称"));
-        if (!StringUtils.hasText(usecase.getUsecaseName())) {
+
+        // 用例名称* (必填)
+        String usecaseName = getCellValueByHeaderWithStar(row, headerRow, "用例名称");
+        if (!StringUtils.hasText(usecaseName)) {
             throw new IllegalArgumentException("用例名称不能为空");
         }
-        usecase.setUsecaseType(resolveDictionaryValue("usecaseType", getCellValueByHeader(row, headerRow, "用例类型")));
-        usecase.setTestPoint(resolveDictionaryValue("testPoint", getCellValueByHeader(row, headerRow, "测试要点")));
-        usecase.setUsecaseNature(resolveDictionaryValue("usecaseNature", getCellValueByHeader(row, headerRow, "用例性质")));
-        usecase.setPrority(resolveDictionaryValue("prority", getCellValueByHeader(row, headerRow, "优先级")));
-        usecase.setIsSmokeTest(getCellValueByHeader(row, headerRow, "是否冒烟"));
-        usecase.setPrecondition(getCellValueByHeader(row, headerRow, "前置条件"));
-        usecase.setTestData(getCellValueByHeader(row, headerRow, "测试数据"));
-        usecase.setTestStep(getCellValueByHeader(row, headerRow, "测试步骤"));
-        usecase.setExpectedResult(getCellValueByHeader(row, headerRow, "预期结果"));
+        usecase.setUsecaseName(usecaseName);
 
-        String creatorName = getCellValueByHeader(row, headerRow, "创建人");
+        // 用例类型* (必填，需要从数据字典获取码值)
+        String usecaseTypeName = getCellValueByHeaderWithStar(row, headerRow, "用例类型");
+        usecase.setUsecaseType(resolveDictionaryValue("usecaseType", usecaseTypeName));
+
+        // 测试要点 (可选)
+        usecase.setTestPoint(resolveDictionaryValue("testPoint", getCellValueByHeader(row, headerRow, "测试要点")));
+
+        // 用例性质* (必填，需要从数据字典获取码值)
+        String usecaseNatureName = getCellValueByHeaderWithStar(row, headerRow, "用例性质");
+        usecase.setUsecaseNature(resolveDictionaryValue("usecaseNature", usecaseNatureName));
+
+        // 优先级 (可选)
+        usecase.setPrority(resolveDictionaryValue("prority", getCellValueByHeader(row, headerRow, "优先级")));
+
+        // 是否冒烟 (可选)
+        usecase.setIsSmokeTest(getCellValueByHeader(row, headerRow, "是否冒烟"));
+
+        // 前置条件 (可选)
+        usecase.setPrecondition(getCellValueByHeader(row, headerRow, "前置条件"));
+
+        // 测试数据 (可选)
+        usecase.setTestData(getCellValueByHeader(row, headerRow, "测试数据"));
+
+        // 测试步骤* (必填)
+        String testStep = getCellValueByHeaderWithStar(row, headerRow, "测试步骤");
+        usecase.setTestStep(testStep);
+
+        // 预期结果* (必填)
+        String expectedResult = getCellValueByHeaderWithStar(row, headerRow, "预期结果");
+        usecase.setExpectedResult(expectedResult);
+
+        // 创建人* (必填)
+        String creatorName = getCellValueByHeaderWithStar(row, headerRow, "创建人");
         if (StringUtils.hasText(creatorName)) {
             String creatorId = userService.getUserIdByUserName(creatorName);
             usecase.setCreatorId(creatorId);
         } else {
             usecase.setCreatorId(securityUtils.getUserId());
         }
+
         usecase.setCreateTime(LocalDateTime.now());
         usecase.setModifyTime(LocalDateTime.now());
         usecase.setModifierId(usecase.getCreatorId());
@@ -546,12 +667,43 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
         return usecase;
     }
 
+    /**
+     * 获取单元格值，先尝试带*号的列名，如果取不到值，再尝试不带*号的列名
+     * @param row 数据行
+     * @param headerRow 表头行
+     * @param headerName 列名（不带*号）
+     * @return 单元格值，如果都取不到则返回null
+     */
+    private String getCellValueByHeaderWithStar(Row row, Row headerRow, String headerName) {
+        // 先尝试带*号的列名
+        String value = getCellValueByHeader(row, headerRow, headerName + "*");
+        // 如果第一次就取到值了，直接返回
+        if (StringUtils.hasText(value)) {
+            return value;
+        }
+        // 如果第一次没取到值，再尝试不带*号的列名
+        return getCellValueByHeader(row, headerRow, headerName);
+    }
+
+    /**
+     * 从数据字典中解析码值
+     * 根据dataType和dataName查询dataValue，如果找不到则抛出异常
+     * @param type 数据类型（dataType）
+     * @param name 数据名称（dataName）
+     * @return 数据值（dataValue）
+     * @throws IllegalArgumentException 如果找不到对应的码值
+     */
     private String resolveDictionaryValue(String type, String name) {
         if (!StringUtils.hasText(name)) {
             return null;
         }
-        String value = dataDictionaryService.getDataValueByTypeAndName(type, name);
-        return value != null ? value : name;
+        // 去掉可能的*号
+        String normalizedName = name.replace("*", "").trim();
+        String value = dataDictionaryService.getDataValueByTypeAndName(type, normalizedName);
+        if (value == null) {
+            throw new IllegalArgumentException(String.format("数据字典中未找到对应的码值: dataType=%s, dataName=%s", type, normalizedName));
+        }
+        return value;
     }
 
     private String getCellValueByHeader(Row row, Row headerRow, String headerName) {
@@ -560,9 +712,18 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
         }
         for (int i = headerRow.getFirstCellNum(); i < headerRow.getLastCellNum(); i++) {
             Cell headerCell = headerRow.getCell(i);
-            if (headerCell != null && headerName.equalsIgnoreCase(headerCell.getStringCellValue().trim())) {
-                Cell cell = row.getCell(i);
-                return getCellValue(cell);
+            if (headerCell != null) {
+                String cellValue = headerCell.getStringCellValue().trim();
+                // 去掉*号后进行比较，支持"用例名称"和"用例名称*"两种格式
+                String normalizedCellValue = cellValue.replace("*", "").trim();
+                String normalizedHeaderName = headerName.replace("*", "").trim();
+                // 使用或的关系：匹配"用例名称"或"用例名称*"
+                if (normalizedHeaderName.equalsIgnoreCase(normalizedCellValue)
+                    || headerName.equalsIgnoreCase(cellValue)
+                    || (headerName + "*").equalsIgnoreCase(cellValue)) {
+                    Cell cell = row.getCell(i);
+                    return getCellValue(cell);
+                }
             }
         }
         return null;

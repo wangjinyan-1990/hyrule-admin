@@ -3,6 +3,7 @@ package com.king.test.baseManage.testDirectory.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.king.test.baseManage.testDirectory.entity.TTestDirectory;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,14 +39,14 @@ public interface ITestDirectoryService extends IService<TTestDirectory> {
      * @return 是否更新成功
      */
     boolean updateDirectory(TTestDirectory directory);
-    
+
     /**
      * 删除测试目录
      * @param directoryId 目录ID
      * @return 是否删除成功
      */
     boolean deleteDirectory(String directoryId);
-    
+
     /**
      * 根据完整路径查找目录ID
      * @param fullPath 完整路径
@@ -59,5 +60,13 @@ public interface ITestDirectoryService extends IService<TTestDirectory> {
      * @return 完整路径
      */
     String getDirectoryFullPath(String directoryId);
+
+    /**
+     * 递归获取所有子目录ID（包含当前目录）
+     * @param directoryId 目录ID
+     * @param systemId 系统ID
+     * @return 包含当前目录及其所有子目录的ID列表
+     */
+    List<String> getAllChildrenDirectoryIds(String directoryId, String systemId);
 
 }

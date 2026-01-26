@@ -122,9 +122,9 @@ public class SITDeployServiceImpl extends ServiceImpl<DeployRecordMapper, TfDepl
         String mergeState = deployRecord.getMergeState();
         String mergeRequest = deployRecord.getMergeRequest();
 
-        // 如果mergeRequest为"1"，只进行登记，不走合并流程
-        if ("1".equals(mergeRequest)) {
-            logger.info("mergeRequest 为 '1'，跳过代码合并，只进行登记");
+        // 如果mergeRequest为"1"，或者mergeRequest已合并，只进行登记，不走合并流程
+        if ("1".equals(mergeRequest)  || "merged".equals(mergeState)) {
+            logger.info("mergeRequest 为 '1'或者mergeRequest已合并，跳过代码合并，只进行登记");
         } else if (StringUtils.hasText(mergeRequest)) {
             // 如果mergeState为null或不是'merged'，则需要合并
             boolean needMerge = mergeState == null || !"merged".equals(mergeState);

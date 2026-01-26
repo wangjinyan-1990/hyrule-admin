@@ -46,6 +46,9 @@
             <if test="systemName != null and systemName != ''">
                 AND ts.SYSTEM_NAME LIKE CONCAT('%', #{systemName}, '%')
             </if>
+            <if test="testStage != null and testStage != ''">
+                AND dr.TEST_STAGE = #{testStage}
+            </if>
             <if test="startDate != null and startDate != ''">
                 AND DATE(dr.DEPLOY_TIME) &gt;= #{startDate}
             </if>
