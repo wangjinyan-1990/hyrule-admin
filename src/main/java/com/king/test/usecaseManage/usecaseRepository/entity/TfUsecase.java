@@ -171,15 +171,22 @@ public class TfUsecase {
     @TableField("WORK_PACKAGE_ID")
     private Integer workPackageId;
 
+    /**
+     * 关联需求点ID（导入用例时用，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String requirePointId;
+
+
     // 构造函数
     public TfUsecase() {
     }
 
-    public TfUsecase(String usecaseId, String directoryId, String usecaseName, String creatorId, 
-                     LocalDateTime createTime, String modifierId, LocalDateTime modifyTime, 
-                     String systemId, String isSmokeTest, String usecaseType, String testPoint, 
-                     String usecaseNature, String prority, String latestExeStatus, 
-                     String precondition, String testData, String testStep, 
+    public TfUsecase(String usecaseId, String directoryId, String usecaseName, String creatorId,
+                     LocalDateTime createTime, String modifierId, LocalDateTime modifyTime,
+                     String systemId, String isSmokeTest, String usecaseType, String testPoint,
+                     String usecaseNature, String prority, String latestExeStatus,
+                     String precondition, String testData, String testStep,
                      String expectedResult, Integer workPackageId) {
         this.usecaseId = usecaseId;
         this.directoryId = directoryId;
@@ -410,4 +417,8 @@ public class TfUsecase {
     public void setWorkPackageId(Integer workPackageId) {
         this.workPackageId = workPackageId;
     }
+
+    public String getRequirePointId() { return requirePointId; }
+
+    public void setRequirePointId(String requirePointId) { this.requirePointId = requirePointId; }
 }

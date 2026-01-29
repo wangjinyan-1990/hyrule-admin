@@ -9,6 +9,7 @@ import com.king.framework.dataDictionary.service.IDataDictionaryService;
 import com.king.sys.user.service.IUserService;
 import com.king.test.baseManage.testDirectory.service.ITestDirectoryService;
 import com.king.test.usecaseManage.requireRepository.entity.TfRequirepoint;
+import com.king.test.usecaseManage.requireRepository.service.ITfRequirepointService;
 import com.king.test.usecaseManage.usecaseRepository.entity.TfUsecase;
 import com.king.test.usecaseManage.usecaseRepository.entity.TfUsecaseHistory;
 import com.king.test.usecaseManage.usecaseRepository.mapper.TfUsecaseHistoryMapper;
@@ -16,6 +17,7 @@ import com.king.test.usecaseManage.usecaseRepository.mapper.UsecaseRepositoryMap
 import com.king.test.usecaseManage.usecaseRepository.service.ITfUsecaseService;
 import com.king.test.usecaseManage.usecaseRequireLink.entity.TfUsecaseRequire;
 import com.king.test.usecaseManage.usecaseRequireLink.mapper.TfUsecaseRequireMapper;
+import com.king.test.usecaseManage.usecaseRequireLink.service.IUsecaseRequireLinkService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -72,6 +74,14 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
     @Autowired
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private TfUsecaseRequireMapper usecaseRequireMapper;
+
+    @Autowired
+    @Qualifier("usecaseRequireLinkServiceImpl")
+    private IUsecaseRequireLinkService usecaseRequireLinkService;
+
+    @Autowired
+    @Qualifier("tfRequirepointServiceImpl")
+    private ITfRequirepointService requirePointService;
 
     private static final String TEMPLATE_PATH = "templates/UsecaseTemplate.xlsx";
 
@@ -342,7 +352,26 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
                     continue;
                 }
                 try {
-                    TfUsecase usecase = parseRowToUsecase(row, headerRow, systemId, directoryId);
+                    // 解析用例信息，同时获取关联测试需求编号
+                    String requirePointId = getCellValueByHeader(row, headerRow, "关联测试需求编号");
+                    // 一个用例只对应一个需求点，如果存在多个需求点编号（用逗号或分号分隔），只取第一个
+                    String firstRequirePointId = null;
+                    if (StringUtils.hasText(requirePointId)) {
+                        String trimmedId = requirePointId.trim();
+                        String[] requirePointIds = trimmedId.split("[,;，；]");
+                        firstRequirePointId = requirePointIds[0].trim();
+
+                        // 如果存在多个需求点编号，记录警告
+                        if (requirePointIds.length > 1) {
+                            String warnMsg = String.format("第%d行: 一个用例只能关联一个需求点，已自动取第一个需求点编号: %s，忽略其他编号",
+                                    i + 1, firstRequirePointId);
+                            logger.warn(warnMsg);
+                            errors.add(warnMsg);
+                        }
+                    }
+
+                    // 解析用例信息，并在parseRowToUsecase中检查需求点是否存在
+                    TfUsecase usecase = parseRowToUsecase(row, headerRow, systemId, directoryId, firstRequirePointId, i + 1, errors);
                     usecases.add(usecase);
                 } catch (Exception ex) {
                     errors.add(String.format("第%d行导入失败: %s", i + 1, ex.getMessage()));
@@ -394,6 +423,33 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
                     } catch (Exception e) {
                         logger.warn("记录用例历史失败: usecaseId={}, error={}", usecase.getUsecaseId(), e.getMessage());
                         // 历史记录失败不影响主流程
+                    }
+                }
+
+                // 关联用例和需求点（一个用例只对应一个需求点）
+                for (TfUsecase usecase : usecases) {
+                    String requirePointId = usecase.getRequirePointId();
+                    if (requirePointId != null && !requirePointId.isEmpty()) {
+                        try {
+                            logger.info("开始关联用例和需求点: usecaseId={}, requirePointId={}", usecase.getUsecaseId(), requirePointId);
+                            boolean linked = usecaseRequireLinkService.linkUsecaseToRequirePoint(usecase.getUsecaseId(), requirePointId);
+                            if (linked) {
+                                logger.info("关联用例和需求点成功: usecaseId={}, requirePointId={}", usecase.getUsecaseId(), requirePointId);
+                            } else {
+                                String errorMsg = String.format("关联用例和需求点失败: usecaseId=%s, requirePointId=%s，请检查需求点是否存在", usecase.getUsecaseId(), requirePointId);
+                                logger.error(errorMsg);
+                                errors.add(errorMsg);
+                                // 关联失败时记录错误，但不影响主流程（用例已保存）
+                            }
+                        } catch (Exception e) {
+                            String errorMsg = String.format("关联用例和需求点异常: usecaseId=%s, requirePointId=%s, error=%s",
+                                    usecase.getUsecaseId(), requirePointId, e.getMessage());
+                            logger.error(errorMsg, e);
+                            errors.add(errorMsg);
+                            // 关联异常时记录错误，但不影响主流程（用例已保存）
+                        }
+                    } else {
+                        logger.debug("用例没有关联的需求点: usecaseId={}", usecase.getUsecaseId());
                     }
                 }
             } else {
@@ -607,11 +663,24 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
         return true;
     }
 
-    private TfUsecase parseRowToUsecase(Row row, Row headerRow, String systemId, String directoryId) {
+    private TfUsecase parseRowToUsecase(Row row, Row headerRow, String systemId, String directoryId, String requirePointId, int rowNumber, List<String> errors) {
         TfUsecase usecase = new TfUsecase();
         usecase.setUsecaseId(generateUsecaseId(systemId));
         usecase.setSystemId(systemId);
         usecase.setDirectoryId(directoryId);
+
+        // 检查需求点是否存在
+        if (StringUtils.hasText(requirePointId)) {
+            TfRequirepoint requirePoint = requirePointService.getById(requirePointId);
+            if (requirePoint == null) {
+                String errorMsg = String.format("第%d行: 关联测试需求编号 '%s' 对应的需求点不存在", rowNumber, requirePointId);
+                logger.error(errorMsg);
+                errors.add(errorMsg);
+                throw new IllegalArgumentException(errorMsg);
+            }else{
+                usecase.setRequirePointId(requirePointId);
+            }
+        }
 
         // 用例名称* (必填)
         String usecaseName = getCellValueByHeaderWithStar(row, headerRow, "用例名称");
