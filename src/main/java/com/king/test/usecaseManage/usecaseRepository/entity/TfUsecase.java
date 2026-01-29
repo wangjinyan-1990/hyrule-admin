@@ -177,6 +177,11 @@ public class TfUsecase {
     @TableField(exist = false)
     private String requirePointId;
 
+    /**
+     * 完整路径（导入导出用例时用，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String fullPath;
 
     // 构造函数
     public TfUsecase() {
@@ -421,4 +426,8 @@ public class TfUsecase {
     public String getRequirePointId() { return requirePointId; }
 
     public void setRequirePointId(String requirePointId) { this.requirePointId = requirePointId; }
+
+    public String getFullPath() { return fullPath; }
+
+    public void setFullPath(String fullPath) { this.fullPath = fullPath; }
 }

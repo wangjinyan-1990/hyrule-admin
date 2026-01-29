@@ -232,9 +232,9 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
     @Override
     public void exportUsecasesToExcel(List<TfUsecase> usecases, HttpServletResponse response) {
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Usecases");
-        String[] headers = {"用例ID", "用例名称", "系统ID", "目录ID", "用例类型", "测试要点", "用例性质", "优先级",
-                "是否冒烟", "创建人", "创建时间", "修改人", "修改时间"};
+        Sheet sheet = workbook.createSheet("测试用例");
+        String[] headers = {"用例ID", "模块路径*", "用例名称*", "前置条件",  "测试数据",  "测试步骤*",  "预期结果*",  "用例类型*", "测试要点",
+                "优先级", "用例性质", "创建人", "修改人", "关联测试需求点"};
 
         Row headerRow = sheet.createRow(0);
         for (int i = 0; i < headers.length; i++) {
@@ -249,19 +249,72 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
 
         for (TfUsecase usecase : usecases) {
             Row row = sheet.createRow(rowIndex++);
-            row.createCell(0).setCellValue(Optional.ofNullable(usecase.getUsecaseId()).orElse(""));
-            row.createCell(1).setCellValue(Optional.ofNullable(usecase.getUsecaseName()).orElse(""));
-            row.createCell(2).setCellValue(Optional.ofNullable(usecase.getSystemId()).orElse(""));
-            row.createCell(3).setCellValue(Optional.ofNullable(usecase.getDirectoryId()).orElse(""));
-            row.createCell(4).setCellValue(Optional.ofNullable(usecase.getUsecaseTypeName()).orElse(Optional.ofNullable(usecase.getUsecaseType()).orElse("")));
-            row.createCell(5).setCellValue(Optional.ofNullable(usecase.getTestPointName()).orElse(Optional.ofNullable(usecase.getTestPoint()).orElse("")));
-            row.createCell(6).setCellValue(Optional.ofNullable(usecase.getUsecaseNatureName()).orElse(Optional.ofNullable(usecase.getUsecaseNature()).orElse("")));
-            row.createCell(7).setCellValue(Optional.ofNullable(usecase.getProrityName()).orElse(Optional.ofNullable(usecase.getPrority()).orElse("")));
-            row.createCell(8).setCellValue(Optional.ofNullable(usecase.getIsSmokeTest()).orElse(""));
-            row.createCell(9).setCellValue(Optional.ofNullable(usecase.getCreator()).orElse(Optional.ofNullable(usecase.getCreatorId()).orElse("")));
-            setDateCell(row, 10, usecase.getCreateTime(), dateStyle);
-            row.createCell(11).setCellValue(Optional.ofNullable(usecase.getModifier()).orElse(Optional.ofNullable(usecase.getModifierId()).orElse("")));
-            setDateCell(row, 12, usecase.getModifyTime(), dateStyle);
+            //用例ID
+            row.createCell(0).setCellValue(safeToString(usecase.getUsecaseId()));
+            
+            //模块路径* 根据directoryId，找出fullPath，填入fullPath
+            String fullPath = "";
+            if (StringUtils.hasText(usecase.getDirectoryId())) {
+                String path = testDirectoryService.getDirectoryFullPath(usecase.getDirectoryId());
+                fullPath = safeToString(path);
+            }
+            row.createCell(1).setCellValue(fullPath);
+            
+            //用例名称*
+            row.createCell(2).setCellValue(safeToString(usecase.getUsecaseName()));
+            
+            //前置条件
+            row.createCell(3).setCellValue(safeToString(usecase.getPrecondition()));
+            
+            //测试数据
+            row.createCell(4).setCellValue(safeToString(usecase.getTestData()));
+            
+            //测试步骤*
+            row.createCell(5).setCellValue(safeToString(usecase.getTestStep()));
+            
+            //预期结果*
+            row.createCell(6).setCellValue(safeToString(usecase.getExpectedResult()));
+            
+            //用例类型*
+            String usecaseTypeValue = StringUtils.hasText(usecase.getUsecaseTypeName()) ? 
+                    safeToString(usecase.getUsecaseTypeName()) : safeToString(usecase.getUsecaseType());
+            row.createCell(7).setCellValue(usecaseTypeValue);
+            
+            //测试要点
+            String testPointValue = StringUtils.hasText(usecase.getTestPointName()) ? 
+                    safeToString(usecase.getTestPointName()) : safeToString(usecase.getTestPoint());
+            row.createCell(8).setCellValue(testPointValue);
+            
+            //优先级
+            String prorityValue = StringUtils.hasText(usecase.getProrityName()) ? 
+                    safeToString(usecase.getProrityName()) : safeToString(usecase.getPrority());
+            row.createCell(9).setCellValue(prorityValue);
+            
+            //用例性质
+            String usecaseNatureValue = StringUtils.hasText(usecase.getUsecaseNatureName()) ? 
+                    safeToString(usecase.getUsecaseNatureName()) : safeToString(usecase.getUsecaseNature());
+            row.createCell(10).setCellValue(usecaseNatureValue);
+            
+            //创建人
+            String creatorValue = StringUtils.hasText(usecase.getCreator()) ? 
+                    safeToString(usecase.getCreator()) : safeToString(usecase.getCreatorId());
+            row.createCell(11).setCellValue(creatorValue);
+            
+            //修改人
+            String modifierValue = StringUtils.hasText(usecase.getModifier()) ? 
+                    safeToString(usecase.getModifier()) : safeToString(usecase.getModifierId());
+            row.createCell(12).setCellValue(modifierValue);
+            
+            //关联测试需求点 根据usecaseId去tf_usecase_require表找出requirePointId
+            String requirePointId = "";
+            if (StringUtils.hasText(usecase.getUsecaseId())) {
+                List<String> requirePointIds = usecaseRequireMapper.selectRequirePointIdsByUsecaseId(usecase.getUsecaseId());
+                if (requirePointIds != null && !requirePointIds.isEmpty()) {
+                    // 一个用例只对应一个需求点，取第一个
+                    requirePointId = safeToString(requirePointIds.get(0));
+                }
+            }
+            row.createCell(13).setCellValue(requirePointId);
         }
 
         for (int i = 0; i < headers.length; i++) {
@@ -333,7 +386,7 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
         List<String> errors = new ArrayList<>();
         List<TfUsecase> usecases = new ArrayList<>();
 
-        logger.info("开始导入用例: systemId={}, directoryId={}, fileName={}", systemId, directoryId, file.getOriginalFilename());
+        logger.info("开始导入用例: systemId={}, fileName={}", systemId, file.getOriginalFilename());
 
         try (InputStream inputStream = file.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
@@ -352,26 +405,8 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
                     continue;
                 }
                 try {
-                    // 解析用例信息，同时获取关联测试需求编号
-                    String requirePointId = getCellValueByHeader(row, headerRow, "关联测试需求编号");
-                    // 一个用例只对应一个需求点，如果存在多个需求点编号（用逗号或分号分隔），只取第一个
-                    String firstRequirePointId = null;
-                    if (StringUtils.hasText(requirePointId)) {
-                        String trimmedId = requirePointId.trim();
-                        String[] requirePointIds = trimmedId.split("[,;，；]");
-                        firstRequirePointId = requirePointIds[0].trim();
-
-                        // 如果存在多个需求点编号，记录警告
-                        if (requirePointIds.length > 1) {
-                            String warnMsg = String.format("第%d行: 一个用例只能关联一个需求点，已自动取第一个需求点编号: %s，忽略其他编号",
-                                    i + 1, firstRequirePointId);
-                            logger.warn(warnMsg);
-                            errors.add(warnMsg);
-                        }
-                    }
-
                     // 解析用例信息，并在parseRowToUsecase中检查需求点是否存在
-                    TfUsecase usecase = parseRowToUsecase(row, headerRow, systemId, directoryId, firstRequirePointId, i + 1, errors);
+                    TfUsecase usecase = parseRowToUsecase(row, headerRow, systemId, i, errors);
                     usecases.add(usecase);
                 } catch (Exception ex) {
                     errors.add(String.format("第%d行导入失败: %s", i + 1, ex.getMessage()));
@@ -435,11 +470,6 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
                             boolean linked = usecaseRequireLinkService.linkUsecaseToRequirePoint(usecase.getUsecaseId(), requirePointId);
                             if (linked) {
                                 logger.info("关联用例和需求点成功: usecaseId={}, requirePointId={}", usecase.getUsecaseId(), requirePointId);
-                            } else {
-                                String errorMsg = String.format("关联用例和需求点失败: usecaseId=%s, requirePointId=%s，请检查需求点是否存在", usecase.getUsecaseId(), requirePointId);
-                                logger.error(errorMsg);
-                                errors.add(errorMsg);
-                                // 关联失败时记录错误，但不影响主流程（用例已保存）
                             }
                         } catch (Exception e) {
                             String errorMsg = String.format("关联用例和需求点异常: usecaseId=%s, requirePointId=%s, error=%s",
@@ -663,24 +693,11 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
         return true;
     }
 
-    private TfUsecase parseRowToUsecase(Row row, Row headerRow, String systemId, String directoryId, String requirePointId, int rowNumber, List<String> errors) {
+    private TfUsecase parseRowToUsecase(Row row, Row headerRow, String systemId, int rowNumber, List<String> errors) {
         TfUsecase usecase = new TfUsecase();
         usecase.setUsecaseId(generateUsecaseId(systemId));
         usecase.setSystemId(systemId);
-        usecase.setDirectoryId(directoryId);
 
-        // 检查需求点是否存在
-        if (StringUtils.hasText(requirePointId)) {
-            TfRequirepoint requirePoint = requirePointService.getById(requirePointId);
-            if (requirePoint == null) {
-                String errorMsg = String.format("第%d行: 关联测试需求编号 '%s' 对应的需求点不存在", rowNumber, requirePointId);
-                logger.error(errorMsg);
-                errors.add(errorMsg);
-                throw new IllegalArgumentException(errorMsg);
-            }else{
-                usecase.setRequirePointId(requirePointId);
-            }
-        }
 
         // 用例名称* (必填)
         String usecaseName = getCellValueByHeaderWithStar(row, headerRow, "用例名称");
@@ -688,6 +705,18 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
             throw new IllegalArgumentException("用例名称不能为空");
         }
         usecase.setUsecaseName(usecaseName);
+
+        // 模块路径* (必填)
+        String fullPath = getCellValueByHeaderWithStar(row, headerRow, "模块路径");
+        if (!StringUtils.hasText(fullPath)) {
+            throw new IllegalArgumentException("模块路径不能为空");
+        }else{
+            String directoryId = testDirectoryService.getDirectoryIdByFullPath(fullPath);
+            if (!StringUtils.hasText(directoryId)) {
+                throw new IllegalArgumentException(String.format("第%d行: 模块路径 '%s' 对应的目录不存在", rowNumber, fullPath));
+            }
+            usecase.setDirectoryId(directoryId);
+        }
 
         // 用例类型* (必填，需要从数据字典获取码值)
         String usecaseTypeName = getCellValueByHeaderWithStar(row, headerRow, "用例类型");
@@ -727,6 +756,21 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
             usecase.setCreatorId(creatorId);
         } else {
             usecase.setCreatorId(securityUtils.getUserId());
+        }
+
+        // 测试数据 (可选)
+        String requirePointId = getCellValueByHeader(row, headerRow, "关联测试需求点");
+        // 检查需求点是否存在
+        if (StringUtils.hasText(requirePointId)) {
+            TfRequirepoint requirePoint = requirePointService.getById(requirePointId);
+            if (requirePoint == null) {
+                String errorMsg = String.format("第%d行: 关联测试需求编号 '%s' 对应的需求点不存在", rowNumber, requirePointId);
+                logger.error(errorMsg);
+                errors.add(errorMsg);
+                throw new IllegalArgumentException(errorMsg);
+            }else{
+                usecase.setRequirePointId(requirePointId);
+            }
         }
 
         usecase.setCreateTime(LocalDateTime.now());
@@ -817,6 +861,21 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
             default:
                 return null;
         }
+    }
+
+    /**
+     * 安全地将对象转换为字符串，避免出现[object Object]
+     * @param value 要转换的值
+     * @return 字符串值，如果为null则返回空字符串
+     */
+    private String safeToString(Object value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof String) {
+            return (String) value;
+        }
+        return value.toString();
     }
 
     private String buildChangeDescription(TfUsecase original, TfUsecase updated) {
