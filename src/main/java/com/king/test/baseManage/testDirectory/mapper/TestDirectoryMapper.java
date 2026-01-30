@@ -30,10 +30,12 @@ public interface TestDirectoryMapper extends BaseMapper<TTestDirectory> {
      * 根据父目录ID和系统ID查询子目录
      * @param directoryParentId 父目录ID（可为空）
      * @param systemId 系统ID
+     * @param module 模块类型（可选）：isUseTestset-只查找IS_USE_TESTSET=1的目录；isUseTestcase-只查找IS_USE_TESTCASE=1的目录
      * @return 子目录列表
      */
     List<TTestDirectory> getChildrenByParentId(@Param("directoryParentId") String directoryParentId, 
-                                             @Param("systemId") String systemId);
+                                             @Param("systemId") String systemId,
+                                             @Param("module") String module);
     
     /**
      * 检查目录名称是否存在

@@ -75,17 +75,19 @@ public class TestDirectoryController {
      * 根据父目录ID和系统ID查询子目录
      * @param directoryParentId 父目录ID（可为空）
      * @param systemId 系统ID
+     * @param module 模块类型（可选）：isUseTestset-只查找IS_USE_TESTSET=1的目录；isUseTestcase-只查找IS_USE_TESTCASE=1的目录
      * @return 子目录列表
      */
     @GetMapping("/getChildrenByParentId")
     public Result<Map<String, Object>> getChildrenByParentId(@RequestParam(value = "directoryParentId", required = false) String directoryParentId,
-                                                           @RequestParam("systemId") String systemId) {
+                                                           @RequestParam("systemId") String systemId,
+                                                           @RequestParam(value = "module", required = false) String module) {
         if (!StringUtils.hasText(systemId)) {
             return Result.error("系统ID不能为空");
         }
         
         try {
-            Map<String, Object> data = testDirectoryService.getChildrenByParentId(directoryParentId, systemId);
+            Map<String, Object> data = testDirectoryService.getChildrenByParentId(directoryParentId, systemId, module);
             return Result.success(data);
         } catch (Exception e) {
             return Result.error("查询子目录失败：" + e.getMessage());

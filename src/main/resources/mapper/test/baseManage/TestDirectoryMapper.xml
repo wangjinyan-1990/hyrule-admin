@@ -85,6 +85,14 @@
                  AND DIRECTORY_PARENTID = #{directoryParentId}
              </otherwise>
          </choose>
+         <if test="module != null and module != ''">
+             <if test="module == 'isUseTestset'">
+                 AND IS_USE_TESTSET = 1
+             </if>
+             <if test="module == 'isUseTestcase'">
+                 AND IS_USE_TESTCASE = 1
+             </if>
+         </if>
          ORDER BY LEVEL ASC, DIRECTORY_NAME ASC
      </select>
 

@@ -134,10 +134,10 @@ public class TestDirectoryServiceImpl extends ServiceImpl<TestDirectoryMapper, T
     }
 
     @Override
-    public Map<String, Object> getChildrenByParentId(String directoryParentId, String systemId) {
+    public Map<String, Object> getChildrenByParentId(String directoryParentId, String systemId, String module) {
         Assert.hasText(systemId, "系统ID不能为空");
 
-        List<TTestDirectory> children = baseMapper.getChildrenByParentId(directoryParentId, systemId);
+        List<TTestDirectory> children = baseMapper.getChildrenByParentId(directoryParentId, systemId, module);
 
         Map<String, Object> result = new HashMap<>();
         result.put("rows", children);
@@ -220,7 +220,7 @@ public class TestDirectoryServiceImpl extends ServiceImpl<TestDirectoryMapper, T
         }
 
         // 检查是否有子目录
-        List<TTestDirectory> children = baseMapper.getChildrenByParentId(directoryId, directory.getSystemId());
+        List<TTestDirectory> children = baseMapper.getChildrenByParentId(directoryId, directory.getSystemId(), null);
         if (!children.isEmpty()) {
             throw new IllegalArgumentException("目录下存在子目录，无法删除");
         }
@@ -247,7 +247,7 @@ public class TestDirectoryServiceImpl extends ServiceImpl<TestDirectoryMapper, T
         TTestDirectory parentDirectory = baseMapper.selectById(parentId);
         if (parentDirectory != null) {
             // 查询父目录下是否还有其他子目录
-            List<TTestDirectory> siblings = baseMapper.getChildrenByParentId(parentId, parentDirectory.getSystemId());
+            List<TTestDirectory> siblings = baseMapper.getChildrenByParentId(parentId, parentDirectory.getSystemId(), null);
 
             // 如果没有子目录了，设置为叶子目录
             if (siblings.isEmpty()) {
