@@ -1,5 +1,7 @@
 package com.king.test.usecaseManage.usecaseRequireLink.service;
 
+import com.king.test.usecaseManage.usecaseRepository.entity.TfUsecase;
+
 import java.util.List;
 
 /**
@@ -22,4 +24,27 @@ public interface IUsecaseRequireLinkService {
      * @return 关联是否成功
      */
     boolean linkUsecaseToRequirePoints(String usecaseId, List<String> requirePointIds);
+
+    /**
+     * 根据需求点ID获取关联的测试用例列表
+     * @param requirePointId 需求点ID
+     * @return 关联的测试用例列表
+     */
+    List<TfUsecase> getUsecasesByRequirePointId(String requirePointId);
+
+    /**
+     * 取消关联测试用例（根据需求点ID和用例ID列表）
+     * @param requirePointId 需求点ID
+     * @param usecaseIds 测试用例ID列表
+     * @return 取消关联是否成功
+     */
+    boolean unlinkTestCasesFromRequirePoint(String requirePointId, List<String> usecaseIds);
+
+    /**
+     * 关联测试用例到需求点（根据需求点ID和用例ID列表）
+     * @param requirePointId 需求点ID
+     * @param usecaseIds 测试用例ID列表
+     * @return 关联是否成功
+     */
+    boolean linkTestCasesToRequirePoint(String requirePointId, List<String> usecaseIds);
 }

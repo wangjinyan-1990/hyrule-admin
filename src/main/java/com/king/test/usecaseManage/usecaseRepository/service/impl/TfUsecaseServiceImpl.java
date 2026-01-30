@@ -16,7 +16,7 @@ import com.king.test.usecaseManage.usecaseRepository.mapper.TfUsecaseHistoryMapp
 import com.king.test.usecaseManage.usecaseRepository.mapper.UsecaseRepositoryMapper;
 import com.king.test.usecaseManage.usecaseRepository.service.ITfUsecaseService;
 import com.king.test.usecaseManage.usecaseRequireLink.entity.TfUsecaseRequire;
-import com.king.test.usecaseManage.usecaseRequireLink.mapper.TfUsecaseRequireMapper;
+import com.king.test.usecaseManage.usecaseRequireLink.mapper.TfUsecaseRequireLinkMapper;
 import com.king.test.usecaseManage.usecaseRequireLink.service.IUsecaseRequireLinkService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -73,7 +73,7 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
 
     @Autowired
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    private TfUsecaseRequireMapper usecaseRequireMapper;
+    private TfUsecaseRequireLinkMapper usecaseRequireMapper;
 
     @Autowired
     @Qualifier("usecaseRequireLinkServiceImpl")
@@ -418,11 +418,6 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
         for (int i = 0; i < usecases.size(); i++) {
             TfUsecase usecase = usecases.get(i);
             // 验证必需字段
-            if (!StringUtils.hasText(usecase.getUsecaseId())) {
-                String errorMsg = String.format("第%d行: 用例ID不能为空", i + 2); // i+2 因为第一行是表头，从第二行开始
-                errors.add(errorMsg);
-                logger.error("用例验证失败: {}", errorMsg);
-            }
             if (!StringUtils.hasText(usecase.getSystemId())) {
                 String errorMsg = String.format("第%d行: 系统ID不能为空", i + 2);
                 errors.add(errorMsg);
@@ -432,6 +427,41 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
                 String errorMsg = String.format("第%d行: 用例名称不能为空", i + 2);
                 errors.add(errorMsg);
                 logger.error("用例验证失败: {}", errorMsg);
+            }
+            
+            // 如果用例ID不为空，验证用例是否存在（用于修改场景）
+            if (StringUtils.hasText(usecase.getUsecaseId())) {
+                TfUsecase existing = this.getById(usecase.getUsecaseId());
+                if (existing == null) {
+                    String errorMsg = String.format("第%d行: 用例ID '%s' 对应的用例不存在", i + 2, usecase.getUsecaseId());
+                    errors.add(errorMsg);
+                    logger.error("用例验证失败: {}", errorMsg);
+                } else {
+                    // 保留原有的创建时间和创建人信息
+                    usecase.setCreateTime(existing.getCreateTime());
+                    usecase.setCreatorId(existing.getCreatorId());
+                    // 更新修改时间和修改人
+                    usecase.setModifyTime(LocalDateTime.now());
+                    String currentUser = securityUtils.getUserId();
+                    if (StringUtils.hasText(currentUser)) {
+                        usecase.setModifierId(currentUser);
+                    } else {
+                        usecase.setModifierId(usecase.getCreatorId());
+                    }
+                }
+            } else {
+                // 用例ID为空，表示新增，设置创建时间和创建人
+                usecase.setCreateTime(LocalDateTime.now());
+                usecase.setModifyTime(usecase.getCreateTime());
+                if (!StringUtils.hasText(usecase.getCreatorId())) {
+                    String currentUser = securityUtils.getUserId();
+                    if (StringUtils.hasText(currentUser)) {
+                        usecase.setCreatorId(currentUser);
+                    }
+                }
+                if (!StringUtils.hasText(usecase.getModifierId())) {
+                    usecase.setModifierId(usecase.getCreatorId());
+                }
             }
         }
 
@@ -444,17 +474,35 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
 
         // 所有验证通过，批量保存所有用例
         int successCount = 0;
+        int insertCount = 0;
+        int updateCount = 0;
         try {
-            // 使用批量保存
-            boolean batchSaved = this.saveBatch(usecases);
+            // 使用批量保存或更新（根据用例ID判断是新增还是修改）
+            boolean batchSaved = this.saveOrUpdateBatch(usecases);
             if (batchSaved) {
                 successCount = usecases.size();
-                logger.info("批量保存用例成功: 数量={}", successCount);
+                // 统计新增和修改的数量（根据创建时间和修改时间是否相等来判断）
+                for (TfUsecase usecase : usecases) {
+                    // 判断是新增还是修改：如果创建时间等于修改时间，说明是新增；否则是修改
+                    if (usecase.getCreateTime() != null && usecase.getModifyTime() != null 
+                            && usecase.getCreateTime().equals(usecase.getModifyTime())) {
+                        insertCount++;
+                    } else {
+                        updateCount++;
+                    }
+                }
+                logger.info("批量保存用例成功: 总数={}, 新增={}, 修改={}", successCount, insertCount, updateCount);
 
                 // 批量记录历史
                 for (TfUsecase usecase : usecases) {
                     try {
-                        recordUsecaseHistory(usecase.getUsecaseId(), "IMPORT", null, "导入用例", usecase.getCreatorId());
+                        // 判断是新增还是修改：如果创建时间等于修改时间，说明是新增；否则是修改
+                        boolean isCreate = usecase.getCreateTime() != null && usecase.getModifyTime() != null 
+                                && usecase.getCreateTime().equals(usecase.getModifyTime());
+                        String action = isCreate ? "IMPORT_CREATE" : "IMPORT_UPDATE";
+                        String operatorId = StringUtils.hasText(usecase.getModifierId()) ? usecase.getModifierId() : usecase.getCreatorId();
+                        recordUsecaseHistory(usecase.getUsecaseId(), action, null, 
+                                isCreate ? "导入新增用例" : "导入修改用例", operatorId);
                     } catch (Exception e) {
                         logger.warn("记录用例历史失败: usecaseId={}, error={}", usecase.getUsecaseId(), e.getMessage());
                         // 历史记录失败不影响主流程
@@ -483,7 +531,7 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
                     }
                 }
             } else {
-                String errorMsg = "批量保存用例失败: saveBatch方法返回false";
+                String errorMsg = "批量保存用例失败: saveOrUpdateBatch方法返回false";
                 errors.add(errorMsg);
                 logger.error("批量保存用例失败: 数量={}", usecases.size());
                 throw new RuntimeException(errorMsg);
@@ -496,9 +544,12 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
 
         Map<String, Object> result = new HashMap<>(8);
         result.put("successCount", successCount);
+        result.put("insertCount", insertCount);
+        result.put("updateCount", updateCount);
         result.put("failCount", errors.size());
         result.put("errors", errors);
-        logger.info("用例导入完成: 成功={}, 失败={}, 总行数={}", successCount, errors.size(), usecases.size());
+        logger.info("用例导入完成: 成功={}, 新增={}, 修改={}, 失败={}, 总行数={}", 
+                successCount, insertCount, updateCount, errors.size(), usecases.size());
         return result;
     }
 
@@ -695,9 +746,17 @@ public class TfUsecaseServiceImpl extends ServiceImpl<UsecaseRepositoryMapper, T
 
     private TfUsecase parseRowToUsecase(Row row, Row headerRow, String systemId, int rowNumber, List<String> errors) {
         TfUsecase usecase = new TfUsecase();
-        usecase.setUsecaseId(generateUsecaseId(systemId));
         usecase.setSystemId(systemId);
 
+        // 用例ID (可选，如果为空则新增，如果不为空则修改)
+        String usecaseId = getCellValueByHeader(row, headerRow, "用例ID");
+        if (StringUtils.hasText(usecaseId)) {
+            // 用例ID不为空，表示修改
+            usecase.setUsecaseId(usecaseId.trim());
+        } else {
+            // 用例ID为空，表示新增，生成新的用例ID
+            usecase.setUsecaseId(generateUsecaseId(systemId));
+        }
 
         // 用例名称* (必填)
         String usecaseName = getCellValueByHeaderWithStar(row, headerRow, "用例名称");

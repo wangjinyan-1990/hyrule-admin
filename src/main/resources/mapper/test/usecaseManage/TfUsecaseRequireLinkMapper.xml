@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.usecaseManage.usecaseRequireLink.mapper.TfUsecaseRequireLinkMapper">
+
+    <select id="selectRequirePointsByUsecaseId" resultType="com.king.test.usecaseManage.requireRepository.entity.TfRequirepoint">
+        SELECT
+            rp.REQUIRE_POINT_ID AS requirePointId,
+            rp.REQUIRE_POINT_DESC AS requirePointDesc,
+            rp.SYSTEM_ID AS systemId,
+            rp.DIRECTORY_ID AS directoryId,
+            rp.REQUIRE_POINT_TYPE AS requirePointType,
+            rp.REVIEW_STATUS AS reviewStatus,
+            rp.ANALYSIS_METHOD AS analysisMethod,
+            rp.REQUIRE_STATUS AS requireStatus,
+            rp.DESIGNER_ID AS designerId,
+            rp.CREATE_TIME AS createTime,
+            rp.MODIFIER_ID AS modifierId,
+            rp.MODIFY_TIME AS modifyTime,
+            rp.REMARK AS remark,
+            rp.SEND_TEST_ID AS sendTestId,
+            rp.WORK_PACKAGE_ID AS workPackageId
+        FROM tf_usecase_require ur
+        LEFT JOIN tf_requirepoint rp ON ur.REQUIRE_POINT_ID = rp.REQUIRE_POINT_ID
+        WHERE ur.USECASE_ID = #{usecaseId}
+        ORDER BY rp.CREATE_TIME DESC
+    </select>
+
+    <select id="selectRequirePointIdsByUsecaseId" resultType="java.lang.String">
+        SELECT ur.REQUIRE_POINT_ID
+        FROM tf_usecase_require ur
+        WHERE ur.USECASE_ID = #{usecaseId}
+    </select>
+
+    <delete id="deleteByUsecaseIdAndRequirePointIds">
+        DELETE FROM tf_usecase_require
+        WHERE USECASE_ID = #{usecaseId}
+        <if test="requirePointIds != null and requirePointIds.size() > 0">
+            AND REQUIRE_POINT_ID IN
+            <foreach collection="requirePointIds" item="requirePointId" open="(" close=")" separator=",">
+                #{requirePointId}
+            </foreach>
+        </if>
+    </delete>
+
+    <!-- 根据需求点ID查询关联的测试用例列表 -->
+    <select id="selectUsecasesByRequirePointId" resultType="com.king.test.usecaseManage.usecaseRepository.entity.TfUsecase">
+        SELECT
+            u.USECASE_ID AS usecaseId,
+            u.DIRECTORY_ID AS directoryId,
+            u.USECASE_NAME AS usecaseName,
+            u.CREATOR_ID AS creatorId,
+            creator.USER_NAME AS creator,
+            u.CREATE_TIME AS createTime,
+            u.MODIFIER_ID AS modifierId,
+            modifier.USER_NAME AS modifier,
+            u.MODIFY_TIME AS modifyTime,
+            u.SYSTEM_ID AS systemId,
+            u.IS_SMOKE_TEST AS isSmokeTest,
+            u.USECASE_TYPE AS usecaseType,
+            dic_type.DATA_NAME AS usecaseTypeName,
+            u.TEST_POINT AS testPoint,
+            dic_point.DATA_NAME AS testPointName,
+            u.USECASE_NATURE AS usecaseNature,
+            dic_nature.DATA_NAME AS usecaseNatureName,
+            u.PRORITY AS prority,
+            dic_priority.DATA_NAME AS prorityName,
+            u.LATEST_EXE_STATUS AS latestExeStatus,
+            dic_status.DATA_NAME AS latestExeStatusName,
+            u.PRECONDITION AS precondition,
+            u.TEST_DATA AS testData,
+            u.TEST_STEP AS testStep,
+            u.EXPECTED_RESULT AS expectedResult,
+            u.WORK_PACKAGE_ID AS workPackageId
+        FROM tf_usecase_require ur
+        LEFT JOIN tf_usecase u ON ur.USECASE_ID = u.USECASE_ID
+        LEFT JOIN t_sys_user creator ON u.CREATOR_ID = creator.USER_ID
+        LEFT JOIN t_sys_user modifier ON u.MODIFIER_ID = modifier.USER_ID
+        LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'usecaseType' AND dic_type.DATA_VALUE = u.USECASE_TYPE
+        LEFT JOIN data_dictionary dic_point ON dic_point.DATA_TYPE = 'testPoint' AND dic_point.DATA_VALUE = u.TEST_POINT
+        LEFT JOIN data_dictionary dic_nature ON dic_nature.DATA_TYPE = 'usecaseNature' AND dic_nature.DATA_VALUE = u.USECASE_NATURE
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = u.PRORITY
+        LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'latestExeStatus' AND dic_status.DATA_VALUE = u.LATEST_EXE_STATUS
+        WHERE ur.REQUIRE_POINT_ID = #{requirePointId}
+        ORDER BY u.CREATE_TIME DESC
+    </select>
+
+    <!-- 根据需求点ID和用例ID列表删除关联关系 -->
+    <delete id="deleteByRequirePointIdAndUsecaseIds">
+        DELETE FROM tf_usecase_require
+        WHERE REQUIRE_POINT_ID = #{requirePointId}
+        <if test="usecaseIds != null and usecaseIds.size() > 0">
+            AND USECASE_ID IN
+            <foreach collection="usecaseIds" item="usecaseId" open="(" close=")" separator=",">
+                #{usecaseId}
+            </foreach>
+        </if>
+    </delete>
+
+    <!-- 根据需求点ID查询已关联的用例ID列表 -->
+    <select id="selectUsecaseIdsByRequirePointId" resultType="java.lang.String">
+        SELECT ur.USECASE_ID
+        FROM tf_usecase_require ur
+        WHERE ur.REQUIRE_POINT_ID = #{requirePointId}
+    </select>
+
+</mapper>

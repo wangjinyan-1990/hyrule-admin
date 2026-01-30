@@ -112,7 +112,11 @@
             u.TEST_DATA AS testData,
             u.TEST_STEP AS testStep,
             u.EXPECTED_RESULT AS expectedResult,
-            u.WORK_PACKAGE_ID AS workPackageId
+            u.WORK_PACKAGE_ID AS workPackageId,
+            (SELECT ur.REQUIRE_POINT_ID 
+             FROM tf_usecase_require ur 
+             WHERE ur.USECASE_ID = u.USECASE_ID 
+             LIMIT 1) AS requirePointId
         FROM tf_usecase u
         LEFT JOIN t_sys_user creator ON u.CREATOR_ID = creator.USER_ID
         LEFT JOIN t_sys_user modifier ON u.MODIFIER_ID = modifier.USER_ID
