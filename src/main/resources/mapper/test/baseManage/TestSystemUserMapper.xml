@@ -15,12 +15,15 @@
             u.STATUS as status,
             u.SORT_NO as sortNo,
             GROUP_CONCAT(DISTINCT tsu.SYSTEM_ID ORDER BY tsu.SYSTEM_ID SEPARATOR ',') as systemIds,
-            GROUP_CONCAT(DISTINCT ts.SYSTEM_NAME ORDER BY ts.SYSTEM_ID SEPARATOR ',') as systemNames
+            GROUP_CONCAT(DISTINCT ts.SYSTEM_NAME ORDER BY ts.SYSTEM_ID SEPARATOR ',') as systemNames,
+            COALESCE(brp.TEST_LEADER, '0') as testLeader,
+            COALESCE(brp.DEV_LEADER, '0') as devLeader
         FROM t_sys_user u
         LEFT JOIN t_sys_role_user ru ON u.USER_ID = ru.USER_ID
         LEFT JOIN t_test_system_user tsu ON u.USER_ID = tsu.USER_ID
         LEFT JOIN t_test_system ts ON tsu.SYSTEM_ID = ts.SYSTEM_ID
         LEFT JOIN t_sys_org o ON u.ORG_ID = o.ORG_ID
+        LEFT JOIN tf_bug_role_permission brp ON u.USER_ID = brp.USER_ID
         WHERE ru.ROLE_ID = #{roleId}
           AND u.STATUS = 1
         <if test="userName != null and userName != ''">
@@ -32,7 +35,7 @@
         <if test="phone != null and phone != ''">
             AND u.PHONE LIKE CONCAT('%', #{phone}, '%')
         </if>
-        GROUP BY u.USER_ID, u.LOGIN_NAME, u.USER_NAME, u.EMAIL, u.PHONE, u.ORG_ID, o.ORG_NAME, u.STATUS, u.SORT_NO
+        GROUP BY u.USER_ID, u.LOGIN_NAME, u.USER_NAME, u.EMAIL, u.PHONE, u.ORG_ID, o.ORG_NAME, u.STATUS, u.SORT_NO, brp.TEST_LEADER, brp.DEV_LEADER
         ORDER BY u.SORT_NO, u.USER_NAME
     </select>
 

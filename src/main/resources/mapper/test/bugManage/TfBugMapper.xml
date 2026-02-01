@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.bugManage.mapper.TfBugMapper">
+
+    <sql id="CommonCondition">
+        <if test="systemId != null and systemId != ''">
+            AND b.SYSTEM_ID = #{systemId}
+        </if>
+        <if test="directoryIds != null and directoryIds.size() > 0">
+            AND b.DIRECTORY_ID IN
+            <foreach collection="directoryIds" item="directoryId" open="(" close=")" separator=",">
+                #{directoryId}
+            </foreach>
+        </if>
+        <if test="bugId != null and bugId != ''">
+            AND (b.BUG_ID LIKE CONCAT('%', #{bugId}, '%') OR CAST(b.BUG_ID AS CHAR) LIKE CONCAT('%', #{bugId}, '%'))
+        </if>
+        <if test="bugName != null and bugName != ''">
+            AND b.BUG_NAME LIKE CONCAT('%', #{bugName}, '%')
+        </if>
+        <if test="bugState != null and bugState != ''">
+            AND b.BUG_STATE = #{bugState}
+        </if>
+        <if test="bugType != null and bugType != ''">
+            AND b.BUG_TYPE = #{bugType}
+        </if>
+        <if test="bugSeverityLevel != null">
+            AND b.BUG_SEVERITY_LEVEL = #{bugSeverityLevel}
+        </if>
+        <if test="bugSource != null and bugSource != ''">
+            AND b.BUG_SOURCE = #{bugSource}
+        </if>
+        <if test="submitterId != null and submitterId != ''">
+            AND b.SUBMITTER_ID = #{submitterId}
+        </if>
+        <if test="checkerId != null and checkerId != ''">
+            AND b.CHECKER_ID = #{checkerId}
+        </if>
+        <if test="developerId != null and developerId != ''">
+            AND b.DEVELOPER_ID = #{developerId}
+        </if>
+        <if test="commitTimeStart != null and commitTimeStart != ''">
+            AND b.COMMIT_TIME &gt;= #{commitTimeStart}
+        </if>
+        <if test="commitTimeEnd != null and commitTimeEnd != ''">
+            AND b.COMMIT_TIME &lt;= #{commitTimeEnd}
+        </if>
+        <if test="closeTimeStart != null and closeTimeStart != ''">
+            AND b.CLOSE_TIME &gt;= #{closeTimeStart}
+        </if>
+        <if test="closeTimeEnd != null and closeTimeEnd != ''">
+            AND b.CLOSE_TIME &lt;= #{closeTimeEnd}
+        </if>
+    </sql>
+
+    <!-- 分页查询缺陷列表 -->
+    <select id="selectPageBugList" resultType="com.king.test.bugManage.entity.TfBug">
+        SELECT
+            b.BUG_ID AS bugId,
+            b.BUG_NAME AS bugName,
+            b.SYSTEM_ID AS systemId,
+            b.BUG_STATE AS bugState,
+            dic_state.DATA_NAME AS bugStateName,
+            b.USECASE_ID AS usecaseId,
+            b.BUG_SOURCE AS bugSource,
+            dic_source.DATA_NAME AS bugSourceName,
+            b.PRORITY AS prority,
+            dic_priority.DATA_NAME AS prorityName,
+            b.BUG_DESCRIPITION AS bugDescription,
+            b.BUG_SEVERITY_LEVEL AS bugSeverityLevel,
+            dic_severity.DATA_NAME AS bugSeverityLevelName,
+            b.CLOSE_REASON AS closeReason,
+            b.SUBMITTER_ID AS submitterId,
+            submitter.USER_NAME AS submitterName,
+            b.DEVELOPER_ID AS developerId,
+            developer.USER_NAME AS developerName,
+            b.DEV_LEADER_ID AS devLeaderId,
+            dev_leader.USER_NAME AS devLeaderName,
+            b.CHECKER_ID AS checkerId,
+            checker.USER_NAME AS checkerName,
+            b.BUG_TYPE AS bugType,
+            dic_type.DATA_NAME AS bugTypeName,
+            b.DIRECTORY_ID AS directoryId,
+            b.COMMIT_TIME AS commitTime,
+            b.CONFIRMED_TIME AS confirmedTime,
+            b.ASSIGNED_TIME AS assignedTime,
+            b.RESOLVED_TIME AS resolvedTime,
+            b.WAITCHECK_TIME AS waitCheckTime,
+            b.CLOSE_TIME AS closeTime,
+            b.SOLVE_VOLUME AS solveVolume,
+            b.SUBMITTED_VOLUME AS submittedVolume,
+            b.BUG_WORKFLOW_ID AS bugWorkflowId
+        FROM tf_bug b
+        LEFT JOIN t_sys_user submitter ON b.SUBMITTER_ID = submitter.USER_ID
+        LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
+        LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
+        LEFT JOIN t_sys_user checker ON b.CHECKER_ID = checker.USER_ID
+        LEFT JOIN data_dictionary dic_state ON dic_state.DATA_TYPE = 'bugState' AND dic_state.DATA_VALUE = b.BUG_STATE
+        LEFT JOIN data_dictionary dic_source ON dic_source.DATA_TYPE = 'bugSource' AND dic_source.DATA_VALUE = b.BUG_SOURCE
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = b.PRORITY
+        LEFT JOIN data_dictionary dic_severity ON dic_severity.DATA_TYPE = 'bugSeverityLevel' AND dic_severity.DATA_VALUE = CAST(b.BUG_SEVERITY_LEVEL AS CHAR)
+        LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'bugType' AND dic_type.DATA_VALUE = b.BUG_TYPE
+        WHERE 1 = 1
+        <include refid="CommonCondition" />
+        ORDER BY b.COMMIT_TIME DESC
+    </select>
+
+    <!-- 根据缺陷ID获取缺陷详情 -->
+    <select id="selectBugDetailById" resultType="com.king.test.bugManage.entity.TfBug">
+        SELECT
+            b.BUG_ID AS bugId,
+            b.BUG_NAME AS bugName,
+            b.SYSTEM_ID AS systemId,
+            b.BUG_STATE AS bugState,
+            dic_state.DATA_NAME AS bugStateName,
+            b.USECASE_ID AS usecaseId,
+            b.BUG_SOURCE AS bugSource,
+            dic_source.DATA_NAME AS bugSourceName,
+            b.PRORITY AS prority,
+            dic_priority.DATA_NAME AS prorityName,
+            b.BUG_DESCRIPITION AS bugDescription,
+            b.BUG_SEVERITY_LEVEL AS bugSeverityLevel,
+            dic_severity.DATA_NAME AS bugSeverityLevelName,
+            b.CLOSE_REASON AS closeReason,
+            b.SUBMITTER_ID AS submitterId,
+            submitter.USER_NAME AS submitterName,
+            b.DEVELOPER_ID AS developerId,
+            developer.USER_NAME AS developerName,
+            b.DEV_LEADER_ID AS devLeaderId,
+            dev_leader.USER_NAME AS devLeaderName,
+            b.CHECKER_ID AS checkerId,
+            checker.USER_NAME AS checkerName,
+            b.BUG_TYPE AS bugType,
+            dic_type.DATA_NAME AS bugTypeName,
+            b.DIRECTORY_ID AS directoryId,
+            b.COMMIT_TIME AS commitTime,
+            b.CONFIRMED_TIME AS confirmedTime,
+            b.ASSIGNED_TIME AS assignedTime,
+            b.RESOLVED_TIME AS resolvedTime,
+            b.WAITCHECK_TIME AS waitCheckTime,
+            b.CLOSE_TIME AS closeTime,
+            b.SOLVE_VOLUME AS solveVolume,
+            b.SUBMITTED_VOLUME AS submittedVolume,
+            b.BUG_WORKFLOW_ID AS bugWorkflowId
+        FROM tf_bug b
+        LEFT JOIN t_sys_user submitter ON b.SUBMITTER_ID = submitter.USER_ID
+        LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
+        LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
+        LEFT JOIN t_sys_user checker ON b.CHECKER_ID = checker.USER_ID
+        LEFT JOIN data_dictionary dic_state ON dic_state.DATA_TYPE = 'bugState' AND dic_state.DATA_VALUE = b.BUG_STATE
+        LEFT JOIN data_dictionary dic_source ON dic_source.DATA_TYPE = 'bugSource' AND dic_source.DATA_VALUE = b.BUG_SOURCE
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = b.PRORITY
+        LEFT JOIN data_dictionary dic_severity ON dic_severity.DATA_TYPE = 'bugSeverityLevel' AND dic_severity.DATA_VALUE = CAST(b.BUG_SEVERITY_LEVEL AS CHAR)
+        LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'bugType' AND dic_type.DATA_VALUE = b.BUG_TYPE
+        WHERE b.BUG_ID = #{bugId}
+        LIMIT 1
+    </select>
+
+    <!-- 查询缺陷列表用于导出 -->
+    <select id="selectBugsForExport" resultType="com.king.test.bugManage.entity.TfBug">
+        SELECT
+            b.BUG_ID AS bugId,
+            b.BUG_NAME AS bugName,
+            b.SYSTEM_ID AS systemId,
+            b.BUG_STATE AS bugState,
+            dic_state.DATA_NAME AS bugStateName,
+            b.USECASE_ID AS usecaseId,
+            b.BUG_SOURCE AS bugSource,
+            dic_source.DATA_NAME AS bugSourceName,
+            b.PRORITY AS prority,
+            dic_priority.DATA_NAME AS prorityName,
+            b.BUG_DESCRIPITION AS bugDescription,
+            b.BUG_SEVERITY_LEVEL AS bugSeverityLevel,
+            dic_severity.DATA_NAME AS bugSeverityLevelName,
+            b.CLOSE_REASON AS closeReason,
+            b.SUBMITTER_ID AS submitterId,
+            submitter.USER_NAME AS submitterName,
+            b.DEVELOPER_ID AS developerId,
+            developer.USER_NAME AS developerName,
+            b.DEV_LEADER_ID AS devLeaderId,
+            dev_leader.USER_NAME AS devLeaderName,
+            b.CHECKER_ID AS checkerId,
+            checker.USER_NAME AS checkerName,
+            b.BUG_TYPE AS bugType,
+            dic_type.DATA_NAME AS bugTypeName,
+            b.DIRECTORY_ID AS directoryId,
+            b.COMMIT_TIME AS commitTime,
+            b.CONFIRMED_TIME AS confirmedTime,
+            b.ASSIGNED_TIME AS assignedTime,
+            b.RESOLVED_TIME AS resolvedTime,
+            b.WAITCHECK_TIME AS waitCheckTime,
+            b.CLOSE_TIME AS closeTime,
+            b.SOLVE_VOLUME AS solveVolume,
+            b.SUBMITTED_VOLUME AS submittedVolume,
+            b.BUG_WORKFLOW_ID AS bugWorkflowId
+        FROM tf_bug b
+        LEFT JOIN t_sys_user submitter ON b.SUBMITTER_ID = submitter.USER_ID
+        LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
+        LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
+        LEFT JOIN t_sys_user checker ON b.CHECKER_ID = checker.USER_ID
+        LEFT JOIN data_dictionary dic_state ON dic_state.DATA_TYPE = 'bugState' AND dic_state.DATA_VALUE = b.BUG_STATE
+        LEFT JOIN data_dictionary dic_source ON dic_source.DATA_TYPE = 'bugSource' AND dic_source.DATA_VALUE = b.BUG_SOURCE
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = b.PRORITY
+        LEFT JOIN data_dictionary dic_severity ON dic_severity.DATA_TYPE = 'bugSeverityLevel' AND dic_severity.DATA_VALUE = CAST(b.BUG_SEVERITY_LEVEL AS CHAR)
+        LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'bugType' AND dic_type.DATA_VALUE = b.BUG_TYPE
+        WHERE 1 = 1
+        <include refid="CommonCondition" />
+        ORDER BY b.COMMIT_TIME DESC
+    </select>
+
+    <!-- 分页查询关联的缺陷列表 -->
+    <select id="selectPageRelatedBugs" resultType="com.king.test.bugManage.entity.TfBug">
+        SELECT
+            b.BUG_ID AS bugId,
+            b.BUG_NAME AS bugName,
+            b.SYSTEM_ID AS systemId,
+            b.BUG_STATE AS bugState,
+            dic_state.DATA_NAME AS bugStateName,
+            b.USECASE_ID AS usecaseId,
+            b.BUG_SOURCE AS bugSource,
+            dic_source.DATA_NAME AS bugSourceName,
+            b.PRORITY AS prority,
+            dic_priority.DATA_NAME AS prorityName,
+            b.BUG_DESCRIPITION AS bugDescription,
+            b.BUG_SEVERITY_LEVEL AS bugSeverityLevel,
+            dic_severity.DATA_NAME AS bugSeverityLevelName,
+            b.CLOSE_REASON AS closeReason,
+            b.SUBMITTER_ID AS submitterId,
+            submitter.USER_NAME AS submitterName,
+            b.DEVELOPER_ID AS developerId,
+            developer.USER_NAME AS developerName,
+            b.DEV_LEADER_ID AS devLeaderId,
+            dev_leader.USER_NAME AS devLeaderName,
+            b.CHECKER_ID AS checkerId,
+            checker.USER_NAME AS checkerName,
+            b.BUG_TYPE AS bugType,
+            dic_type.DATA_NAME AS bugTypeName,
+            b.DIRECTORY_ID AS directoryId,
+            b.COMMIT_TIME AS commitTime,
+            b.CONFIRMED_TIME AS confirmedTime,
+            b.ASSIGNED_TIME AS assignedTime,
+            b.RESOLVED_TIME AS resolvedTime,
+            b.WAITCHECK_TIME AS waitCheckTime,
+            b.CLOSE_TIME AS closeTime,
+            b.SOLVE_VOLUME AS solveVolume,
+            b.SUBMITTED_VOLUME AS submittedVolume,
+            b.BUG_WORKFLOW_ID AS bugWorkflowId
+        FROM tf_bug b
+        LEFT JOIN t_sys_user submitter ON b.SUBMITTER_ID = submitter.USER_ID
+        LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
+        LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
+        LEFT JOIN t_sys_user checker ON b.CHECKER_ID = checker.USER_ID
+        LEFT JOIN data_dictionary dic_state ON dic_state.DATA_TYPE = 'bugState' AND dic_state.DATA_VALUE = b.BUG_STATE
+        LEFT JOIN data_dictionary dic_source ON dic_source.DATA_TYPE = 'bugSource' AND dic_source.DATA_VALUE = b.BUG_SOURCE
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = b.PRORITY
+        LEFT JOIN data_dictionary dic_severity ON dic_severity.DATA_TYPE = 'bugSeverityLevel' AND dic_severity.DATA_VALUE = CAST(b.BUG_SEVERITY_LEVEL AS CHAR)
+        LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'bugType' AND dic_type.DATA_VALUE = b.BUG_TYPE
+        WHERE 1 = 1
+        <if test="usecaseId != null and usecaseId != ''">
+            AND b.USECASE_ID = #{usecaseId}
+        </if>
+        <if test="directoryId != null and directoryId != ''">
+            AND CAST(b.DIRECTORY_ID AS CHAR) = #{directoryId}
+        </if>
+        ORDER BY b.COMMIT_TIME DESC
+    </select>
+
+</mapper>

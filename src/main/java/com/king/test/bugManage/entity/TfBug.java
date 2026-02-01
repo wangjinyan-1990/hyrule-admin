@@ -112,13 +112,13 @@ public class TfBug {
     private String submitterName;
 
     /**
-     * 开发人员Id
+     * 开发责任人Id
      */
     @TableField("DEVELOPER_ID")
     private String developerId;
 
     /**
-     * 开发人员姓名（关联查询字段，不对应数据库字段）
+     * 开发责任人姓名（关联查询字段，不对应数据库字段）
      */
     @TableField(exist = false)
     private String developerName;
@@ -164,6 +164,12 @@ public class TfBug {
      */
     @TableField("DIRECTORY_ID")
     private Integer directoryId;
+
+    /**
+     * 测试集路径（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String fullPath;
 
     /**
      * 提交时间
@@ -456,6 +462,14 @@ public class TfBug {
 
     public void setDirectoryId(Integer directoryId) {
         this.directoryId = directoryId;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
     }
 
     public LocalDateTime getCommitTime() {

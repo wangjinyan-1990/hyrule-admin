@@ -152,5 +152,25 @@ public class TestDirectoryController {
         }
     }
 
+    /**
+     * 根据目录ID获取目录详情（包含完整路径）
+     * @param directoryId 目录ID
+     * @return 目录详情
+     */
+    @GetMapping("/{directoryId}")
+    public Result<TTestDirectory> getDirectoryById(@PathVariable("directoryId") String directoryId) {
+        if (!StringUtils.hasText(directoryId)) {
+            return Result.error("目录ID不能为空");
+        }
+        
+        try {
+            TTestDirectory directory = testDirectoryService.getDirectoryById(directoryId);
+            return Result.success(directory);
+        } catch (IllegalArgumentException e) {
+            return Result.error(e.getMessage());
+        } catch (Exception e) {
+            return Result.error("查询目录详情失败：" + e.getMessage());
+        }
+    }
 
 }

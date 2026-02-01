@@ -720,7 +720,7 @@ CREATE TABLE `tf_bug` (
   `BUG_SEVERITY_LEVEL` int DEFAULT NULL COMMENT '缺陷严重级别',
   `CLOSE_REASON` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷关闭原因',
   `SUBMITTER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '提交人Id',
-  `DEVELOPER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '开发人员Id',
+  `DEVELOPER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '开发责任人Id',
   `DEV_LEADER_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '开发组长Id',
   `CHECKER_ID` varchar(30) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '验证人Id',
   `BUG_TYPE` varchar(2) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '缺陷类型',
@@ -866,9 +866,23 @@ CREATE TABLE `tf_bug_history` (
 
 /*Data for the table `tf_bug_history` */
 
-/*Table structure for table `tf_bug_state` */
+DROP TABLE IF EXISTS `tf_bug_state`;
+
+create table `tf_bug_role_permission` (
+	`ROLE_PERMISSION_ID` int (11),
+	`USER_ID` varchar (96),
+	`TEST_LEADER` varchar (12),
+	`DEV_LEADER` varchar (12)
+); 
+insert into `tf_bug_role_permission` (`ROLE_PERMISSION_ID`, `USER_ID`, `TEST_LEADER`, `DEV_LEADER`) values('-1467346942','caojie','1','0');
+insert into `tf_bug_role_permission` (`ROLE_PERMISSION_ID`, `USER_ID`, `TEST_LEADER`, `DEV_LEADER`) values('-1467346941','chenchen','0','0');
+insert into `tf_bug_role_permission` (`ROLE_PERMISSION_ID`, `USER_ID`, `TEST_LEADER`, `DEV_LEADER`) values('-943058942','baiyang','0','1');
+insert into `tf_bug_role_permission` (`ROLE_PERMISSION_ID`, `USER_ID`, `TEST_LEADER`, `DEV_LEADER`) values('-943058941','fengyu','0','1');
+
 
 DROP TABLE IF EXISTS `tf_bug_state`;
+
+/*Table structure for table `tf_bug_state` */
 
 CREATE TABLE `tf_bug_state` (
   `BUG_STATE_ID` int NOT NULL AUTO_INCREMENT COMMENT '缺陷状态Id',

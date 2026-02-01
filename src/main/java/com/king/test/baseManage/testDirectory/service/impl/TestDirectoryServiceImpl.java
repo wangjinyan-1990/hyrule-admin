@@ -373,6 +373,23 @@ public class TestDirectoryServiceImpl extends ServiceImpl<TestDirectoryMapper, T
         }
     }
 
-
+    @Override
+    public TTestDirectory getDirectoryById(String directoryId) {
+        Assert.hasText(directoryId, "目录ID不能为空");
+        
+        TTestDirectory directory = this.getById(directoryId);
+        if (directory == null) {
+            throw new IllegalArgumentException("目录不存在");
+        }
+        
+        // 确保fullPath字段被填充
+        // 如果数据库中的fullPath为空，尝试构建完整路径
+        if (!StringUtils.hasText(directory.getFullPath())) {
+            // 尝试构建完整路径
+            buildFullPath(directory);
+        }
+        
+        return directory;
+    }
 
 }

@@ -64,6 +64,16 @@ public class UserSystemInfoDTO {
      */
     private String systemNames;
     
+    /**
+     * 是否为测试组长:0为否、1为是（关联查询字段，来自tf_bug_role_permission表）
+     */
+    private String testLeader;
+    
+    /**
+     * 是否为开发组长:0为否、1为是（关联查询字段，来自tf_bug_role_permission表）
+     */
+    private String devLeader;
+    
     public UserSystemInfoDTO() {
     }
     

@@ -70,4 +70,11 @@ public interface ITestDirectoryService extends IService<TTestDirectory> {
      */
     List<String> getAllChildrenDirectoryIds(String directoryId, String systemId);
 
+    /**
+     * 根据目录ID获取目录详情（包含完整路径）
+     * @param directoryId 目录ID
+     * @return 目录详情
+     */
+    TTestDirectory getDirectoryById(String directoryId);
+
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.bugManage.mapper.TfBugHistoryMapper">
+
+    <!-- 分页查询缺陷历史记录列表 -->
+    <select id="selectPageBugHistoryList" resultType="com.king.test.bugManage.entity.TfBugHistory">
+        SELECT
+            h.BUG_HISHORY_ID AS bugHistoryId,
+            h.BUG_ID AS bugId,
+            h.NEW_STATE AS newState,
+            dic_new_state.DATA_NAME AS newStateName,
+            h.OLD_STATE AS oldState,
+            dic_old_state.DATA_NAME AS oldStateName,
+            h.OPERATING_TIME AS operatingTime,
+            h.OPERATOR_ID AS operatorId,
+            operator.USER_NAME AS operatorName,
+            h.SYSTEM_ID AS systemId,
+            h.COMMENT AS comment,
+            h.LAST_OPERATION_TIME AS lastOperationTime
+        FROM tf_bug_history h
+        LEFT JOIN t_sys_user operator ON h.OPERATOR_ID = operator.USER_ID
+        LEFT JOIN data_dictionary dic_new_state ON dic_new_state.DATA_TYPE = 'bugState' AND dic_new_state.DATA_VALUE = h.NEW_STATE
+        LEFT JOIN data_dictionary dic_old_state ON dic_old_state.DATA_TYPE = 'bugState' AND dic_old_state.DATA_VALUE = h.OLD_STATE
+        WHERE h.BUG_ID = #{bugId}
+        ORDER BY h.OPERATING_TIME DESC
+    </select>
+
+</mapper>
