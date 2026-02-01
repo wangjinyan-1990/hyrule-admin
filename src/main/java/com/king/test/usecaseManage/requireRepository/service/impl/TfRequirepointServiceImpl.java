@@ -96,10 +96,7 @@ public class TfRequirepointServiceImpl extends ServiceImpl<TfRequirepointMapper,
         if (!StringUtils.hasText(requirepoint.getReviewStatus())) {
             requirepoint.setReviewStatus("0");
         }
-        // 设置默认需求点状态: 未覆盖
-        if (!StringUtils.hasText(requirepoint.getRequireStatus())) {
-            requirepoint.setRequireStatus("1");
-        }
+        // requireStatus 不再手动设置，通过关联表自动计算：0-未覆盖，1-已覆盖
         return baseMapper.insert(requirepoint) > 0;
     }
 

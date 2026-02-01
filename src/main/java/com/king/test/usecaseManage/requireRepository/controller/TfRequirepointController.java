@@ -175,7 +175,7 @@ public class TfRequirepointController {
             requirepoint.setRequirePointType((String) data.get("requirePointType"));
             requirepoint.setReviewStatus((String) data.get("reviewStatus"));
             requirepoint.setAnalysisMethod((String) data.get("analysisMethod"));
-            requirepoint.setRequireStatus((String) data.get("requireStatus"));
+            // requireStatus 不再手动设置，通过关联表自动计算：0-未覆盖，1-已覆盖
             requirepoint.setDesignerId((String) data.get("designerId"));
             // 自动设置修改人为当前用户
             String currentUserId = securityUtils.getUserId();
@@ -642,17 +642,8 @@ public class TfRequirepointController {
                 requirepoint.setAnalysisMethod(analysisMethodValue);
             }
             
-            // 需求状态 - 通过数据字典验证和转换
-            String requireStatus = getCellValueByColumnName(row, headerRow, "需求状态");
-            if (StringUtils.hasText(requireStatus)) {
-                String requireStatusValue = dataDictionaryService.getDataValueByTypeAndName("requireStatus", requireStatus);
-                if (requireStatusValue == null) {
-                    result.put("success", false);
-                    result.put("error", "第" + rowNumber + "行，需求状态不存在：" + requireStatus);
-                    return result;
-                }
-                requirepoint.setRequireStatus(requireStatusValue);
-            }
+            // 需求状态 - 不再从Excel导入，通过关联表自动计算：0-未覆盖，1-已覆盖
+            // 如果Excel中有需求状态列，忽略它
             
             // 评审状态 - 通过数据字典验证和转换
             String reviewStatus = getCellValueByColumnName(row, headerRow, "评审状态");

@@ -70,10 +70,16 @@ public class TfUsecaseExecutionHistory {
     private String remark;
 
     /**
-     * 执行附件Id
+     * 执行附件Id（关联查询字段，不对应数据库字段）
      */
-    @TableField("RUN_ATTACHMENT_ID")
-    private String runAttachmentId;
+    @TableField(exist = false)
+    private String attachmentId;
+
+    /**
+     * 附件名（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String originalFileName;
 
     /**
      * 执行分类：功能、非功能、自动化
@@ -91,9 +97,9 @@ public class TfUsecaseExecutionHistory {
     public TfUsecaseExecutionHistory() {
     }
 
-    public TfUsecaseExecutionHistory(Integer usecaseExecutionHistoryId, String directoryId, String usecaseId, 
-                                   LocalDateTime executionTime, String runStatus, String executorId, 
-                                   String remark, String runAttachmentId, String runType) {
+    public TfUsecaseExecutionHistory(Integer usecaseExecutionHistoryId, String directoryId, String usecaseId,
+                                   LocalDateTime executionTime, String runStatus, String executorId,
+                                   String remark, String attachmentId, String runType) {
         this.usecaseExecutionHistoryId = usecaseExecutionHistoryId;
         this.directoryId = directoryId;
         this.usecaseId = usecaseId;
@@ -101,12 +107,12 @@ public class TfUsecaseExecutionHistory {
         this.runStatus = runStatus;
         this.executorId = executorId;
         this.remark = remark;
-        this.runAttachmentId = runAttachmentId;
+        this.attachmentId = attachmentId;
         this.runType = runType;
     }
 
-    public TfUsecaseExecutionHistory(String directoryId, String usecaseId, LocalDateTime executionTime, 
-                                   String runStatus, String executorId, String remark, String runAttachmentId, 
+    public TfUsecaseExecutionHistory(String directoryId, String usecaseId, LocalDateTime executionTime,
+                                   String runStatus, String executorId, String remark, String attachmentId,
                                    String runType) {
         this.directoryId = directoryId;
         this.usecaseId = usecaseId;
@@ -114,7 +120,7 @@ public class TfUsecaseExecutionHistory {
         this.runStatus = runStatus;
         this.executorId = executorId;
         this.remark = remark;
-        this.runAttachmentId = runAttachmentId;
+        this.attachmentId = attachmentId;
         this.runType = runType;
     }
 
@@ -191,12 +197,20 @@ public class TfUsecaseExecutionHistory {
         this.remark = remark;
     }
 
-    public String getRunAttachmentId() {
-        return runAttachmentId;
+    public String getAttachmentId() {
+        return attachmentId;
     }
 
-    public void setRunAttachmentId(String runAttachmentId) {
-        this.runAttachmentId = runAttachmentId;
+    public void setAttachmentId(String attachmentId) {
+        this.attachmentId = attachmentId;
+    }
+
+    public String getOriginalFileName() {
+        return originalFileName;
+    }
+
+    public void setOriginalFileName(String originalFileName) {
+        this.originalFileName = originalFileName;
     }
 
     public String getRunType() {

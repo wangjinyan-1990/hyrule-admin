@@ -11,7 +11,7 @@
             rp.REQUIRE_POINT_TYPE AS requirePointType,
             rp.REVIEW_STATUS AS reviewStatus,
             rp.ANALYSIS_METHOD AS analysisMethod,
-            rp.REQUIRE_STATUS AS requireStatus,
+            '1' AS requireStatus,
             rp.DESIGNER_ID AS designerId,
             rp.CREATE_TIME AS createTime,
             rp.MODIFIER_ID AS modifierId,

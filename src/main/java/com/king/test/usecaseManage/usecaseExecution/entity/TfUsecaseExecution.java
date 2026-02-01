@@ -29,10 +29,94 @@ public class TfUsecaseExecution {
     private String directoryId;
 
     /**
+     * 测试系统ID
+     */
+    @TableField("SYSTEM_ID")
+    private String systemId;
+
+    /**
      * 用例Id
      */
     @TableField("USECASE_ID")
     private String usecaseId;
+
+    /**
+     * 用例名称（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String usecaseName;
+
+    /**
+     * 用例类型（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String usecaseType;
+
+    /**
+     * 用例类型名称（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String usecaseTypeName;
+
+    /**
+     * 测试要点（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String testPoint;
+
+    /**
+     * 测试要点名称（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String testPointName;
+
+    /**
+     * 用例性质（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String usecaseNature;
+
+    /**
+     * 用例性质名称（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String usecaseNatureName;
+
+    /**
+     * 优先级（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String prority;
+
+    /**
+     * 优先级名称（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String prorityName;
+
+    /**
+     * 前置条件（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String precondition;
+
+    /**
+     * 测试数据（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String testData;
+
+    /**
+     * 测试步骤（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String testStep;
+
+    /**
+     * 预期结果（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String expectedResult;
 
     /**
      * 计划执行日期
@@ -116,13 +200,14 @@ public class TfUsecaseExecution {
     public TfUsecaseExecution() {
     }
 
-    public TfUsecaseExecution(Integer usecaseExecutionId, String directoryId, String usecaseId,
-                              Date planExecutionDate, LocalDateTime actExecutionTime,
-                             String runStatus, String planExecutorId, String actExecutorId, 
-                             String remark, LocalDateTime lastExecutionTime, String executionCreatorId, 
+    public TfUsecaseExecution(Integer usecaseExecutionId, String directoryId, String systemId,
+                              String usecaseId, Date planExecutionDate, LocalDateTime actExecutionTime,
+                             String runStatus, String planExecutorId, String actExecutorId,
+                             String remark, LocalDateTime lastExecutionTime, String executionCreatorId,
                              LocalDateTime executionCreateTime) {
         this.usecaseExecutionId = usecaseExecutionId;
         this.directoryId = directoryId;
+        this.systemId = systemId;
         this.usecaseId = usecaseId;
         this.planExecutionDate = planExecutionDate;
         this.actExecutionTime = actExecutionTime;
@@ -135,12 +220,13 @@ public class TfUsecaseExecution {
         this.executionCreateTime = executionCreateTime;
     }
 
-    public TfUsecaseExecution(String directoryId, String usecaseId, Date planExecutionDate,
+    public TfUsecaseExecution(String directoryId, String usecaseId, Date planExecutionDate, String systemId,
                              LocalDateTime actExecutionTime, String runStatus, String planExecutorId,
-                             String actExecutorId, String remark, LocalDateTime lastExecutionTime, 
+                             String actExecutorId, String remark, LocalDateTime lastExecutionTime,
                              String executionCreatorId, LocalDateTime executionCreateTime) {
         this.directoryId = directoryId;
         this.usecaseId = usecaseId;
+        this.systemId = systemId;
         this.planExecutionDate = planExecutionDate;
         this.actExecutionTime = actExecutionTime;
         this.runStatus = runStatus;
@@ -167,6 +253,14 @@ public class TfUsecaseExecution {
 
     public void setDirectoryId(String directoryId) {
         this.directoryId = directoryId;
+    }
+
+    public String getSystemId() {
+        return systemId;
+    }
+
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
     }
 
     public String getUsecaseId() {

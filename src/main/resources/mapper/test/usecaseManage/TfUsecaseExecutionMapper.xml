@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.usecaseManage.usecaseExecution.mapper.TfUsecaseExecutionMapper">
+
+    <!-- 根据用例ID和目录ID查询用例执行记录 -->
+    <select id="selectByUsecaseIdAndDirectoryId" resultType="com.king.test.usecaseManage.usecaseExecution.entity.TfUsecaseExecution">
+        SELECT
+            USECASE_EXECUTION_ID AS usecaseExecutionId,
+            DIRECTORY_ID AS directoryId,
+            SYSTEM_ID AS systemId,
+            USECASE_ID AS usecaseId,
+            PLAN_EXECUTION_DATE AS planExecutionDate,
+            ACT_EXECUTION_TIME AS actExecutionTime,
+            RUN_STATUS AS runStatus,
+            PLAN_EXECUTOR_ID AS planExecutorId,
+            ACT_EXECUTOR_ID AS actExecutorId,
+            REMARK AS remark,
+            LAST_EXECUTION_TIME AS lastExecutionTime,
+            EXECUTION_CREATOR_ID AS executionCreatorId,
+            EXECUTION_CREATE_TIME AS executionCreateTime
+        FROM tf_usecase_execution
+        WHERE USECASE_ID = #{usecaseId}
+          AND DIRECTORY_ID = #{directoryId}
+        LIMIT 1
+    </select>
+
+    <!-- 分页查询用例执行列表 -->
+    <select id="selectPageExecutionList" resultType="com.king.test.usecaseManage.usecaseExecution.entity.TfUsecaseExecution">
+        SELECT
+            e.USECASE_EXECUTION_ID AS usecaseExecutionId,
+            e.DIRECTORY_ID AS directoryId,
+            e.SYSTEM_ID AS systemId,
+            e.USECASE_ID AS usecaseId,
+            u.USECASE_NAME AS usecaseName,
+            e.PLAN_EXECUTION_DATE AS planExecutionDate,
+            e.ACT_EXECUTION_TIME AS actExecutionTime,
+            e.RUN_STATUS AS runStatus,
+            dic_status.DATA_NAME AS runStatusName,
+            e.PLAN_EXECUTOR_ID AS planExecutorId,
+            plan_executor.USER_NAME AS planExecutorName,
+            e.ACT_EXECUTOR_ID AS actExecutorId,
+            act_executor.USER_NAME AS actExecutorName,
+            e.REMARK AS remark,
+            e.LAST_EXECUTION_TIME AS lastExecutionTime,
+            e.EXECUTION_CREATOR_ID AS executionCreatorId,
+            execution_creator.USER_NAME AS executionCreatorName,
+            e.EXECUTION_CREATE_TIME AS executionCreateTime
+        FROM tf_usecase_execution e
+        LEFT JOIN tf_usecase u ON e.USECASE_ID = u.USECASE_ID
+        LEFT JOIN t_sys_user plan_executor ON e.PLAN_EXECUTOR_ID = plan_executor.USER_ID
+        LEFT JOIN t_sys_user act_executor ON e.ACT_EXECUTOR_ID = act_executor.USER_ID
+        LEFT JOIN t_sys_user execution_creator ON e.EXECUTION_CREATOR_ID = execution_creator.USER_ID
+        LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'runStatus' AND dic_status.DATA_VALUE = e.RUN_STATUS
+        <where>
+            <if test="systemId != null and systemId != ''">
+                AND e.SYSTEM_ID = #{systemId}
+            </if>
+            <if test="directoryIds != null and directoryIds.size() > 0">
+                AND e.DIRECTORY_ID IN
+                <foreach collection="directoryIds" item="directoryId" open="(" close=")" separator=",">
+                    #{directoryId}
+                </foreach>
+            </if>
+            <if test="usecaseId != null and usecaseId != ''">
+                AND e.USECASE_ID = #{usecaseId}
+            </if>
+            <if test="usecaseName != null and usecaseName != ''">
+                AND u.USECASE_NAME LIKE CONCAT('%', #{usecaseName}, '%')
+            </if>
+            <if test="runStatus != null and runStatus != ''">
+                AND e.RUN_STATUS = #{runStatus}
+            </if>
+            <if test="planExecutorId != null and planExecutorId != ''">
+                AND e.PLAN_EXECUTOR_ID = #{planExecutorId}
+            </if>
+            <if test="actExecutorId != null and actExecutorId != ''">
+                AND e.ACT_EXECUTOR_ID = #{actExecutorId}
+            </if>
+        </where>
+        ORDER BY e.EXECUTION_CREATE_TIME DESC
+    </select>
+
+    <!-- 查询执行统计信息 -->
+    <select id="selectExecutionStatistics" resultType="java.util.Map">
+        SELECT
+            e.RUN_STATUS AS code,
+            dic_status.DATA_NAME AS name,
+            COUNT(*) AS count
+        FROM tf_usecase_execution e
+        LEFT JOIN tf_usecase u ON e.USECASE_ID = u.USECASE_ID
+        LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'runStatus' AND dic_status.DATA_VALUE = e.RUN_STATUS
+        <where>
+            <if test="systemId != null and systemId != ''">
+                AND e.SYSTEM_ID = #{systemId}
+            </if>
+            <if test="directoryIds != null and directoryIds.size() > 0">
+                AND e.DIRECTORY_ID IN
+                <foreach collection="directoryIds" item="directoryId" open="(" close=")" separator=",">
+                    #{directoryId}
+                </foreach>
+            </if>
+            <if test="usecaseId != null and usecaseId != ''">
+                AND e.USECASE_ID = #{usecaseId}
+            </if>
+            <if test="usecaseName != null and usecaseName != ''">
+                AND u.USECASE_NAME LIKE CONCAT('%', #{usecaseName}, '%')
+            </if>
+            <if test="usecaseOverview != null and usecaseOverview != ''">
+                AND (u.PRECONDITION LIKE CONCAT('%', #{usecaseOverview}, '%')
+                     OR u.TEST_STEP LIKE CONCAT('%', #{usecaseOverview}, '%')
+                     OR u.EXPECTED_RESULT LIKE CONCAT('%', #{usecaseOverview}, '%'))
+            </if>
+            <if test="actExecutionTimeStart != null and actExecutionTimeStart != ''">
+                AND e.ACT_EXECUTION_TIME &gt;= #{actExecutionTimeStart}
+            </if>
+            <if test="actExecutionTimeEnd != null and actExecutionTimeEnd != ''">
+                AND e.ACT_EXECUTION_TIME &lt;= #{actExecutionTimeEnd}
+            </if>
+            <if test="runStatus != null and runStatus != ''">
+                AND e.RUN_STATUS = #{runStatus}
+            </if>
+        </where>
+        GROUP BY e.RUN_STATUS, dic_status.DATA_NAME
+        ORDER BY count DESC
+    </select>
+
+    <!-- 根据执行ID查询执行详情（关联用例表） -->
+    <select id="selectExecutionDetailById" resultType="com.king.test.usecaseManage.usecaseExecution.entity.TfUsecaseExecution">
+        SELECT
+            e.USECASE_EXECUTION_ID AS usecaseExecutionId,
+            e.DIRECTORY_ID AS directoryId,
+            e.SYSTEM_ID AS systemId,
+            e.USECASE_ID AS usecaseId,
+            u.USECASE_NAME AS usecaseName,
+            u.USECASE_TYPE AS usecaseType,
+            dic_type.DATA_NAME AS usecaseTypeName,
+            u.TEST_POINT AS testPoint,
+            dic_point.DATA_NAME AS testPointName,
+            u.USECASE_NATURE AS usecaseNature,
+            dic_nature.DATA_NAME AS usecaseNatureName,
+            u.PRORITY AS prority,
+            dic_priority.DATA_NAME AS prorityName,
+            u.PRECONDITION AS precondition,
+            u.TEST_DATA AS testData,
+            u.TEST_STEP AS testStep,
+            u.EXPECTED_RESULT AS expectedResult,
+            e.PLAN_EXECUTION_DATE AS planExecutionDate,
+            e.ACT_EXECUTION_TIME AS actExecutionTime,
+            e.RUN_STATUS AS runStatus,
+            dic_status.DATA_NAME AS runStatusName,
+            e.PLAN_EXECUTOR_ID AS planExecutorId,
+            plan_executor.USER_NAME AS planExecutorName,
+            e.ACT_EXECUTOR_ID AS actExecutorId,
+            act_executor.USER_NAME AS actExecutorName,
+            e.REMARK AS remark,
+            e.LAST_EXECUTION_TIME AS lastExecutionTime,
+            e.EXECUTION_CREATOR_ID AS executionCreatorId,
+            execution_creator.USER_NAME AS executionCreatorName,
+            e.EXECUTION_CREATE_TIME AS executionCreateTime
+        FROM tf_usecase_execution e
+        LEFT JOIN tf_usecase u ON e.USECASE_ID = u.USECASE_ID
+        LEFT JOIN t_sys_user plan_executor ON e.PLAN_EXECUTOR_ID = plan_executor.USER_ID
+        LEFT JOIN t_sys_user act_executor ON e.ACT_EXECUTOR_ID = act_executor.USER_ID
+        LEFT JOIN t_sys_user execution_creator ON e.EXECUTION_CREATOR_ID = execution_creator.USER_ID
+        LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'runStatus' AND dic_status.DATA_VALUE = e.RUN_STATUS
+        LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'usecaseType' AND dic_type.DATA_VALUE = u.USECASE_TYPE
+        LEFT JOIN data_dictionary dic_point ON dic_point.DATA_TYPE = 'testPoint' AND dic_point.DATA_VALUE = u.TEST_POINT
+        LEFT JOIN data_dictionary dic_nature ON dic_nature.DATA_TYPE = 'usecaseNature' AND dic_nature.DATA_VALUE = u.USECASE_NATURE
+        LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = u.PRORITY
+        WHERE e.USECASE_EXECUTION_ID = #{usecaseExecutionId}
+    </select>
+
+</mapper>

@@ -70,9 +70,9 @@ public class TfRequirepoint {
     private String analysisMethodName;
 
     /**
-     * 需求状态
+     * 需求状态仅用来查询显示，通过查询用例和需求关联表查询覆盖状态 0：未覆盖，1：已覆盖
      */
-    @TableField("REQUIRE_STATUS")
+    @TableField(exist = false)
     private String requireStatus;
 
     /**
@@ -140,10 +140,10 @@ public class TfRequirepoint {
     public TfRequirepoint() {
     }
 
-    public TfRequirepoint(String requirePointId, String requirePointDesc, String systemId, 
+    public TfRequirepoint(String requirePointId, String requirePointDesc, String systemId,
                          String directoryId, String requirePointType, String reviewStatus,
-                         String analysisMethod, String requireStatus, String designerId, 
-                         LocalDateTime createTime, String modifierId, LocalDateTime modifyTime, 
+                         String analysisMethod, String requireStatus, String designerId,
+                         LocalDateTime createTime, String modifierId, LocalDateTime modifyTime,
                          String remark, String sendTestId, Integer workPackageId) {
         this.requirePointId = requirePointId;
         this.requirePointDesc = requirePointDesc;
