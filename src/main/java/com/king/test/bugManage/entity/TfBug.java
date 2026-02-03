@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 public class TfBug {
 
     /**
-     * 缺陷Id（自增主键）
+     * 缺陷Id（字符串类型，格式：systemId-baseCode 或 baseCode）
      */
     @TableId("BUG_ID")
-    private Integer bugId;
+    private String bugId;
 
     /**
      * 缺陷名称
@@ -160,16 +160,22 @@ public class TfBug {
     private String bugTypeName;
 
     /**
-     * 执行库目录Id
+     * 执行库目录Id（VARCHAR类型，支持UUID格式）
      */
     @TableField("DIRECTORY_ID")
-    private Integer directoryId;
+    private String directoryId;
 
     /**
      * 测试集路径（关联查询字段，不对应数据库字段）
      */
     @TableField(exist = false)
     private String fullPath;
+
+    /**
+     * 备注（用于接收前端的备注，保存在缺陷历史记录中，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String remark;
 
     /**
      * 提交时间
@@ -229,10 +235,10 @@ public class TfBug {
     public TfBug() {
     }
 
-    public TfBug(Integer bugId, String bugName, String systemId, String bugState, String usecaseId, 
+    public TfBug(String bugId, String bugName, String systemId, String bugState, String usecaseId, 
                  String bugSource, String prority, String bugDescription, Integer bugSeverityLevel, 
                  String closeReason, String submitterId, String developerId, String devLeaderId, 
-                 String checkerId, String bugType, Integer directoryId, LocalDateTime commitTime, 
+                 String checkerId, String bugType, String directoryId, LocalDateTime commitTime, 
                  LocalDateTime confirmedTime, LocalDateTime assignedTime, LocalDateTime resolvedTime, 
                  LocalDateTime waitCheckTime, LocalDateTime closeTime, Integer solveVolume, 
                  Integer submittedVolume, Integer bugWorkflowId) {
@@ -264,11 +270,11 @@ public class TfBug {
     }
 
     // Getter和Setter方法（Lombok的@Data注解会自动生成，这里提供手动版本作为备选）
-    public Integer getBugId() {
+    public String getBugId() {
         return bugId;
     }
 
-    public void setBugId(Integer bugId) {
+    public void setBugId(String bugId) {
         this.bugId = bugId;
     }
 
@@ -456,11 +462,11 @@ public class TfBug {
         this.bugTypeName = bugTypeName;
     }
 
-    public Integer getDirectoryId() {
+    public String getDirectoryId() {
         return directoryId;
     }
 
-    public void setDirectoryId(Integer directoryId) {
+    public void setDirectoryId(String directoryId) {
         this.directoryId = directoryId;
     }
 

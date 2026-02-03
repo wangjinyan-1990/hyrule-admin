@@ -191,6 +191,13 @@ public class TfUsecaseExecution {
     private String executionCreatorName;
 
     /**
+     * 用例设计者（关联查询字段，不对应数据库字段）
+     * 从tf_usecase表的CREATOR_ID关联t_sys_user表获取用户名
+     */
+    @TableField(exist = false)
+    private String usecaseDesigner;
+
+    /**
      * 创建在执行库时间
      */
     @TableField("EXECUTION_CREATE_TIME")

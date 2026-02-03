@@ -2,6 +2,7 @@ package com.king.test.bugManage.controller;
 
 import com.king.common.Result;
 import com.king.test.bugManage.entity.TfBug;
+import com.king.test.bugManage.entity.TfBugState;
 import com.king.test.bugManage.service.ITfBugService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,6 +10,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +51,7 @@ public class TfBugController {
             @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             @RequestParam(value = "systemId", required = false) String systemId,
-            @RequestParam(value = "directoryId", required = false) Integer directoryId,
+            @RequestParam(value = "directoryId", required = false) String directoryId,
             @RequestParam(value = "bugId", required = false) String bugId,
             @RequestParam(value = "bugName", required = false) String bugName,
             @RequestParam(value = "bugState", required = false) String bugState,
@@ -102,8 +104,8 @@ public class TfBugController {
      * @return 缺陷详情
      */
     @GetMapping("/{bugId}")
-    public Result<TfBug> getBugDetail(@PathVariable("bugId") Integer bugId) {
-        if (bugId == null) {
+    public Result<TfBug> getBugDetail(@PathVariable("bugId") String bugId) {
+        if (bugId == null || bugId.trim().isEmpty()) {
             return Result.error("缺陷ID不能为空");
         }
         try {
@@ -113,25 +115,33 @@ public class TfBugController {
             return Result.error("查询缺陷详情失败：" + e.getMessage());
         }
     }
-
+    
     /**
-     * 创建缺陷
+     * 创建缺陷（前端API接口）
      * @param bug 缺陷对象
-     * @return 创建结果
+     * @return 创建结果，包含生成的bugId
      */
-    @PostMapping
-    public Result<?> createBug(@RequestBody TfBug bug) {
+    @PostMapping("/save")
+    public Result<?> saveBug(@RequestBody TfBug bug) {
         if (bug == null) {
             return Result.error("缺陷数据不能为空");
         }
         try {
             boolean success = bugService.createBug(bug);
             if (success) {
-                return Result.success("创建缺陷成功");
+                // 返回生成的bugId
+                Map<String, Object> data = new HashMap<>(2);
+                data.put("bugId", bug.getBugId());
+                return Result.success(data, "创建缺陷成功");
             } else {
                 return Result.error("创建缺陷失败");
             }
+        } catch (IllegalArgumentException e) {
+            // 参数验证失败（包括 Assert 断言失败）
+            return Result.error("参数验证失败：" + e.getMessage());
         } catch (Exception e) {
+            // 记录详细错误信息
+            e.printStackTrace();
             return Result.error("创建缺陷失败：" + e.getMessage());
         }
     }
@@ -143,7 +153,7 @@ public class TfBugController {
      * @return 更新结果
      */
     @PutMapping("/{bugId}")
-    public Result<?> updateBug(@PathVariable("bugId") Integer bugId, @RequestBody TfBug bug) {
+    public Result<?> updateBug(@PathVariable("bugId") String bugId, @RequestBody TfBug bug) {
         if (bugId == null) {
             return Result.error("缺陷ID不能为空");
         }
@@ -169,8 +179,8 @@ public class TfBugController {
      * @return 删除结果
      */
     @DeleteMapping("/{bugId}")
-    public Result<?> deleteBug(@PathVariable("bugId") Integer bugId) {
-        if (bugId == null) {
+    public Result<?> deleteBug(@PathVariable("bugId") String bugId) {
+        if (bugId == null || bugId.trim().isEmpty()) {
             return Result.error("缺陷ID不能为空");
         }
         try {
@@ -196,7 +206,7 @@ public class TfBugController {
             return Result.error("请求数据不能为空");
         }
         @SuppressWarnings("unchecked")
-        List<Integer> bugIds = (List<Integer>) data.get("bugIds");
+        List<String> bugIds = (List<String>) data.get("bugIds");
         if (CollectionUtils.isEmpty(bugIds)) {
             return Result.error("缺陷ID列表不能为空");
         }
@@ -234,7 +244,7 @@ public class TfBugController {
     @GetMapping("/export")
     public void exportBugList(
             @RequestParam(value = "systemId", required = false) String systemId,
-            @RequestParam(value = "directoryId", required = false) Integer directoryId,
+            @RequestParam(value = "directoryId", required = false) String directoryId,
             @RequestParam(value = "bugId", required = false) String bugId,
             @RequestParam(value = "bugName", required = false) String bugName,
             @RequestParam(value = "bugState", required = false) String bugState,
@@ -273,10 +283,10 @@ public class TfBugController {
      */
     @GetMapping("/{bugId}/history")
     public Result<Map<String, Object>> getBugHistory(
-            @PathVariable("bugId") Integer bugId,
+            @PathVariable("bugId") String bugId,
             @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "20") int pageSize) {
-        if (bugId == null) {
+        if (bugId == null || bugId.trim().isEmpty()) {
             return Result.error("缺陷ID不能为空");
         }
         try {
@@ -284,6 +294,20 @@ public class TfBugController {
             return Result.success(data);
         } catch (Exception e) {
             return Result.error("查询缺陷历史记录失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取所有缺陷状态
+     * @return 缺陷状态列表（包含 bugStateCode, bugStateName）
+     */
+    @GetMapping("/getAllBugState")
+    public Result<List<TfBugState>> getAllBugState() {
+        try {
+            List<TfBugState> states = bugService.getAllBugStates();
+            return Result.success(states);
+        } catch (Exception e) {
+            return Result.error("获取缺陷状态列表失败：" + e.getMessage());
         }
     }
 }

@@ -36,7 +36,7 @@ public interface TfBugMapper extends BaseMapper<TfBug> {
      */
     Page<TfBug> selectPageBugList(Page<TfBug> page,
                                   @Param("systemId") String systemId,
-                                  @Param("directoryIds") List<Integer> directoryIds,
+                                  @Param("directoryIds") List<String> directoryIds,
                                   @Param("bugId") String bugId,
                                   @Param("bugName") String bugName,
                                   @Param("bugState") String bugState,
@@ -56,7 +56,7 @@ public interface TfBugMapper extends BaseMapper<TfBug> {
      * @param bugId 缺陷ID
      * @return 缺陷详情
      */
-    TfBug selectBugDetailById(@Param("bugId") Integer bugId);
+    TfBug selectBugDetailById(@Param("bugId") String bugId);
 
     /**
      * 查询缺陷列表用于导出
@@ -78,7 +78,7 @@ public interface TfBugMapper extends BaseMapper<TfBug> {
      * @return 缺陷列表
      */
     List<TfBug> selectBugsForExport(@Param("systemId") String systemId,
-                                    @Param("directoryIds") List<Integer> directoryIds,
+                                    @Param("directoryIds") List<String> directoryIds,
                                     @Param("bugId") String bugId,
                                     @Param("bugName") String bugName,
                                     @Param("bugState") String bugState,

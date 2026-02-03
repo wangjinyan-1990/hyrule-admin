@@ -2,6 +2,7 @@ package com.king.test.bugManage.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.king.test.bugManage.entity.TfBug;
+import com.king.test.bugManage.entity.TfBugState;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -34,7 +35,7 @@ public interface ITfBugService extends IService<TfBug> {
      * @return 分页结果
      */
     Map<String, Object> getBugPage(int pageNo, int pageSize,
-                                    String systemId, Integer directoryId,
+                                    String systemId, String directoryId,
                                     String bugId, String bugName,
                                     String bugState, String bugType,
                                     Integer bugSeverityLevel, String bugSource,
@@ -47,7 +48,7 @@ public interface ITfBugService extends IService<TfBug> {
      * @param bugId 缺陷ID
      * @return 缺陷详情
      */
-    TfBug getBugDetail(Integer bugId);
+    TfBug getBugDetail(String bugId);
 
     /**
      * 创建缺陷
@@ -68,14 +69,14 @@ public interface ITfBugService extends IService<TfBug> {
      * @param bugId 缺陷ID
      * @return 是否删除成功
      */
-    boolean deleteBug(Integer bugId);
+    boolean deleteBug(String bugId);
 
     /**
      * 批量删除缺陷
      * @param bugIds 缺陷ID列表
      * @return 是否删除成功
      */
-    boolean batchDeleteBugs(List<Integer> bugIds);
+    boolean batchDeleteBugs(List<String> bugIds);
 
     /**
      * 查询缺陷列表用于导出
@@ -96,7 +97,7 @@ public interface ITfBugService extends IService<TfBug> {
      * @param closeTimeEnd 关闭时间结束（可选）
      * @return 缺陷列表
      */
-    List<TfBug> listBugsForExport(String systemId, Integer directoryId,
+    List<TfBug> listBugsForExport(String systemId, String directoryId,
                                    String bugId, String bugName,
                                    String bugState, String bugType,
                                    Integer bugSeverityLevel, String bugSource,
@@ -118,7 +119,7 @@ public interface ITfBugService extends IService<TfBug> {
      * @param pageSize 每页大小
      * @return 分页结果
      */
-    Map<String, Object> getBugHistory(Integer bugId, int pageNo, int pageSize);
+    Map<String, Object> getBugHistory(String bugId, int pageNo, int pageSize);
 
     /**
      * 分页查询关联的缺陷列表
@@ -129,4 +130,10 @@ public interface ITfBugService extends IService<TfBug> {
      * @return 分页结果
      */
     Map<String, Object> getRelatedBugs(int pageNo, int pageSize, String usecaseId, String directoryId);
+
+    /**
+     * 获取所有缺陷状态
+     * @return 缺陷状态列表（包含 bugStateCode, bugStateName）
+     */
+    List<TfBugState> getAllBugStates();
 }

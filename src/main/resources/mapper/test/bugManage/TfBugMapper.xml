@@ -60,7 +60,7 @@
             b.BUG_NAME AS bugName,
             b.SYSTEM_ID AS systemId,
             b.BUG_STATE AS bugState,
-            dic_state.DATA_NAME AS bugStateName,
+            bs.BUG_STATE_NAME AS bugStateName,
             b.USECASE_ID AS usecaseId,
             b.BUG_SOURCE AS bugSource,
             dic_source.DATA_NAME AS bugSourceName,
@@ -95,7 +95,7 @@
         LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
         LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
         LEFT JOIN t_sys_user checker ON b.CHECKER_ID = checker.USER_ID
-        LEFT JOIN data_dictionary dic_state ON dic_state.DATA_TYPE = 'bugState' AND dic_state.DATA_VALUE = b.BUG_STATE
+        LEFT JOIN tf_bug_state bs ON bs.BUG_STATE_CODE = b.BUG_STATE
         LEFT JOIN data_dictionary dic_source ON dic_source.DATA_TYPE = 'bugSource' AND dic_source.DATA_VALUE = b.BUG_SOURCE
         LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = b.PRORITY
         LEFT JOIN data_dictionary dic_severity ON dic_severity.DATA_TYPE = 'bugSeverityLevel' AND dic_severity.DATA_VALUE = CAST(b.BUG_SEVERITY_LEVEL AS CHAR)
@@ -112,7 +112,7 @@
             b.BUG_NAME AS bugName,
             b.SYSTEM_ID AS systemId,
             b.BUG_STATE AS bugState,
-            dic_state.DATA_NAME AS bugStateName,
+            bs.BUG_STATE_NAME AS bugStateName,
             b.USECASE_ID AS usecaseId,
             b.BUG_SOURCE AS bugSource,
             dic_source.DATA_NAME AS bugSourceName,
@@ -147,7 +147,7 @@
         LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
         LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
         LEFT JOIN t_sys_user checker ON b.CHECKER_ID = checker.USER_ID
-        LEFT JOIN data_dictionary dic_state ON dic_state.DATA_TYPE = 'bugState' AND dic_state.DATA_VALUE = b.BUG_STATE
+        LEFT JOIN tf_bug_state bs ON bs.BUG_STATE_CODE = b.BUG_STATE
         LEFT JOIN data_dictionary dic_source ON dic_source.DATA_TYPE = 'bugSource' AND dic_source.DATA_VALUE = b.BUG_SOURCE
         LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = b.PRORITY
         LEFT JOIN data_dictionary dic_severity ON dic_severity.DATA_TYPE = 'bugSeverityLevel' AND dic_severity.DATA_VALUE = CAST(b.BUG_SEVERITY_LEVEL AS CHAR)
@@ -163,7 +163,7 @@
             b.BUG_NAME AS bugName,
             b.SYSTEM_ID AS systemId,
             b.BUG_STATE AS bugState,
-            dic_state.DATA_NAME AS bugStateName,
+            bs.BUG_STATE_NAME AS bugStateName,
             b.USECASE_ID AS usecaseId,
             b.BUG_SOURCE AS bugSource,
             dic_source.DATA_NAME AS bugSourceName,
@@ -198,7 +198,7 @@
         LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
         LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
         LEFT JOIN t_sys_user checker ON b.CHECKER_ID = checker.USER_ID
-        LEFT JOIN data_dictionary dic_state ON dic_state.DATA_TYPE = 'bugState' AND dic_state.DATA_VALUE = b.BUG_STATE
+        LEFT JOIN tf_bug_state bs ON bs.BUG_STATE_CODE = b.BUG_STATE
         LEFT JOIN data_dictionary dic_source ON dic_source.DATA_TYPE = 'bugSource' AND dic_source.DATA_VALUE = b.BUG_SOURCE
         LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = b.PRORITY
         LEFT JOIN data_dictionary dic_severity ON dic_severity.DATA_TYPE = 'bugSeverityLevel' AND dic_severity.DATA_VALUE = CAST(b.BUG_SEVERITY_LEVEL AS CHAR)
@@ -215,7 +215,7 @@
             b.BUG_NAME AS bugName,
             b.SYSTEM_ID AS systemId,
             b.BUG_STATE AS bugState,
-            dic_state.DATA_NAME AS bugStateName,
+            bs.BUG_STATE_NAME AS bugStateName,
             b.USECASE_ID AS usecaseId,
             b.BUG_SOURCE AS bugSource,
             dic_source.DATA_NAME AS bugSourceName,
@@ -250,7 +250,7 @@
         LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
         LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
         LEFT JOIN t_sys_user checker ON b.CHECKER_ID = checker.USER_ID
-        LEFT JOIN data_dictionary dic_state ON dic_state.DATA_TYPE = 'bugState' AND dic_state.DATA_VALUE = b.BUG_STATE
+        LEFT JOIN tf_bug_state bs ON bs.BUG_STATE_CODE = b.BUG_STATE
         LEFT JOIN data_dictionary dic_source ON dic_source.DATA_TYPE = 'bugSource' AND dic_source.DATA_VALUE = b.BUG_SOURCE
         LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = b.PRORITY
         LEFT JOIN data_dictionary dic_severity ON dic_severity.DATA_TYPE = 'bugSeverityLevel' AND dic_severity.DATA_VALUE = CAST(b.BUG_SEVERITY_LEVEL AS CHAR)

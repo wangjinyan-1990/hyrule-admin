@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.bugManage.mapper.TfBugStateMapper">
+
+    <!-- 查询所有缺陷状态，按排序号排序 -->
+    <select id="selectAllBugStates" resultType="com.king.test.bugManage.entity.TfBugState">
+        SELECT
+            BUG_STATE_ID AS bugStateId,
+            BUG_FLOWLET_NUMBER AS bugFlowletNumber,
+            BUG_STATE_CODE AS bugStateCode,
+            BUG_STATE_NAME AS bugStateName,
+            SORT_NO AS sortNo
+        FROM tf_bug_state
+        ORDER BY SORT_NO ASC, BUG_STATE_ID ASC
+    </select>
+
+</mapper>
+

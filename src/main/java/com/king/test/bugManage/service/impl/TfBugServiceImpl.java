@@ -3,13 +3,16 @@ package com.king.test.bugManage.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.king.common.utils.CounterUtil;
 import com.king.common.utils.SecurityUtils;
 import com.king.framework.dataDictionary.service.IDataDictionaryService;
 import com.king.test.baseManage.testDirectory.service.ITestDirectoryService;
 import com.king.test.bugManage.entity.TfBug;
 import com.king.test.bugManage.entity.TfBugHistory;
+import com.king.test.bugManage.entity.TfBugState;
 import com.king.test.bugManage.mapper.TfBugHistoryMapper;
 import com.king.test.bugManage.mapper.TfBugMapper;
+import com.king.test.bugManage.mapper.TfBugStateMapper;
 import com.king.test.bugManage.service.ITfBugService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -53,9 +56,15 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
     @Autowired
     private TfBugHistoryMapper bugHistoryMapper;
 
+    @Autowired
+    private TfBugStateMapper bugStateMapper;
+
+    @Autowired
+    private CounterUtil counterUtil;
+
     @Override
     public Map<String, Object> getBugPage(int pageNo, int pageSize,
-                                          String systemId, Integer directoryId,
+                                          String systemId, String directoryId,
                                           String bugId, String bugName,
                                           String bugState, String bugType,
                                           Integer bugSeverityLevel, String bugSource,
@@ -64,7 +73,7 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
                                           String closeTimeStart, String closeTimeEnd) {
         Page<TfBug> page = new Page<>(pageNo, pageSize);
         // 获取目录及其所有子目录的ID列表（包含当前目录）
-        List<Integer> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
+        List<String> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
         Page<TfBug> result = this.baseMapper.selectPageBugList(page, systemId, directoryIds,
                 bugId, bugName, bugState, bugType, bugSeverityLevel, bugSource,
                 submitterId, checkerId, developerId,
@@ -86,8 +95,8 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
     }
 
     @Override
-    public TfBug getBugDetail(Integer bugId) {
-        Assert.notNull(bugId, "缺陷ID不能为空");
+    public TfBug getBugDetail(String bugId) {
+        Assert.hasText(bugId, "缺陷ID不能为空");
         TfBug bug = this.baseMapper.selectBugDetailById(bugId);
         if (bug == null) {
             throw new IllegalArgumentException("缺陷不存在");
@@ -103,6 +112,16 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
         Assert.notNull(bug, "缺陷信息不能为空");
         Assert.hasText(bug.getBugName(), "缺陷名称不能为空");
         Assert.hasText(bug.getSystemId(), "系统ID不能为空");
+
+        // 数据转换：将前端传入的中文名称转换为代码值
+        convertBugDataFromFrontend(bug);
+
+        // 生成缺陷ID（如果未提供）
+        if (!StringUtils.hasText(bug.getBugId())) {
+            String bugIdStr = generateBugId(bug.getSystemId());
+            bug.setBugId(bugIdStr);
+            logger.debug("生成缺陷ID: {}", bugIdStr);
+        }
 
         // 设置提交时间和提交人
         LocalDateTime now = LocalDateTime.now();
@@ -122,8 +141,10 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
 
         boolean saved = this.save(bug);
         if (saved) {
-            // 记录历史
-            recordBugHistory(bug.getBugId().toString(), null, bug.getBugState(), "创建缺陷", currentUser, bug.getSystemId());
+            // 记录历史，如果有备注则使用备注，否则使用默认描述
+            // 旧状态设置为'无'，因为这是创建操作
+            String comment = StringUtils.hasText(bug.getRemark()) ? bug.getRemark() : "创建缺陷";
+            recordBugHistory(bug.getBugId(), "无", bug.getBugState(), comment, currentUser, bug.getSystemId());
             logger.info("创建缺陷成功: bugId={}, bugName={}", bug.getBugId(), bug.getBugName());
         } else {
             logger.error("创建缺陷失败: bugName={}", bug.getBugName());
@@ -131,11 +152,89 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
         return saved;
     }
 
+    /**
+     * 将前端传入的数据转换为数据库存储格式
+     * 1. 将中文状态名转换为代码值
+     * 2. 处理空字符串，转换为null
+     * 3. 处理其他字段转换
+     */
+    private void convertBugDataFromFrontend(TfBug bug) {
+        // 转换缺陷状态：如果传入的是中文名称，转换为代码值
+        if (StringUtils.hasText(bug.getBugState())) {
+            // 先尝试通过数据字典将名称转换为代码值
+            String bugStateCode = dataDictionaryService.getDataValueByTypeAndName("bugState", bug.getBugState());
+            if (bugStateCode != null) {
+                logger.debug("缺陷状态转换: {} -> {}", bug.getBugState(), bugStateCode);
+                bug.setBugState(bugStateCode);
+            } else {
+                // 如果转换失败，说明传入的已经是代码值，保持不变
+                logger.debug("缺陷状态未转换，使用原值: {}", bug.getBugState());
+            }
+        }
+
+        // 处理空字符串：将空字符串转换为null
+        if (bug.getBugSource() != null && bug.getBugSource().trim().isEmpty()) {
+            bug.setBugSource(null);
+        }
+        if (bug.getPrority() != null && bug.getPrority().trim().isEmpty()) {
+            bug.setPrority(null);
+        }
+        if (bug.getBugType() != null && bug.getBugType().trim().isEmpty()) {
+            bug.setBugType(null);
+        }
+        if (bug.getCloseReason() != null && bug.getCloseReason().trim().isEmpty()) {
+            bug.setCloseReason(null);
+        }
+        if (bug.getRemark() != null && bug.getRemark().trim().isEmpty()) {
+            bug.setRemark(null);
+        }
+
+        // 转换优先级：如果传入的是中文名称，转换为代码值
+        if (StringUtils.hasText(bug.getProrityName()) && !StringUtils.hasText(bug.getPrority())) {
+            String prorityCode = dataDictionaryService.getDataValueByTypeAndName("prority", bug.getProrityName());
+            if (prorityCode != null) {
+                logger.debug("优先级转换: {} -> {}", bug.getProrityName(), prorityCode);
+                bug.setPrority(prorityCode);
+            }
+        }
+
+        // 转换缺陷来源：如果传入的是中文名称，转换为代码值
+        if (StringUtils.hasText(bug.getBugSourceName()) && !StringUtils.hasText(bug.getBugSource())) {
+            String bugSourceCode = dataDictionaryService.getDataValueByTypeAndName("bugSource", bug.getBugSourceName());
+            if (bugSourceCode != null) {
+                logger.debug("缺陷来源转换: {} -> {}", bug.getBugSourceName(), bugSourceCode);
+                bug.setBugSource(bugSourceCode);
+            }
+        }
+
+        // 转换缺陷类型：如果传入的是中文名称，转换为代码值
+        if (StringUtils.hasText(bug.getBugTypeName()) && !StringUtils.hasText(bug.getBugType())) {
+            String bugTypeCode = dataDictionaryService.getDataValueByTypeAndName("bugType", bug.getBugTypeName());
+            if (bugTypeCode != null) {
+                logger.debug("缺陷类型转换: {} -> {}", bug.getBugTypeName(), bugTypeCode);
+                bug.setBugType(bugTypeCode);
+            }
+        }
+
+        // 转换缺陷严重级别：如果传入的是中文名称，转换为代码值
+        if (bug.getBugSeverityLevel() == null && StringUtils.hasText(bug.getBugSeverityLevelName())) {
+            String severityLevelCode = dataDictionaryService.getDataValueByTypeAndName("bugSeverityLevel", bug.getBugSeverityLevelName());
+            if (severityLevelCode != null) {
+                try {
+                    bug.setBugSeverityLevel(Integer.valueOf(severityLevelCode));
+                    logger.debug("缺陷严重级别转换: {} -> {}", bug.getBugSeverityLevelName(), severityLevelCode);
+                } catch (NumberFormatException e) {
+                    logger.warn("缺陷严重级别转换失败: {}", severityLevelCode, e);
+                }
+            }
+        }
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateBug(TfBug bug) {
         Assert.notNull(bug, "缺陷信息不能为空");
-        Assert.notNull(bug.getBugId(), "缺陷ID不能为空");
+        Assert.hasText(bug.getBugId(), "缺陷ID不能为空");
         Assert.hasText(bug.getBugName(), "缺陷名称不能为空");
 
         // 查询原缺陷信息
@@ -153,7 +252,12 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
         if (updated) {
             // 如果状态发生变化，记录历史
             if (!StringUtils.hasText(oldState) || !oldState.equals(newState)) {
-                recordBugHistory(bug.getBugId().toString(), oldState, newState, "更新缺陷", currentUser, bug.getSystemId());
+                // 如果有备注则使用备注，否则使用默认描述
+                String comment = StringUtils.hasText(bug.getRemark()) ? bug.getRemark() : "更新缺陷";
+                recordBugHistory(bug.getBugId(), oldState, newState, comment, currentUser, bug.getSystemId());
+            } else if (StringUtils.hasText(bug.getRemark())) {
+                // 即使状态未变化，如果有备注也记录历史
+                recordBugHistory(bug.getBugId(), oldState, newState, bug.getRemark(), currentUser, bug.getSystemId());
             }
             logger.info("更新缺陷成功: bugId={}, bugName={}", bug.getBugId(), bug.getBugName());
         } else {
@@ -164,8 +268,8 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteBug(Integer bugId) {
-        Assert.notNull(bugId, "缺陷ID不能为空");
+    public boolean deleteBug(String bugId) {
+        Assert.hasText(bugId, "缺陷ID不能为空");
         TfBug bug = this.getById(bugId);
         if (bug == null) {
             throw new IllegalArgumentException("缺陷不存在");
@@ -173,7 +277,7 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
 
         // 删除关联的历史记录
         LambdaQueryWrapper<TfBugHistory> historyWrapper = new LambdaQueryWrapper<>();
-        historyWrapper.eq(TfBugHistory::getBugId, bugId.toString());
+        historyWrapper.eq(TfBugHistory::getBugId, bugId);
         bugHistoryMapper.delete(historyWrapper);
 
         boolean deleted = this.removeById(bugId);
@@ -187,16 +291,16 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean batchDeleteBugs(List<Integer> bugIds) {
+    public boolean batchDeleteBugs(List<String> bugIds) {
         Assert.notEmpty(bugIds, "缺陷ID列表不能为空");
-        for (Integer bugId : bugIds) {
+        for (String bugId : bugIds) {
             deleteBug(bugId);
         }
         return true;
     }
 
     @Override
-    public List<TfBug> listBugsForExport(String systemId, Integer directoryId,
+    public List<TfBug> listBugsForExport(String systemId, String directoryId,
                                         String bugId, String bugName,
                                         String bugState, String bugType,
                                         Integer bugSeverityLevel, String bugSource,
@@ -204,7 +308,7 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
                                         String commitTimeStart, String commitTimeEnd,
                                         String closeTimeStart, String closeTimeEnd) {
         // 获取目录及其所有子目录的ID列表（包含当前目录）
-        List<Integer> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
+        List<String> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
         List<TfBug> bugs = this.baseMapper.selectBugsForExport(systemId, directoryIds,
                 bugId, bugName, bugState, bugType, bugSeverityLevel, bugSource,
                 submitterId, checkerId, developerId,
@@ -264,9 +368,9 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
             row.createCell(7).setCellValue(safeToString(bug.getCheckerName()));
             // 用例模块（目录路径）
             String modulePath = "";
-            if (bug.getDirectoryId() != null) {
+            if (StringUtils.hasText(bug.getDirectoryId())) {
                 try {
-                    modulePath = testDirectoryService.getDirectoryFullPath(bug.getDirectoryId().toString());
+                    modulePath = testDirectoryService.getDirectoryFullPath(bug.getDirectoryId());
                 } catch (Exception e) {
                     logger.warn("获取目录路径失败: directoryId={}", bug.getDirectoryId(), e);
                 }
@@ -316,10 +420,10 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
     }
 
     @Override
-    public Map<String, Object> getBugHistory(Integer bugId, int pageNo, int pageSize) {
-        Assert.notNull(bugId, "缺陷ID不能为空");
+    public Map<String, Object> getBugHistory(String bugId, int pageNo, int pageSize) {
+        Assert.hasText(bugId, "缺陷ID不能为空");
         Page<TfBugHistory> page = new Page<>(pageNo, pageSize);
-        Page<TfBugHistory> result = bugHistoryMapper.selectPageBugHistoryList(page, bugId.toString());
+        Page<TfBugHistory> result = bugHistoryMapper.selectPageBugHistoryList(page, bugId);
 
         // 填充字典名称
         for (TfBugHistory history : result.getRecords()) {
@@ -346,9 +450,9 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
      * 填充测试集路径
      */
     private void fillFullPath(TfBug bug) {
-        if (bug.getDirectoryId() != null) {
+        if (StringUtils.hasText(bug.getDirectoryId())) {
             try {
-                String fullPath = testDirectoryService.getDirectoryFullPath(bug.getDirectoryId().toString());
+                String fullPath = testDirectoryService.getDirectoryFullPath(bug.getDirectoryId());
                 bug.setFullPath(fullPath);
             } catch (Exception e) {
                 logger.warn("获取测试集路径失败: directoryId={}", bug.getDirectoryId(), e);
@@ -402,28 +506,19 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
     /**
      * 获取目录及其所有子目录的ID列表
      */
-    private List<Integer> fetchDirectoryHierarchy(Integer directoryId, String systemId) {
-        if (directoryId == null) {
+    private List<String> fetchDirectoryHierarchy(String directoryId, String systemId) {
+        if (!StringUtils.hasText(directoryId)) {
             return null;
         }
         // 调用目录服务获取当前目录及其所有子目录的ID列表
-        List<String> ids = testDirectoryService.getAllChildrenDirectoryIds(directoryId.toString(), systemId);
+        List<String> ids = testDirectoryService.getAllChildrenDirectoryIds(directoryId, systemId);
         if (ids == null || ids.isEmpty()) {
-            List<Integer> result = new ArrayList<>();
+            List<String> result = new ArrayList<>();
             result.add(directoryId);
             return result;
         }
-        // 转换为Integer列表
-        List<Integer> result = new ArrayList<>();
-        for (String id : ids) {
-            try {
-                result.add(Integer.valueOf(id));
-            } catch (NumberFormatException e) {
-                logger.warn("目录ID格式错误: {}", id);
-            }
-        }
-        logger.debug("查询目录层级: directoryId={}, systemId={}, 包含的目录数量={}", directoryId, systemId, result.size());
-        return result;
+        logger.debug("查询目录层级: directoryId={}, systemId={}, 包含的目录数量={}", directoryId, systemId, ids.size());
+        return ids;
     }
 
     @Override
@@ -457,5 +552,30 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
             return "";
         }
         return value.toString();
+    }
+
+    /**
+     * 生成缺陷ID
+     * @param systemId 系统ID
+     * @return 缺陷ID，格式：systemId-baseCode 或 baseCode
+     */
+    private String generateBugId(String systemId) {
+        String base = counterUtil.generateNextCode("bugCode");
+        if (StringUtils.hasText(systemId)) {
+            return systemId + "-" + base;
+        }
+        return base;
+    }
+
+    @Override
+    public List<TfBugState> getAllBugStates() {
+        try {
+            List<TfBugState> states = bugStateMapper.selectAllBugStates();
+            logger.info("查询所有缺陷状态，共 {} 条", states != null ? states.size() : 0);
+            return states;
+        } catch (Exception e) {
+            logger.error("查询所有缺陷状态失败", e);
+            throw new RuntimeException("查询所有缺陷状态失败: " + e.getMessage(), e);
+        }
     }
 }

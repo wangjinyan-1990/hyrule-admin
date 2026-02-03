@@ -44,12 +44,14 @@
             e.LAST_EXECUTION_TIME AS lastExecutionTime,
             e.EXECUTION_CREATOR_ID AS executionCreatorId,
             execution_creator.USER_NAME AS executionCreatorName,
+            usecase_designer.USER_NAME AS usecaseDesigner,
             e.EXECUTION_CREATE_TIME AS executionCreateTime
         FROM tf_usecase_execution e
         LEFT JOIN tf_usecase u ON e.USECASE_ID = u.USECASE_ID
         LEFT JOIN t_sys_user plan_executor ON e.PLAN_EXECUTOR_ID = plan_executor.USER_ID
         LEFT JOIN t_sys_user act_executor ON e.ACT_EXECUTOR_ID = act_executor.USER_ID
         LEFT JOIN t_sys_user execution_creator ON e.EXECUTION_CREATOR_ID = execution_creator.USER_ID
+        LEFT JOIN t_sys_user usecase_designer ON u.CREATOR_ID = usecase_designer.USER_ID
         LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'runStatus' AND dic_status.DATA_VALUE = e.RUN_STATUS
         <where>
             <if test="systemId != null and systemId != ''">
