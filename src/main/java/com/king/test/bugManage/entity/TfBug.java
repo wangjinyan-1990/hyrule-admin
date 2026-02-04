@@ -34,6 +34,12 @@ public class TfBug {
     private String systemId;
 
     /**
+     * 系统名称（用于前端显示，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String systemName;
+
+    /**
      * 缺陷状态
      */
     @TableField("BUG_STATE")
@@ -166,7 +172,7 @@ public class TfBug {
     private String directoryId;
 
     /**
-     * 测试集路径（关联查询字段，不对应数据库字段）
+     * 测试执行路径（关联查询字段，不对应数据库字段）
      */
     @TableField(exist = false)
     private String fullPath;

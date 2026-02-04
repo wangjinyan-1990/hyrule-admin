@@ -15,6 +15,7 @@ public interface ITfBugService extends IService<TfBug> {
 
     /**
      * 分页查询缺陷列表
+     * @param queryType 查询类型：allBugs-全部缺陷，myActiveBugs-和我相关的活动缺陷
      * @param pageNo 页码
      * @param pageSize 每页大小
      * @param systemId 系统ID（可选）
@@ -34,7 +35,7 @@ public interface ITfBugService extends IService<TfBug> {
      * @param closeTimeEnd 关闭时间结束（可选）
      * @return 分页结果
      */
-    Map<String, Object> getBugPage(int pageNo, int pageSize,
+    Map<String, Object> getBugPage(String queryType, int pageNo, int pageSize,
                                     String systemId, String directoryId,
                                     String bugId, String bugName,
                                     String bugState, String bugType,
@@ -136,4 +137,25 @@ public interface ITfBugService extends IService<TfBug> {
      * @return 缺陷状态列表（包含 bugStateCode, bugStateName）
      */
     List<TfBugState> getAllBugStates();
+
+    /**
+     * 获取下一步可变更的状态
+     * @param bugId 缺陷ID
+     * @return 可变更的状态列表（根据当前状态和用户角色过滤）
+     */
+    List<TfBugState> getNextAvailableStates(String bugId);
+
+    /**
+     * 根据系统ID获取开发组长列表
+     * @param systemId 系统ID
+     * @return 开发组长列表
+     */
+    List<com.king.sys.user.entity.TSysUser> getDevLeadersBySystemId(String systemId);
+
+    /**
+     * 根据系统ID获取开发人员列表
+     * @param systemId 系统ID
+     * @return 开发人员列表
+     */
+    List<com.king.sys.user.entity.TSysUser> getDevelopersBySystemId(String systemId);
 }

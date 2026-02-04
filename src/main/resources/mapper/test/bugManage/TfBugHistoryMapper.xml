@@ -8,9 +8,9 @@
             h.BUG_HISHORY_ID AS bugHistoryId,
             h.BUG_ID AS bugId,
             h.NEW_STATE AS newState,
-            dic_new_state.DATA_NAME AS newStateName,
+            bs_new.BUG_STATE_NAME AS newStateName,
             h.OLD_STATE AS oldState,
-            dic_old_state.DATA_NAME AS oldStateName,
+            bs_old.BUG_STATE_NAME AS oldStateName,
             h.OPERATING_TIME AS operatingTime,
             h.OPERATOR_ID AS operatorId,
             operator.USER_NAME AS operatorName,
@@ -19,8 +19,8 @@
             h.LAST_OPERATION_TIME AS lastOperationTime
         FROM tf_bug_history h
         LEFT JOIN t_sys_user operator ON h.OPERATOR_ID = operator.USER_ID
-        LEFT JOIN data_dictionary dic_new_state ON dic_new_state.DATA_TYPE = 'bugState' AND dic_new_state.DATA_VALUE = h.NEW_STATE
-        LEFT JOIN data_dictionary dic_old_state ON dic_old_state.DATA_TYPE = 'bugState' AND dic_old_state.DATA_VALUE = h.OLD_STATE
+        LEFT JOIN tf_bug_state bs_new ON bs_new.BUG_STATE_CODE = h.NEW_STATE
+        LEFT JOIN tf_bug_state bs_old ON bs_old.BUG_STATE_CODE = h.OLD_STATE
         WHERE h.BUG_ID = #{bugId}
         ORDER BY h.OPERATING_TIME DESC
     </select>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.bugManage.mapper.TfBugFlowletPermissionMapper">
+
+    <!-- 根据流程ID和角色代码查询下一状态码列表 -->
+    <select id="selectNextStateCodesByFlowletIdsAndRoleCodes" resultType="java.lang.String">
+        SELECT DISTINCT f.NEXT_STATE_CODE
+        FROM tf_bug_flowlet_permission p
+        INNER JOIN tf_bug_flowlet f ON p.BUG_FLOWLET_ID = f.BUG_FLOWLET_ID
+        WHERE p.BUG_FLOWLET_ID IN
+        <foreach collection="bugFlowletIds" item="flowletId" open="(" close=")" separator=",">
+            #{flowletId}
+        </foreach>
+        AND p.BUG_ROLE_CODE IN
+        <foreach collection="bugRoleCodes" item="roleCode" open="(" close=")" separator=",">
+            #{roleCode}
+        </foreach>
+    </select>
+
+</mapper>
+

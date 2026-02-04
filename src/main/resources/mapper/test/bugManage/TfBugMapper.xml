@@ -59,6 +59,7 @@
             b.BUG_ID AS bugId,
             b.BUG_NAME AS bugName,
             b.SYSTEM_ID AS systemId,
+            ts.SYSTEM_NAME AS systemName,
             b.BUG_STATE AS bugState,
             bs.BUG_STATE_NAME AS bugStateName,
             b.USECASE_ID AS usecaseId,
@@ -91,6 +92,7 @@
             b.SUBMITTED_VOLUME AS submittedVolume,
             b.BUG_WORKFLOW_ID AS bugWorkflowId
         FROM tf_bug b
+        LEFT JOIN t_test_system ts ON b.SYSTEM_ID = ts.SYSTEM_ID
         LEFT JOIN t_sys_user submitter ON b.SUBMITTER_ID = submitter.USER_ID
         LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
         LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
@@ -100,7 +102,24 @@
         LEFT JOIN data_dictionary dic_priority ON dic_priority.DATA_TYPE = 'prority' AND dic_priority.DATA_VALUE = b.PRORITY
         LEFT JOIN data_dictionary dic_severity ON dic_severity.DATA_TYPE = 'bugSeverityLevel' AND dic_severity.DATA_VALUE = CAST(b.BUG_SEVERITY_LEVEL AS CHAR)
         LEFT JOIN data_dictionary dic_type ON dic_type.DATA_TYPE = 'bugType' AND dic_type.DATA_VALUE = b.BUG_TYPE
+        <if test="queryType != null and queryType == 'myActiveBugs' and currentUserId != null and currentUserId != ''">
+            LEFT JOIN t_test_system_user tsu ON tsu.SYSTEM_ID = b.SYSTEM_ID AND tsu.USER_ID = #{currentUserId}
+            LEFT JOIN tf_bug_role_permission brp ON brp.USER_ID = #{currentUserId} AND brp.TEST_LEADER = '1'
+        </if>
         WHERE 1 = 1
+        <if test="queryType != null and queryType == 'myActiveBugs' and currentUserId != null and currentUserId != ''">
+            AND (
+                b.SUBMITTER_ID = #{currentUserId}
+                OR b.DEVELOPER_ID = #{currentUserId}
+                OR b.DEV_LEADER_ID = #{currentUserId}
+                OR b.CHECKER_ID = #{currentUserId}
+                OR (
+                    (b.BUG_STATE = 'Submitted' OR b.BUG_STATE = 'ReSubmitted')
+                    AND brp.ROLE_PERMISSION_ID IS NOT NULL
+                    AND tsu.SYSTEM_USER_ID IS NOT NULL
+                )
+            )
+        </if>
         <include refid="CommonCondition" />
         ORDER BY b.COMMIT_TIME DESC
     </select>
@@ -111,6 +130,7 @@
             b.BUG_ID AS bugId,
             b.BUG_NAME AS bugName,
             b.SYSTEM_ID AS systemId,
+            ts.SYSTEM_NAME AS systemName,
             b.BUG_STATE AS bugState,
             bs.BUG_STATE_NAME AS bugStateName,
             b.USECASE_ID AS usecaseId,
@@ -143,6 +163,7 @@
             b.SUBMITTED_VOLUME AS submittedVolume,
             b.BUG_WORKFLOW_ID AS bugWorkflowId
         FROM tf_bug b
+        LEFT JOIN t_test_system ts ON b.SYSTEM_ID = ts.SYSTEM_ID
         LEFT JOIN t_sys_user submitter ON b.SUBMITTER_ID = submitter.USER_ID
         LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
         LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
@@ -162,6 +183,7 @@
             b.BUG_ID AS bugId,
             b.BUG_NAME AS bugName,
             b.SYSTEM_ID AS systemId,
+            ts.SYSTEM_NAME AS systemName,
             b.BUG_STATE AS bugState,
             bs.BUG_STATE_NAME AS bugStateName,
             b.USECASE_ID AS usecaseId,
@@ -194,6 +216,7 @@
             b.SUBMITTED_VOLUME AS submittedVolume,
             b.BUG_WORKFLOW_ID AS bugWorkflowId
         FROM tf_bug b
+        LEFT JOIN t_test_system ts ON b.SYSTEM_ID = ts.SYSTEM_ID
         LEFT JOIN t_sys_user submitter ON b.SUBMITTER_ID = submitter.USER_ID
         LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
         LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
@@ -214,6 +237,7 @@
             b.BUG_ID AS bugId,
             b.BUG_NAME AS bugName,
             b.SYSTEM_ID AS systemId,
+            ts.SYSTEM_NAME AS systemName,
             b.BUG_STATE AS bugState,
             bs.BUG_STATE_NAME AS bugStateName,
             b.USECASE_ID AS usecaseId,
@@ -246,6 +270,7 @@
             b.SUBMITTED_VOLUME AS submittedVolume,
             b.BUG_WORKFLOW_ID AS bugWorkflowId
         FROM tf_bug b
+        LEFT JOIN t_test_system ts ON b.SYSTEM_ID = ts.SYSTEM_ID
         LEFT JOIN t_sys_user submitter ON b.SUBMITTER_ID = submitter.USER_ID
         LEFT JOIN t_sys_user developer ON b.DEVELOPER_ID = developer.USER_ID
         LEFT JOIN t_sys_user dev_leader ON b.DEV_LEADER_ID = dev_leader.USER_ID
@@ -263,6 +288,46 @@
             AND CAST(b.DIRECTORY_ID AS CHAR) = #{directoryId}
         </if>
         ORDER BY b.COMMIT_TIME DESC
+    </select>
+
+    <!-- 根据系统ID查询开发组长列表 -->
+    <select id="selectDevLeadersBySystemId" resultType="com.king.sys.user.entity.TSysUser">
+        SELECT DISTINCT
+            u.USER_ID AS userId,
+            u.LOGIN_NAME AS loginName,
+            u.USER_NAME AS userName,
+            u.EMAIL AS email,
+            u.PHONE AS phone,
+            u.ORG_ID AS orgId,
+            u.STATUS AS status,
+            u.SORT_NO AS sortNo
+        FROM t_test_system_user tsu
+        INNER JOIN tf_bug_role_permission brp ON tsu.USER_ID = brp.USER_ID
+        INNER JOIN t_sys_user u ON tsu.USER_ID = u.USER_ID
+        WHERE tsu.SYSTEM_ID = #{systemId}
+          AND brp.DEV_LEADER = '1'
+          AND u.STATUS = 1
+        ORDER BY u.SORT_NO ASC, u.USER_NAME ASC
+    </select>
+
+    <!-- 根据系统ID查询开发人员列表 -->
+    <select id="selectDevelopersBySystemId" resultType="com.king.sys.user.entity.TSysUser">
+        SELECT DISTINCT
+            u.USER_ID AS userId,
+            u.LOGIN_NAME AS loginName,
+            u.USER_NAME AS userName,
+            u.EMAIL AS email,
+            u.PHONE AS phone,
+            u.ORG_ID AS orgId,
+            u.STATUS AS status,
+            u.SORT_NO AS sortNo
+        FROM t_test_system_user tsu
+        INNER JOIN t_sys_role_user ru ON tsu.USER_ID = ru.USER_ID
+        INNER JOIN t_sys_user u ON tsu.USER_ID = u.USER_ID
+        WHERE tsu.SYSTEM_ID = #{systemId}
+          AND ru.ROLE_ID = '0001'
+          AND u.STATUS = 1
+        ORDER BY u.SORT_NO ASC, u.USER_NAME ASC
     </select>
 
 </mapper>

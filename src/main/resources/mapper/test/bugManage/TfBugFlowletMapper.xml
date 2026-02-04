@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.bugManage.mapper.TfBugFlowletMapper">
+
+    <!-- 根据当前状态码查询流程ID列表 -->
+    <select id="selectFlowletIdsByCurrentState" resultType="java.lang.Integer">
+        SELECT BUG_FLOWLET_ID
+        FROM tf_bug_flowlet
+        WHERE CURRENT_STATE_CODE = #{currentStateCode}
+    </select>
+
+</mapper>
+

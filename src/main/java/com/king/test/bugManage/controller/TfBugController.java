@@ -27,6 +27,7 @@ public class TfBugController {
 
     /**
      * 分页查询缺陷列表
+     * @param queryType 查询类型：allBugs-全部缺陷，myActiveBugs-和我相关的活动缺陷
      * @param pageNo 页码
      * @param pageSize 每页大小
      * @param systemId 系统ID（可选）
@@ -48,6 +49,7 @@ public class TfBugController {
      */
     @GetMapping("/list")
     public Result<Map<String, Object>> getBugList(
+            @RequestParam(value = "queryType", required = false) String queryType,
             @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             @RequestParam(value = "systemId", required = false) String systemId,
@@ -66,7 +68,7 @@ public class TfBugController {
             @RequestParam(value = "closeTimeStart", required = false) String closeTimeStart,
             @RequestParam(value = "closeTimeEnd", required = false) String closeTimeEnd) {
         try {
-            Map<String, Object> data = bugService.getBugPage(pageNo, pageSize, systemId, directoryId,
+            Map<String, Object> data = bugService.getBugPage(queryType, pageNo, pageSize, systemId, directoryId,
                     bugId, bugName, bugState, bugType, bugSeverityLevel, bugSource,
                     submitterId, checkerId, developerId,
                     commitTimeStart, commitTimeEnd, closeTimeStart, closeTimeEnd);
@@ -308,6 +310,62 @@ public class TfBugController {
             return Result.success(states);
         } catch (Exception e) {
             return Result.error("获取缺陷状态列表失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取下一步可变更的状态
+     * @param bugId 缺陷ID
+     * @return 可变更的状态列表（根据当前状态和用户角色过滤）
+     */
+    @GetMapping("/nextStates")
+    public Result<List<TfBugState>> getNextAvailableStates(@RequestParam("bugId") String bugId) {
+        if (bugId == null || bugId.trim().isEmpty()) {
+            return Result.error("缺陷ID不能为空");
+        }
+        try {
+            List<TfBugState> states = bugService.getNextAvailableStates(bugId);
+            return Result.success(states);
+        } catch (Exception e) {
+            return Result.error("获取下一步可变更状态失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据系统ID获取开发组长列表
+     * @param systemId 系统ID
+     * @return 开发组长列表
+     */
+    @GetMapping("/devLeaders")
+    public Result<List<com.king.sys.user.entity.TSysUser>> getDevLeadersBySystemId(
+            @RequestParam("systemId") String systemId) {
+        if (systemId == null || systemId.trim().isEmpty()) {
+            return Result.error("系统ID不能为空");
+        }
+        try {
+            List<com.king.sys.user.entity.TSysUser> devLeaders = bugService.getDevLeadersBySystemId(systemId);
+            return Result.success(devLeaders);
+        } catch (Exception e) {
+            return Result.error("获取开发组长列表失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据系统ID获取开发人员列表
+     * @param systemId 系统ID
+     * @return 开发人员列表
+     */
+    @GetMapping("/developers")
+    public Result<List<com.king.sys.user.entity.TSysUser>> getDevelopersBySystemId(
+            @RequestParam("systemId") String systemId) {
+        if (systemId == null || systemId.trim().isEmpty()) {
+            return Result.error("系统ID不能为空");
+        }
+        try {
+            List<com.king.sys.user.entity.TSysUser> developers = bugService.getDevelopersBySystemId(systemId);
+            return Result.success(developers);
+        } catch (Exception e) {
+            return Result.error("获取开发人员列表失败：" + e.getMessage());
         }
     }
 }

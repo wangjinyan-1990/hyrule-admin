@@ -9,11 +9,16 @@ import com.king.framework.dataDictionary.service.IDataDictionaryService;
 import com.king.test.baseManage.testDirectory.service.ITestDirectoryService;
 import com.king.test.bugManage.entity.TfBug;
 import com.king.test.bugManage.entity.TfBugHistory;
+import com.king.test.bugManage.entity.TfBugRolePermission;
 import com.king.test.bugManage.entity.TfBugState;
+import com.king.test.bugManage.mapper.TfBugFlowletMapper;
+import com.king.test.bugManage.mapper.TfBugFlowletPermissionMapper;
 import com.king.test.bugManage.mapper.TfBugHistoryMapper;
 import com.king.test.bugManage.mapper.TfBugMapper;
+import com.king.test.bugManage.mapper.TfBugRolePermissionMapper;
 import com.king.test.bugManage.mapper.TfBugStateMapper;
 import com.king.test.bugManage.service.ITfBugService;
+import com.king.sys.user.mapper.UserMapper;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -62,8 +67,20 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
     @Autowired
     private CounterUtil counterUtil;
 
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private TfBugRolePermissionMapper bugRolePermissionMapper;
+
+    @Autowired
+    private TfBugFlowletMapper bugFlowletMapper;
+
+    @Autowired
+    private TfBugFlowletPermissionMapper bugFlowletPermissionMapper;
+
     @Override
-    public Map<String, Object> getBugPage(int pageNo, int pageSize,
+    public Map<String, Object> getBugPage(String queryType, int pageNo, int pageSize,
                                           String systemId, String directoryId,
                                           String bugId, String bugName,
                                           String bugState, String bugType,
@@ -74,7 +91,9 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
         Page<TfBug> page = new Page<>(pageNo, pageSize);
         // 获取目录及其所有子目录的ID列表（包含当前目录）
         List<String> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
-        Page<TfBug> result = this.baseMapper.selectPageBugList(page, systemId, directoryIds,
+        // 获取当前用户ID
+        String currentUserId = securityUtils.getUserId();
+        Page<TfBug> result = this.baseMapper.selectPageBugList(page, queryType, currentUserId, systemId, directoryIds,
                 bugId, bugName, bugState, bugType, bugSeverityLevel, bugSource,
                 submitterId, checkerId, developerId,
                 commitTimeStart, commitTimeEnd, closeTimeStart, closeTimeEnd);
@@ -576,6 +595,158 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
         } catch (Exception e) {
             logger.error("查询所有缺陷状态失败", e);
             throw new RuntimeException("查询所有缺陷状态失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 获取当前用户、当前缺陷的权限
+     * 
+     * @param bug 缺陷对象
+     * @return 角色代码数组
+     */
+    private String[] getBugRoleCodes(TfBug bug) {
+        List<String> bugRoles = new ArrayList<>();
+        String currentUserId = securityUtils.getUserId();
+        
+        if (currentUserId == null) {
+            logger.warn("无法获取当前用户ID");
+            return new String[0];
+        }
+
+        // 检查是否为提交人
+        if (currentUserId.equals(bug.getSubmitterId())) {
+            bugRoles.add("submitter");
+        }
+        
+        // 检查是否为验证人
+        if (currentUserId.equals(bug.getCheckerId())) {
+            bugRoles.add("checker");
+        }
+        
+        // 检查是否为开发人员
+        if (currentUserId.equals(bug.getDeveloperId())) {
+            bugRoles.add("developer");
+        }
+        
+        // 检查是否为开发组长
+        if (currentUserId.equals(bug.getDevLeaderId())) {
+            bugRoles.add("devLeader");
+        }
+        
+        // 检查系统角色（角色ID包含"00002,"表示测试组长）
+        List<String> roleIds = userMapper.getRoleIdByUserId(currentUserId);
+        if (roleIds != null) {
+            for (String roleId : roleIds) {
+                if (roleId != null && roleId.contains("00002,")) {
+                    bugRoles.add("testLeader");
+                    break;
+                }
+            }
+        }
+        
+        // 查询测试组长角色权限
+        List<TfBugRolePermission> testLeaderRoles = bugRolePermissionMapper.selectTestLeaderBySystemIdAndUserId(
+                bug.getSystemId(), currentUserId);
+        if (testLeaderRoles != null && testLeaderRoles.size() > 0) {
+            bugRoles.add("testLeader");
+        }
+        
+        return bugRoles.toArray(new String[0]);
+    }
+
+    @Override
+    public List<TfBugState> getNextAvailableStates(String bugId) {
+        Assert.hasText(bugId, "缺陷ID不能为空");
+        
+        try {
+            // 获取缺陷详情
+            TfBug bug = getBugDetail(bugId);
+            if (bug == null) {
+                throw new IllegalArgumentException("缺陷不存在: " + bugId);
+            }
+            
+            // 获取当前用户对于该缺陷的角色
+            String[] roleCodes = getBugRoleCodes(bug);
+            if (roleCodes == null || roleCodes.length == 0) {
+                logger.warn("用户 {} 对于缺陷 {} 没有任何角色权限", securityUtils.getUserId(), bugId);
+                return new ArrayList<>();
+            }
+            
+            // 根据当前状态查询流程ID列表
+            String currentStateCode = bug.getBugState();
+            if (!StringUtils.hasText(currentStateCode)) {
+                logger.warn("缺陷 {} 的当前状态为空", bugId);
+                return new ArrayList<>();
+            }
+            
+            List<Integer> flowletIds = bugFlowletMapper.selectFlowletIdsByCurrentState(currentStateCode);
+            if (flowletIds == null || flowletIds.isEmpty()) {
+                logger.warn("缺陷 {} 的当前状态 {} 没有对应的流程配置", bugId, currentStateCode);
+                return new ArrayList<>();
+            }
+            
+            // 根据流程ID和角色代码查询下一状态码列表
+            List<String> roleCodeList = new ArrayList<>();
+            for (String roleCode : roleCodes) {
+                roleCodeList.add(roleCode);
+            }
+            
+            List<String> nextStateCodes = bugFlowletPermissionMapper.selectNextStateCodesByFlowletIdsAndRoleCodes(
+                    flowletIds, roleCodeList);
+            
+            if (nextStateCodes == null || nextStateCodes.isEmpty()) {
+                logger.warn("缺陷 {} 的当前状态 {} 和用户角色 {} 没有可用的下一状态", 
+                        bugId, currentStateCode, String.join(",", roleCodes));
+                return new ArrayList<>();
+            }
+            
+            // 根据状态码查询状态详情
+            List<TfBugState> availableStates = new ArrayList<>();
+            List<TfBugState> allStates = bugStateMapper.selectAllBugStates();
+            
+            for (String stateCode : nextStateCodes) {
+                for (TfBugState state : allStates) {
+                    if (stateCode.equals(state.getBugStateCode())) {
+                        availableStates.add(state);
+                        break;
+                    }
+                }
+            }
+            
+            logger.info("缺陷 {} 的当前状态 {} 下，用户角色 {} 可用的下一状态共 {} 个", 
+                    bugId, currentStateCode, String.join(",", roleCodes), availableStates.size());
+            
+            return availableStates;
+            
+        } catch (Exception e) {
+            logger.error("获取缺陷 {} 的下一步可变更状态失败", bugId, e);
+            throw new RuntimeException("获取下一步可变更状态失败: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<com.king.sys.user.entity.TSysUser> getDevLeadersBySystemId(String systemId) {
+        Assert.hasText(systemId, "系统ID不能为空");
+        try {
+            List<com.king.sys.user.entity.TSysUser> devLeaders = this.baseMapper.selectDevLeadersBySystemId(systemId);
+            logger.info("根据系统ID {} 查询开发组长列表，共 {} 人", systemId, devLeaders != null ? devLeaders.size() : 0);
+            return devLeaders != null ? devLeaders : new ArrayList<>();
+        } catch (Exception e) {
+            logger.error("根据系统ID {} 查询开发组长列表失败", systemId, e);
+            throw new RuntimeException("获取开发组长列表失败: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<com.king.sys.user.entity.TSysUser> getDevelopersBySystemId(String systemId) {
+        Assert.hasText(systemId, "系统ID不能为空");
+        try {
+            List<com.king.sys.user.entity.TSysUser> developers = this.baseMapper.selectDevelopersBySystemId(systemId);
+            logger.info("根据系统ID {} 查询开发人员列表，共 {} 人", systemId, developers != null ? developers.size() : 0);
+            return developers != null ? developers : new ArrayList<>();
+        } catch (Exception e) {
+            logger.error("根据系统ID {} 查询开发人员列表失败", systemId, e);
+            throw new RuntimeException("获取开发人员列表失败: " + e.getMessage(), e);
         }
     }
 }

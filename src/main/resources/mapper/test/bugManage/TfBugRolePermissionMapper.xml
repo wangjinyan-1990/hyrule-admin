@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.king.test.bugManage.mapper.TfBugRolePermissionMapper">
+
+    <!-- 根据系统ID和用户ID查询测试组长角色权限 -->
+    <select id="selectTestLeaderBySystemIdAndUserId" resultType="com.king.test.bugManage.entity.TfBugRolePermission">
+        SELECT br.*
+        FROM tf_bug_role_permission br
+        LEFT JOIN t_test_system_user su ON br.USER_ID = su.USER_ID
+        WHERE su.SYSTEM_ID = #{systemId}
+          AND br.USER_ID = #{userId}
+          AND br.TEST_LEADER = '1'
+    </select>
+
+</mapper>
+

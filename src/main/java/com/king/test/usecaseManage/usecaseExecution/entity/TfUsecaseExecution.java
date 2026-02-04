@@ -35,6 +35,12 @@ public class TfUsecaseExecution {
     private String systemId;
 
     /**
+     * 系统名称（用于前端显示，不在数据库表中）
+     */
+    @TableField(exist = false)
+    private String systemName;
+
+    /**
      * 用例Id
      */
     @TableField("USECASE_ID")

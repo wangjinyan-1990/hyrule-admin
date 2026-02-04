@@ -17,6 +17,8 @@ public interface TfBugMapper extends BaseMapper<TfBug> {
     /**
      * 分页查询缺陷列表
      * @param page 分页对象
+     * @param queryType 查询类型：allBugs-全部缺陷，myActiveBugs-和我相关的活动缺陷
+     * @param currentUserId 当前用户ID
      * @param systemId 系统ID（可选）
      * @param directoryIds 目录ID列表（可选，包含当前目录及其所有子目录）
      * @param bugId 缺陷ID（可选，模糊查询）
@@ -35,6 +37,8 @@ public interface TfBugMapper extends BaseMapper<TfBug> {
      * @return 分页结果
      */
     Page<TfBug> selectPageBugList(Page<TfBug> page,
+                                  @Param("queryType") String queryType,
+                                  @Param("currentUserId") String currentUserId,
                                   @Param("systemId") String systemId,
                                   @Param("directoryIds") List<String> directoryIds,
                                   @Param("bugId") String bugId,
@@ -103,4 +107,18 @@ public interface TfBugMapper extends BaseMapper<TfBug> {
     Page<TfBug> selectPageRelatedBugs(Page<TfBug> page,
                                        @Param("usecaseId") String usecaseId,
                                        @Param("directoryId") String directoryId);
+
+    /**
+     * 根据系统ID查询开发组长列表
+     * @param systemId 系统ID
+     * @return 开发组长列表
+     */
+    List<com.king.sys.user.entity.TSysUser> selectDevLeadersBySystemId(@Param("systemId") String systemId);
+
+    /**
+     * 根据系统ID查询开发人员列表
+     * @param systemId 系统ID
+     * @return 开发人员列表
+     */
+    List<com.king.sys.user.entity.TSysUser> selectDevelopersBySystemId(@Param("systemId") String systemId);
 }
