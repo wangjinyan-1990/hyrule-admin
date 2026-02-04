@@ -29,9 +29,9 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (26,'WeekDay','星期五','5',5,'A','星期几'),
 (27,'WeekDay','星期六','6',6,'A','星期几'),
 (28,'WeekDay','星期日','0',7,'A','星期几'),
-(30,'CloseReason','验证通过','验证通过',NULL,'A','bug关闭原因'),
-(31,'CloseReason','不是缺陷','不是缺陷',NULL,'A','bug关闭原因'),
-(32,'CloseReason','不处理','不处理',NULL,'A','bug关闭原因'),
+(30,'closeReason','验证通过','验证通过',NULL,'A','bug关闭原因'),
+(31,'closeReason','不是缺陷','不是缺陷',NULL,'A','bug关闭原因'),
+(32,'closeReason','不处理','不处理',NULL,'A','bug关闭原因'),
 (33,'reviewStatus','未评审','0',NULL,'A',NULL),
 (34,'reviewStatus','已评审','1',NULL,'A',NULL),
 (35,'reviewStatus','评审不通过','2',NULL,'A',NULL),
@@ -232,13 +232,13 @@ insert  into `data_dictionary`(`DICTIONARY_ID`,`DATA_TYPE`,`DATA_NAME`,`DATA_VAL
 (387,'testPoint','单交易基准','9',9,'A','用例测试要点'),
 (388,'testPoint','混合容量','10',10,'A','用例测试要点'),
 (389,'testPoint','批量','11',11,'A','用例测试要点'),
-(390,'bugSource','1-需求','1',1,'A','bug来源'),
-(391,'bugSource','2-设计','2',2,'A','bug来源'),
-(392,'bugSource','3-编码','3',3,'A','bug来源'),
-(393,'bugSource','4-环境','4',4,'A','bug来源'),
-(394,'bugSource','5-数据','5',5,'A','bug来源'),
-(395,'bugSource','6-版本','6',6,'A','bug来源'),
-(396,'bugSource','7-设备','7',7,'A','bug来源');
+(390,'bugSource','需求','1',1,'A','bug来源'),
+(391,'bugSource','设计','2',2,'A','bug来源'),
+(392,'bugSource','编码','3',3,'A','bug来源'),
+(393,'bugSource','环境','4',4,'A','bug来源'),
+(394,'bugSource','数据','5',5,'A','bug来源'),
+(395,'bugSource','版本','6',6,'A','bug来源'),
+(396,'bugSource','设备','7',7,'A','bug来源');
 
 /*Table structure for table `t_sys_counter` */
 

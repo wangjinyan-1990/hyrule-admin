@@ -51,14 +51,32 @@ public class TfUsecaseExecutionServiceImpl extends ServiceImpl<TfUsecaseExecutio
 
     @Override
     public Map<String, Object> getExecutionPage(int pageNo, int pageSize,
-                                               String systemId, String directoryId,
+                                               String systemId, String directoryId, Boolean includeSubdirectories,
                                                String usecaseId, String usecaseName,
                                                String runStatus, String planExecutorId, String actExecutorId) {
         Page<TfUsecaseExecution> page = new Page<>(pageNo, pageSize);
-        // 获取目录及其所有子目录的ID列表（包含当前目录）
-        List<String> directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
+        
+        // 根据 includeSubdirectories 参数决定查询逻辑
+        String directoryFullPath = null;
+        List<String> directoryIds = null;
+        
+        if (StringUtils.hasText(directoryId)) {
+            if (includeSubdirectories != null && includeSubdirectories) {
+                // 包含子目录：获取目录的 fullPath
+                directoryFullPath = testDirectoryService.getDirectoryFullPath(directoryId);
+                if (!StringUtils.hasText(directoryFullPath)) {
+                    logger.warn("无法获取目录完整路径，directoryId={}, systemId={}", directoryId, systemId);
+                    directoryFullPath = null;
+                }
+            } else {
+                // 不包含子目录：只查询指定 directoryId
+                directoryIds = new ArrayList<>();
+                directoryIds.add(directoryId);
+            }
+        }
+        
         Page<TfUsecaseExecution> result = this.baseMapper.selectPageExecutionList(page, systemId, directoryIds, 
-                usecaseId, usecaseName, runStatus, planExecutorId, actExecutorId);
+                directoryFullPath, usecaseId, usecaseName, runStatus, planExecutorId, actExecutorId);
 
         // 填充执行状态名称（如果 SQL 关联失败，手动查询数据字典）
         for (TfUsecaseExecution execution : result.getRecords()) {
@@ -81,38 +99,87 @@ public class TfUsecaseExecutionServiceImpl extends ServiceImpl<TfUsecaseExecutio
     public Map<String, Object> getExecutionStatistics(String systemId, String directoryId, Boolean includeSubdirectories,
                                                       String usecaseId, String usecaseName, String usecaseOverview,
                                                       String actExecutionTimeStart, String actExecutionTimeEnd, String runStatus) {
-        // 处理目录ID列表
+        // 根据 includeSubdirectories 参数决定查询逻辑
+        String directoryFullPath = null;
         List<String> directoryIds = null;
+        
         if (StringUtils.hasText(directoryId)) {
             if (includeSubdirectories != null && includeSubdirectories) {
-                // 包含子目录
-                directoryIds = fetchDirectoryHierarchy(directoryId, systemId);
+                // 包含子目录：获取目录的 fullPath
+                directoryFullPath = testDirectoryService.getDirectoryFullPath(directoryId);
+                if (!StringUtils.hasText(directoryFullPath)) {
+                    logger.warn("无法获取目录完整路径，directoryId={}, systemId={}", directoryId, systemId);
+                    directoryFullPath = null;
+                }
             } else {
-                // 只查询当前目录
+                // 不包含子目录：只查询指定 directoryId
                 directoryIds = new ArrayList<>();
                 directoryIds.add(directoryId);
             }
         }
 
-        // 查询统计信息
+        // 查询执行状态统计信息
         List<Map<String, Object>> statistics = this.baseMapper.selectExecutionStatistics(
-                systemId, directoryIds, usecaseId, usecaseName, usecaseOverview,
+                systemId, directoryIds, directoryFullPath, usecaseId, usecaseName, usecaseOverview,
                 actExecutionTimeStart, actExecutionTimeEnd, runStatus);
 
-        // 计算总数
-        long total = 0;
+        // 初始化各状态计数
+        long totalCount = 0;
+        long notExecuted = 0;
+        long passed = 0;
+        long failed = 0;
+        long notApplicable = 0;
+        long blocked = 0;
+
+        // 获取各状态的值
+        String notExecutedValue = dataDictionaryService.getDataValueByTypeAndName("runStatus", "未执行");
+        String passedValue = dataDictionaryService.getDataValueByTypeAndName("runStatus", "通过");
+        String failedValue = dataDictionaryService.getDataValueByTypeAndName("runStatus", "失败");
+        String notApplicableValue = dataDictionaryService.getDataValueByTypeAndName("runStatus", "不适用");
+        String blockedValue = dataDictionaryService.getDataValueByTypeAndName("runStatus", "阻塞");
+
+        // 统计各状态数量
         if (statistics != null && !statistics.isEmpty()) {
             for (Map<String, Object> stat : statistics) {
-                Object count = stat.get("count");
-                if (count instanceof Number) {
-                    total += ((Number) count).longValue();
+                Object countObj = stat.get("count");
+                Object codeObj = stat.get("code");
+                
+                if (countObj instanceof Number && codeObj != null) {
+                    long count = ((Number) countObj).longValue();
+                    String code = codeObj.toString();
+                    totalCount += count;
+                    
+                    if (notExecutedValue != null && notExecutedValue.equals(code)) {
+                        notExecuted = count;
+                    } else if (passedValue != null && passedValue.equals(code)) {
+                        passed = count;
+                    } else if (failedValue != null && failedValue.equals(code)) {
+                        failed = count;
+                    } else if (notApplicableValue != null && notApplicableValue.equals(code)) {
+                        notApplicable = count;
+                    } else if (blockedValue != null && blockedValue.equals(code)) {
+                        blocked = count;
+                    }
                 }
             }
         }
 
+        // 查询缺陷数量
+        Long bugCount = this.baseMapper.selectBugCount(systemId, directoryIds, directoryFullPath);
+        if (bugCount == null) {
+            bugCount = 0L;
+        }
+
+        // 构建返回结果
         Map<String, Object> result = new HashMap<>(8);
-        result.put("total", total);
-        result.put("items", statistics);
+        result.put("totalCount", totalCount);
+        result.put("notExecuted", notExecuted);
+        result.put("passed", passed);
+        result.put("failed", failed);
+        result.put("notApplicable", notApplicable);
+        result.put("blocked", blocked);
+        result.put("bugCount", bugCount);
+        
         return result;
     }
 
@@ -133,21 +200,6 @@ public class TfUsecaseExecutionServiceImpl extends ServiceImpl<TfUsecaseExecutio
         return execution;
     }
 
-    /**
-     * 获取目录及其所有子目录的ID列表
-     * @param directoryId 目录ID
-     * @param systemId 系统ID
-     * @return 目录ID列表（包含当前目录及其所有子目录），如果directoryId为空则返回null（不限制目录）
-     */
-    private List<String> fetchDirectoryHierarchy(String directoryId, String systemId) {
-        if (!StringUtils.hasText(directoryId)) {
-            return null;
-        }
-        // 调用目录服务获取当前目录及其所有子目录的ID列表
-        List<String> ids = testDirectoryService.getAllChildrenDirectoryIds(directoryId, systemId);
-        logger.debug("查询目录层级: directoryId={}, systemId={}, 包含的目录数量={}", directoryId, systemId, ids != null ? ids.size() : 0);
-        return ids;
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -172,6 +224,16 @@ public class TfUsecaseExecutionServiceImpl extends ServiceImpl<TfUsecaseExecutio
         execution.setUsecaseId(usecaseId);
         execution.setDirectoryId(directoryId);
         execution.setSystemId(systemId);
+        
+        // 设置执行状态为'未执行'
+        String notExecutedStatus = dataDictionaryService.getDataValueByTypeAndName("runStatus", "未执行");
+        if (StringUtils.hasText(notExecutedStatus)) {
+            execution.setRunStatus(notExecutedStatus);
+        } else {
+            // 如果数据字典查询失败，直接使用'未执行'作为默认值
+            execution.setRunStatus("未执行");
+            logger.warn("无法从数据字典获取'未执行'状态值，使用默认值'未执行'");
+        }
         
         // 设置创建时间和创建人
         execution.setExecutionCreateTime(LocalDateTime.now());

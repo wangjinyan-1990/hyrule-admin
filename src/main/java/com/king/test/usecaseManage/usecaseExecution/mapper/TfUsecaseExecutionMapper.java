@@ -28,7 +28,8 @@ public interface TfUsecaseExecutionMapper extends BaseMapper<TfUsecaseExecution>
      * 分页查询用例执行列表
      * @param page 分页对象
      * @param systemId 系统ID（可选）
-     * @param directoryIds 目录ID列表（可选，包含当前目录及其所有子目录）
+     * @param directoryIds 目录ID列表（可选，当includeSubdirectories=false时使用）
+     * @param directoryFullPath 目录完整路径（可选，当includeSubdirectories=true时使用，用于LIKE查询）
      * @param usecaseId 用例ID（可选）
      * @param usecaseName 用例名称（可选，模糊查询）
      * @param runStatus 执行状态（可选）
@@ -39,6 +40,7 @@ public interface TfUsecaseExecutionMapper extends BaseMapper<TfUsecaseExecution>
     Page<TfUsecaseExecution> selectPageExecutionList(Page<TfUsecaseExecution> page,
                                                       @Param("systemId") String systemId,
                                                       @Param("directoryIds") List<String> directoryIds,
+                                                      @Param("directoryFullPath") String directoryFullPath,
                                                       @Param("usecaseId") String usecaseId,
                                                       @Param("usecaseName") String usecaseName,
                                                       @Param("runStatus") String runStatus,
@@ -48,7 +50,8 @@ public interface TfUsecaseExecutionMapper extends BaseMapper<TfUsecaseExecution>
     /**
      * 查询执行统计信息
      * @param systemId 系统ID（可选）
-     * @param directoryIds 目录ID列表（可选，包含当前目录及其所有子目录）
+     * @param directoryIds 目录ID列表（可选，当includeSubdirectories=false时使用）
+     * @param directoryFullPath 目录完整路径（可选，当includeSubdirectories=true时使用，用于LIKE查询）
      * @param usecaseId 用例ID（可选）
      * @param usecaseName 用例名称（可选，模糊查询）
      * @param usecaseOverview 用例概述（可选，模糊查询）
@@ -59,6 +62,7 @@ public interface TfUsecaseExecutionMapper extends BaseMapper<TfUsecaseExecution>
      */
     List<Map<String, Object>> selectExecutionStatistics(@Param("systemId") String systemId,
                                                          @Param("directoryIds") List<String> directoryIds,
+                                                         @Param("directoryFullPath") String directoryFullPath,
                                                          @Param("usecaseId") String usecaseId,
                                                          @Param("usecaseName") String usecaseName,
                                                          @Param("usecaseOverview") String usecaseOverview,
@@ -72,4 +76,15 @@ public interface TfUsecaseExecutionMapper extends BaseMapper<TfUsecaseExecution>
      * @return 执行详情，如果不存在返回null
      */
     TfUsecaseExecution selectExecutionDetailById(@Param("usecaseExecutionId") Integer usecaseExecutionId);
+
+    /**
+     * 查询缺陷数量
+     * @param systemId 系统ID（可选）
+     * @param directoryIds 目录ID列表（可选，当includeSubdirectories=false时使用）
+     * @param directoryFullPath 目录完整路径（可选，当includeSubdirectories=true时使用，用于LIKE查询）
+     * @return 缺陷数量
+     */
+    Long selectBugCount(@Param("systemId") String systemId,
+                       @Param("directoryIds") List<String> directoryIds,
+                       @Param("directoryFullPath") String directoryFullPath);
 }

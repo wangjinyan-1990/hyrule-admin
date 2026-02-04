@@ -158,4 +158,11 @@ public interface ITfBugService extends IService<TfBug> {
      * @return 开发人员列表
      */
     List<com.king.sys.user.entity.TSysUser> getDevelopersBySystemId(String systemId);
+
+    /**
+     * 根据系统ID获取验证人列表
+     * @param systemId 系统ID
+     * @return 验证人列表
+     */
+    List<com.king.sys.user.entity.TSysUser> getCheckersBySystemId(String systemId);
 }

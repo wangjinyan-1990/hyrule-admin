@@ -53,6 +53,9 @@
         LEFT JOIN t_sys_user execution_creator ON e.EXECUTION_CREATOR_ID = execution_creator.USER_ID
         LEFT JOIN t_sys_user usecase_designer ON u.CREATOR_ID = usecase_designer.USER_ID
         LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'runStatus' AND dic_status.DATA_VALUE = e.RUN_STATUS
+        <if test="directoryFullPath != null and directoryFullPath != ''">
+        LEFT JOIN t_test_directory td ON e.DIRECTORY_ID = td.DIRECTORY_ID
+        </if>
         <where>
             <if test="systemId != null and systemId != ''">
                 AND e.SYSTEM_ID = #{systemId}
@@ -62,6 +65,15 @@
                 <foreach collection="directoryIds" item="directoryId" open="(" close=")" separator=",">
                     #{directoryId}
                 </foreach>
+                AND EXISTS (
+                    SELECT 1 FROM t_test_directory td_check
+                    WHERE td_check.DIRECTORY_ID = e.DIRECTORY_ID
+                    AND td_check.IS_USE_TESTSET = '1'
+                )
+            </if>
+            <if test="directoryFullPath != null and directoryFullPath != ''">
+                AND td.FULLPATH LIKE CONCAT(#{directoryFullPath}, '%')
+                AND td.IS_USE_TESTSET = '1'
             </if>
             <if test="usecaseId != null and usecaseId != ''">
                 AND e.USECASE_ID = #{usecaseId}
@@ -91,6 +103,9 @@
         FROM tf_usecase_execution e
         LEFT JOIN tf_usecase u ON e.USECASE_ID = u.USECASE_ID
         LEFT JOIN data_dictionary dic_status ON dic_status.DATA_TYPE = 'runStatus' AND dic_status.DATA_VALUE = e.RUN_STATUS
+        <if test="directoryFullPath != null and directoryFullPath != ''">
+        LEFT JOIN t_test_directory td ON e.DIRECTORY_ID = td.DIRECTORY_ID
+        </if>
         <where>
             <if test="systemId != null and systemId != ''">
                 AND e.SYSTEM_ID = #{systemId}
@@ -100,6 +115,15 @@
                 <foreach collection="directoryIds" item="directoryId" open="(" close=")" separator=",">
                     #{directoryId}
                 </foreach>
+                AND EXISTS (
+                    SELECT 1 FROM t_test_directory td_check
+                    WHERE td_check.DIRECTORY_ID = e.DIRECTORY_ID
+                    AND td_check.IS_USE_TESTSET = '1'
+                )
+            </if>
+            <if test="directoryFullPath != null and directoryFullPath != ''">
+                AND td.FULLPATH LIKE CONCAT(#{directoryFullPath}, '%')
+                AND td.IS_USE_TESTSET = '1'
             </if>
             <if test="usecaseId != null and usecaseId != ''">
                 AND e.USECASE_ID = #{usecaseId}
@@ -124,6 +148,29 @@
         </where>
         GROUP BY e.RUN_STATUS, dic_status.DATA_NAME
         ORDER BY count DESC
+    </select>
+
+    <!-- 查询缺陷数量 -->
+    <select id="selectBugCount" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT b.BUG_ID)
+        FROM tf_bug b
+        <if test="directoryFullPath != null and directoryFullPath != ''">
+        LEFT JOIN t_test_directory td ON b.DIRECTORY_ID = td.DIRECTORY_ID
+        </if>
+        <where>
+            <if test="systemId != null and systemId != ''">
+                AND b.SYSTEM_ID = #{systemId}
+            </if>
+            <if test="directoryIds != null and directoryIds.size() > 0">
+                AND b.DIRECTORY_ID IN
+                <foreach collection="directoryIds" item="directoryId" open="(" close=")" separator=",">
+                    #{directoryId}
+                </foreach>
+            </if>
+            <if test="directoryFullPath != null and directoryFullPath != ''">
+                AND td.FULLPATH LIKE CONCAT(#{directoryFullPath}, '%')
+            </if>
+        </where>
     </select>
 
     <!-- 根据执行ID查询执行详情（关联用例表） -->

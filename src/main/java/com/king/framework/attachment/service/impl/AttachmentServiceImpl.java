@@ -150,21 +150,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, TfAttac
     
     @Override
     public List<TfAttachment> getAttachments(String module, String relateId) {
-        LambdaQueryWrapper<TfAttachment> wrapper = new LambdaQueryWrapper<>();
-        
-        // 根据传入的参数动态组合查询条件
-        if (StringUtils.hasText(module)) {
-            wrapper.eq(TfAttachment::getModule, module);
-        }
-        
-        if (StringUtils.hasText(relateId)) {
-            wrapper.eq(TfAttachment::getRelateId, relateId);
-        }
-        
-        // 按上传时间倒序排列
-        wrapper.orderByDesc(TfAttachment::getUploadDate);
-        
-        return this.list(wrapper);
+        // 使用自定义查询方法，关联用户表查询上传用户姓名
+        return this.baseMapper.selectAttachmentsWithUserName(module, relateId);
     }
     
     @Override

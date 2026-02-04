@@ -368,4 +368,23 @@ public class TfBugController {
             return Result.error("获取开发人员列表失败：" + e.getMessage());
         }
     }
+
+    /**
+     * 根据系统ID获取验证人列表
+     * @param systemId 系统ID
+     * @return 验证人列表
+     */
+    @GetMapping("/checkers")
+    public Result<List<com.king.sys.user.entity.TSysUser>> getCheckersBySystemId(
+            @RequestParam("systemId") String systemId) {
+        if (systemId == null || systemId.trim().isEmpty()) {
+            return Result.error("系统ID不能为空");
+        }
+        try {
+            List<com.king.sys.user.entity.TSysUser> checkers = bugService.getCheckersBySystemId(systemId);
+            return Result.success(checkers);
+        } catch (Exception e) {
+            return Result.error("获取验证人列表失败：" + e.getMessage());
+        }
+    }
 }

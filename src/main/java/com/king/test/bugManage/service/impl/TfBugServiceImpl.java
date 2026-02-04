@@ -142,33 +142,74 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
             logger.debug("生成缺陷ID: {}", bugIdStr);
         }
 
-        // 设置提交时间和提交人
-        LocalDateTime now = LocalDateTime.now();
-        bug.setCommitTime(now);
+        // 检查缺陷ID是否已存在
+        TfBug existingBug = this.getById(bug.getBugId());
+        boolean isUpdate = existingBug != null;
+
         String currentUser = securityUtils.getUserId();
-        if (StringUtils.hasText(currentUser)) {
-            bug.setSubmitterId(currentUser);
-        }
+        LocalDateTime now = LocalDateTime.now();
 
-        // 初始化解决次数和提交次数
-        if (bug.getSolveVolume() == null) {
-            bug.setSolveVolume(0);
-        }
-        if (bug.getSubmittedVolume() == null) {
-            bug.setSubmittedVolume(1);
-        }
-
-        boolean saved = this.save(bug);
-        if (saved) {
-            // 记录历史，如果有备注则使用备注，否则使用默认描述
-            // 旧状态设置为'无'，因为这是创建操作
-            String comment = StringUtils.hasText(bug.getRemark()) ? bug.getRemark() : "创建缺陷";
-            recordBugHistory(bug.getBugId(), "无", bug.getBugState(), comment, currentUser, bug.getSystemId());
-            logger.info("创建缺陷成功: bugId={}, bugName={}", bug.getBugId(), bug.getBugName());
+        if (isUpdate) {
+            // 如果缺陷已存在，执行更新操作
+            logger.info("缺陷ID已存在，执行更新操作: bugId={}", bug.getBugId());
+            
+            // 保留原有的提交时间和提交人（如果新数据中没有提供）
+            if (bug.getCommitTime() == null && existingBug.getCommitTime() != null) {
+                bug.setCommitTime(existingBug.getCommitTime());
+            }
+            if (!StringUtils.hasText(bug.getSubmitterId()) && StringUtils.hasText(existingBug.getSubmitterId())) {
+                bug.setSubmitterId(existingBug.getSubmitterId());
+            }
+            
+            // 保留原有的解决次数和提交次数（如果新数据中没有提供）
+            if (bug.getSolveVolume() == null && existingBug.getSolveVolume() != null) {
+                bug.setSolveVolume(existingBug.getSolveVolume());
+            }
+            if (bug.getSubmittedVolume() == null && existingBug.getSubmittedVolume() != null) {
+                bug.setSubmittedVolume(existingBug.getSubmittedVolume());
+            }
+            
+            // 执行更新
+            boolean updated = this.updateById(bug);
+            if (updated) {
+                // 记录历史：状态变更
+                String oldState = existingBug.getBugState() != null ? existingBug.getBugState() : "无";
+                String newState = bug.getBugState() != null ? bug.getBugState() : "无";
+                String comment = StringUtils.hasText(bug.getRemark()) ? bug.getRemark() : "更新缺陷";
+                recordBugHistory(bug.getBugId(), oldState, newState, comment, currentUser, bug.getSystemId());
+                logger.info("更新缺陷成功: bugId={}, bugName={}", bug.getBugId(), bug.getBugName());
+            } else {
+                logger.error("更新缺陷失败: bugId={}, bugName={}", bug.getBugId(), bug.getBugName());
+            }
+            return updated;
         } else {
-            logger.error("创建缺陷失败: bugName={}", bug.getBugName());
+            // 如果缺陷不存在，执行创建操作
+            // 设置提交时间和提交人
+            bug.setCommitTime(now);
+            if (StringUtils.hasText(currentUser)) {
+                bug.setSubmitterId(currentUser);
+            }
+
+            // 初始化解决次数和提交次数
+            if (bug.getSolveVolume() == null) {
+                bug.setSolveVolume(0);
+            }
+            if (bug.getSubmittedVolume() == null) {
+                bug.setSubmittedVolume(1);
+            }
+
+            boolean saved = this.save(bug);
+            if (saved) {
+                // 记录历史，如果有备注则使用备注，否则使用默认描述
+                // 旧状态设置为'无'，因为这是创建操作
+                String comment = StringUtils.hasText(bug.getRemark()) ? bug.getRemark() : "创建缺陷";
+                recordBugHistory(bug.getBugId(), "无", bug.getBugState(), comment, currentUser, bug.getSystemId());
+                logger.info("创建缺陷成功: bugId={}, bugName={}", bug.getBugId(), bug.getBugName());
+            } else {
+                logger.error("创建缺陷失败: bugName={}", bug.getBugName());
+            }
+            return saved;
         }
-        return saved;
     }
 
     /**
@@ -747,6 +788,19 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
         } catch (Exception e) {
             logger.error("根据系统ID {} 查询开发人员列表失败", systemId, e);
             throw new RuntimeException("获取开发人员列表失败: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<com.king.sys.user.entity.TSysUser> getCheckersBySystemId(String systemId) {
+        Assert.hasText(systemId, "系统ID不能为空");
+        try {
+            List<com.king.sys.user.entity.TSysUser> checkers = this.baseMapper.selectCheckersBySystemId(systemId);
+            logger.info("根据系统ID {} 查询验证人列表，共 {} 人", systemId, checkers != null ? checkers.size() : 0);
+            return checkers != null ? checkers : new ArrayList<>();
+        } catch (Exception e) {
+            logger.error("根据系统ID {} 查询验证人列表失败", systemId, e);
+            throw new RuntimeException("获取验证人列表失败: " + e.getMessage(), e);
         }
     }
 }

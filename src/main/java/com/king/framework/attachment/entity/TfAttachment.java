@@ -52,6 +52,12 @@ public class TfAttachment {
     private String uploadUserId;
 
     /**
+     * 上传用户姓名（关联查询字段，不对应数据库字段）
+     */
+    @TableField(exist = false)
+    private String uploadUserName;
+
+    /**
      * 上传路径
      */
     @TableField("UPLOAD_PATH")

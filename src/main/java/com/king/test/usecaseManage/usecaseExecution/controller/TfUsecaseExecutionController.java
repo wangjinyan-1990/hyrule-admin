@@ -67,6 +67,7 @@ public class TfUsecaseExecutionController {
      * @param pageSize 每页大小
      * @param systemId 系统ID（可选）
      * @param directoryId 目录ID（可选）
+     * @param includeSubdirectories 是否包含子目录（可选，默认false）
      * @param usecaseId 用例ID（可选）
      * @param usecaseName 用例名称（可选）
      * @param runStatus 执行状态（可选）
@@ -80,6 +81,7 @@ public class TfUsecaseExecutionController {
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             @RequestParam(value = "systemId", required = false) String systemId,
             @RequestParam(value = "directoryId", required = false) String directoryId,
+            @RequestParam(value = "includeSubdirectories", required = false, defaultValue = "false") Boolean includeSubdirectories,
             @RequestParam(value = "usecaseId", required = false) String usecaseId,
             @RequestParam(value = "usecaseName", required = false) String usecaseName,
             @RequestParam(value = "runStatus", required = false) String runStatus,
@@ -87,7 +89,7 @@ public class TfUsecaseExecutionController {
             @RequestParam(value = "actExecutorId", required = false) String actExecutorId) {
         try {
             Map<String, Object> data = executionService.getExecutionPage(pageNo, pageSize, systemId, directoryId,
-                    usecaseId, usecaseName, runStatus, planExecutorId, actExecutorId);
+                    includeSubdirectories, usecaseId, usecaseName, runStatus, planExecutorId, actExecutorId);
             return Result.success(data);
         } catch (Exception e) {
             return Result.error("查询执行用例列表失败：" + e.getMessage());

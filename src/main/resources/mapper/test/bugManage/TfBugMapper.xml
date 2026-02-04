@@ -119,6 +119,7 @@
                     AND tsu.SYSTEM_USER_ID IS NOT NULL
                 )
             )
+            AND b.BUG_STATE NOT IN ('BackClosed', 'Invalid', 'Closed')
         </if>
         <include refid="CommonCondition" />
         ORDER BY b.COMMIT_TIME DESC
@@ -326,6 +327,26 @@
         INNER JOIN t_sys_user u ON tsu.USER_ID = u.USER_ID
         WHERE tsu.SYSTEM_ID = #{systemId}
           AND ru.ROLE_ID = '0001'
+          AND u.STATUS = 1
+        ORDER BY u.SORT_NO ASC, u.USER_NAME ASC
+    </select>
+
+    <!-- 根据系统ID查询验证人列表 -->
+    <select id="selectCheckersBySystemId" resultType="com.king.sys.user.entity.TSysUser">
+        SELECT DISTINCT
+            u.USER_ID AS userId,
+            u.LOGIN_NAME AS loginName,
+            u.USER_NAME AS userName,
+            u.EMAIL AS email,
+            u.PHONE AS phone,
+            u.ORG_ID AS orgId,
+            u.STATUS AS status,
+            u.SORT_NO AS sortNo
+        FROM t_test_system_user tsu
+        INNER JOIN t_sys_role_user ru ON tsu.USER_ID = ru.USER_ID
+        INNER JOIN t_sys_user u ON tsu.USER_ID = u.USER_ID
+        WHERE tsu.SYSTEM_ID = #{systemId}
+          AND ru.ROLE_ID = '0002'
           AND u.STATUS = 1
         ORDER BY u.SORT_NO ASC, u.USER_NAME ASC
     </select>

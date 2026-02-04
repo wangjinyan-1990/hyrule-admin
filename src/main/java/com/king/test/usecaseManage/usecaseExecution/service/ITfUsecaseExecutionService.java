@@ -27,6 +27,7 @@ public interface ITfUsecaseExecutionService extends IService<TfUsecaseExecution>
      * @param pageSize 每页大小
      * @param systemId 系统ID（可选）
      * @param directoryId 目录ID（可选）
+     * @param includeSubdirectories 是否包含子目录（可选）
      * @param usecaseId 用例ID（可选）
      * @param usecaseName 用例名称（可选）
      * @param runStatus 执行状态（可选）
@@ -35,7 +36,7 @@ public interface ITfUsecaseExecutionService extends IService<TfUsecaseExecution>
      * @return 分页结果
      */
     Map<String, Object> getExecutionPage(int pageNo, int pageSize,
-                                        String systemId, String directoryId,
+                                        String systemId, String directoryId, Boolean includeSubdirectories,
                                         String usecaseId, String usecaseName,
                                         String runStatus, String planExecutorId, String actExecutorId);
 
