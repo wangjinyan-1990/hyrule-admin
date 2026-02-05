@@ -76,7 +76,7 @@ public class TTestDirectory {
     private String isUseTestcase;
 
     /**
-     * 测试集是否使用:0-不使用;1-使用
+     * 执行库是否使用:0-不使用;1-使用
      */
     @TableField("IS_USE_TESTSET")
     private String isUseTestset;

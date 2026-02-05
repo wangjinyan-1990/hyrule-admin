@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -170,6 +173,72 @@ public class TestDirectoryController {
             return Result.error(e.getMessage());
         } catch (Exception e) {
             return Result.error("查询目录详情失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 导出目录数据
+     * @param params 导出参数（包含systemId等）
+     * @param response HTTP响应对象
+     */
+    @PostMapping("/export")
+    public void exportDirectory(@RequestBody(required = false) Map<String, Object> params, 
+                               HttpServletResponse response) {
+        try {
+            testDirectoryService.exportDirectory(params, response);
+        } catch (Exception e) {
+            try {
+                response.reset();
+                response.getWriter().write("导出失败：" + e.getMessage());
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    /**
+     * 下载导入模板
+     * @param response HTTP响应对象
+     */
+    @GetMapping("/template")
+    public void downloadImportTemplate(HttpServletResponse response) {
+        try {
+            testDirectoryService.downloadImportTemplate(response);
+        } catch (Exception e) {
+            try {
+                response.reset();
+                response.getWriter().write("下载模板失败：" + e.getMessage());
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    /**
+     * 导入目录数据
+     * @param file 上传的Excel文件
+     * @param systemId 系统ID（必填）
+     * @return 导入结果
+     */
+    @PostMapping("/import")
+    public Result<?> importDirectory(@RequestParam("file") MultipartFile file,
+                                    @RequestParam("systemId") String systemId) {
+        if (file == null || file.isEmpty()) {
+            return Result.error("上传文件不能为空");
+        }
+
+        if (!StringUtils.hasText(systemId)) {
+            return Result.error("系统ID不能为空");
+        }
+
+        try {
+            Map<String, Object> result = testDirectoryService.importDirectory(file, systemId);
+            Boolean success = (Boolean) result.get("success");
+            if (success != null && success) {
+                return Result.success(result, (String) result.get("message"));
+            } else {
+                return Result.error((String) result.get("message"));
+            }
+        } catch (Exception e) {
+            return Result.error("导入目录数据失败：" + e.getMessage());
         }
     }
 

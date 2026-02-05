@@ -88,4 +88,31 @@ public interface ITfUsecaseExecutionService extends IService<TfUsecaseExecution>
      * @return 是否删除成功
      */
     boolean deleteExecution(Integer usecaseExecutionId);
+
+    /**
+     * 移动执行用例到其他目录
+     * @param usecaseExecutionIds 用例执行ID数组
+     * @param targetDirectoryId 目标目录ID
+     * @return 是否移动成功
+     */
+    boolean moveExecutions(List<Integer> usecaseExecutionIds, String targetDirectoryId);
+
+    /**
+     * 批量更新执行状态
+     * @param usecaseExecutionIds 用例执行ID数组
+     * @param runStatus 执行状态
+     * @param remark 执行备注（可选）
+     * @param actExecutorId 实际执行人ID（可选）
+     * @return 是否更新成功
+     */
+    boolean batchUpdateRunStatus(List<Integer> usecaseExecutionIds, String runStatus, String remark, String actExecutorId);
+
+    /**
+     * 批量更新计划执行信息
+     * @param usecaseExecutionIds 用例执行ID数组
+     * @param planExecutorId 计划执行人ID（可选）
+     * @param planExecutionDate 计划执行日期（可选）
+     * @return 是否更新成功
+     */
+    boolean batchUpdatePlanExecution(List<Integer> usecaseExecutionIds, String planExecutorId, java.util.Date planExecutionDate);
 }

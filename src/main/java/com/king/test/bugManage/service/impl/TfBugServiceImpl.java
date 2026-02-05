@@ -792,15 +792,15 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
     }
 
     @Override
-    public List<com.king.sys.user.entity.TSysUser> getCheckersBySystemId(String systemId) {
+    public List<com.king.sys.user.entity.TSysUser> getTestersBySystemId(String systemId) {
         Assert.hasText(systemId, "系统ID不能为空");
         try {
-            List<com.king.sys.user.entity.TSysUser> checkers = this.baseMapper.selectCheckersBySystemId(systemId);
-            logger.info("根据系统ID {} 查询验证人列表，共 {} 人", systemId, checkers != null ? checkers.size() : 0);
-            return checkers != null ? checkers : new ArrayList<>();
+            List<com.king.sys.user.entity.TSysUser> testers = this.baseMapper.selectTestersBySystemId(systemId);
+            logger.info("根据系统ID {} 查询测试人员列表，共 {} 人", systemId, testers != null ? testers.size() : 0);
+            return testers != null ? testers : new ArrayList<>();
         } catch (Exception e) {
-            logger.error("根据系统ID {} 查询验证人列表失败", systemId, e);
-            throw new RuntimeException("获取验证人列表失败: " + e.getMessage(), e);
+            logger.error("根据系统ID {} 查询测试人员列表失败", systemId, e);
+            throw new RuntimeException("获取测试人员列表失败: " + e.getMessage(), e);
         }
     }
 }

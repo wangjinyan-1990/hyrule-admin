@@ -77,4 +77,25 @@ public interface ITestDirectoryService extends IService<TTestDirectory> {
      */
     TTestDirectory getDirectoryById(String directoryId);
 
+    /**
+     * 导出目录数据到Excel
+     * @param params 导出参数（包含systemId等）
+     * @param response HTTP响应对象
+     */
+    void exportDirectory(Map<String, Object> params, javax.servlet.http.HttpServletResponse response);
+
+    /**
+     * 下载导入模板
+     * @param response HTTP响应对象
+     */
+    void downloadImportTemplate(javax.servlet.http.HttpServletResponse response);
+
+    /**
+     * 导入目录数据
+     * @param file Excel文件
+     * @param systemId 系统ID（必填）
+     * @return 导入结果
+     */
+    Map<String, Object> importDirectory(org.springframework.web.multipart.MultipartFile file, String systemId);
+
 }

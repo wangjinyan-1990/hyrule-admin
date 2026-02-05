@@ -331,8 +331,8 @@
         ORDER BY u.SORT_NO ASC, u.USER_NAME ASC
     </select>
 
-    <!-- 根据系统ID查询验证人列表 -->
-    <select id="selectCheckersBySystemId" resultType="com.king.sys.user.entity.TSysUser">
+    <!-- 根据系统ID查询测试人员列表 -->
+    <select id="selectTestersBySystemId" resultType="com.king.sys.user.entity.TSysUser">
         SELECT DISTINCT
             u.USER_ID AS userId,
             u.LOGIN_NAME AS loginName,

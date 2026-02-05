@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -234,6 +235,215 @@ public class TfUsecaseExecutionController {
             }
         } catch (Exception e) {
             return Result.error("删除执行用例失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 批量更新执行状态
+     * @param data 更新数据，包含usecaseExecutionIds（用例执行ID数组）、runStatus（执行状态）、remark（执行备注）
+     * @return 更新结果
+     */
+    @PostMapping("/batchUpdateStatus")
+    public Result<?> batchUpdateRunStatus(@RequestBody Map<String, Object> data) {
+        if (data == null) {
+            return Result.error("请求数据不能为空");
+        }
+
+        Object executionIdsObj = data.get("usecaseExecutionIds");
+        if (executionIdsObj == null) {
+            return Result.error("用例执行ID列表不能为空");
+        }
+
+        List<Integer> usecaseExecutionIds;
+        try {
+            if (executionIdsObj instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<Object> idList = (List<Object>) executionIdsObj;
+                usecaseExecutionIds = new ArrayList<>();
+                for (Object idObj : idList) {
+                    if (idObj instanceof Integer) {
+                        usecaseExecutionIds.add((Integer) idObj);
+                    } else {
+                        usecaseExecutionIds.add(Integer.valueOf(idObj.toString()));
+                    }
+                }
+            } else {
+                return Result.error("用例执行ID列表格式错误");
+            }
+        } catch (Exception e) {
+            return Result.error("用例执行ID列表格式错误：" + e.getMessage());
+        }
+
+        if (usecaseExecutionIds.isEmpty()) {
+            return Result.error("用例执行ID列表不能为空");
+        }
+
+        String runStatus = getString(data, "runStatus");
+        if (!StringUtils.hasText(runStatus)) {
+            return Result.error("执行状态不能为空");
+        }
+
+        String remark = getString(data, "remark");
+        String actExecutorId = getString(data, "actExecutorId");
+
+        try {
+            boolean success = executionService.batchUpdateRunStatus(usecaseExecutionIds, runStatus, remark, actExecutorId);
+            if (success) {
+                return Result.success("批量更新执行状态成功");
+            } else {
+                return Result.error("批量更新执行状态失败");
+            }
+        } catch (Exception e) {
+            return Result.error("批量更新执行状态失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 移动执行用例到其他目录
+     * @param data 移动数据，包含usecaseExecutionIds（用例执行ID数组）和targetDirectoryId（目标目录ID）
+     * @return 移动结果
+     */
+    @PostMapping("/move")
+    public Result<?> moveExecutions(@RequestBody Map<String, Object> data) {
+        if (data == null) {
+            return Result.error("请求数据不能为空");
+        }
+
+        Object executionIdsObj = data.get("usecaseExecutionIds");
+        if (executionIdsObj == null) {
+            return Result.error("用例执行ID列表不能为空");
+        }
+
+        List<Integer> usecaseExecutionIds;
+        try {
+            if (executionIdsObj instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<Object> idList = (List<Object>) executionIdsObj;
+                usecaseExecutionIds = new ArrayList<>();
+                for (Object idObj : idList) {
+                    if (idObj instanceof Integer) {
+                        usecaseExecutionIds.add((Integer) idObj);
+                    } else {
+                        usecaseExecutionIds.add(Integer.valueOf(idObj.toString()));
+                    }
+                }
+            } else {
+                return Result.error("用例执行ID列表格式错误");
+            }
+        } catch (Exception e) {
+            return Result.error("用例执行ID列表格式错误：" + e.getMessage());
+        }
+
+        if (usecaseExecutionIds.isEmpty()) {
+            return Result.error("用例执行ID列表不能为空");
+        }
+
+        String targetDirectoryId = getString(data, "targetDirectoryId");
+        if (!StringUtils.hasText(targetDirectoryId)) {
+            return Result.error("目标目录ID不能为空");
+        }
+
+        try {
+            boolean success = executionService.moveExecutions(usecaseExecutionIds, targetDirectoryId);
+            if (success) {
+                return Result.success("移动执行用例到目标目录成功");
+            } else {
+                return Result.error("移动执行用例到目标目录失败");
+            }
+        } catch (Exception e) {
+            return Result.error("移动执行用例到目标目录失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 批量更新计划执行信息
+     * @param data 更新数据，包含usecaseExecutionIds（用例执行ID数组）、planExecutorId（计划执行人ID）、planExecutionDate（计划执行日期）
+     * @return 更新结果
+     */
+    @PostMapping("/batchUpdatePlan")
+    public Result<?> batchUpdatePlanExecution(@RequestBody Map<String, Object> data) {
+        if (data == null) {
+            return Result.error("请求数据不能为空");
+        }
+
+        Object executionIdsObj = data.get("usecaseExecutionIds");
+        if (executionIdsObj == null) {
+            return Result.error("用例执行ID列表不能为空");
+        }
+
+        List<Integer> usecaseExecutionIds;
+        try {
+            if (executionIdsObj instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<Object> idList = (List<Object>) executionIdsObj;
+                usecaseExecutionIds = new ArrayList<>();
+                for (Object idObj : idList) {
+                    if (idObj instanceof Integer) {
+                        usecaseExecutionIds.add((Integer) idObj);
+                    } else {
+                        usecaseExecutionIds.add(Integer.valueOf(idObj.toString()));
+                    }
+                }
+            } else {
+                return Result.error("用例执行ID列表格式错误");
+            }
+        } catch (Exception e) {
+            return Result.error("用例执行ID列表格式错误：" + e.getMessage());
+        }
+
+        if (usecaseExecutionIds.isEmpty()) {
+            return Result.error("用例执行ID列表不能为空");
+        }
+
+        String planExecutorId = getString(data, "planExecutorId");
+        Object planExecutionDateObj = data.get("planExecutionDate");
+        java.util.Date planExecutionDate = null;
+
+        // 解析计划执行日期
+        if (planExecutionDateObj != null) {
+            try {
+                if (planExecutionDateObj instanceof java.util.Date) {
+                    planExecutionDate = (java.util.Date) planExecutionDateObj;
+                } else if (planExecutionDateObj instanceof Long) {
+                    // 时间戳格式
+                    planExecutionDate = new java.util.Date((Long) planExecutionDateObj);
+                } else {
+                    // 字符串格式，尝试解析
+                    String dateStr = planExecutionDateObj.toString();
+                    if (StringUtils.hasText(dateStr)) {
+                        // 尝试多种日期格式
+                        java.text.SimpleDateFormat sdf1 = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            planExecutionDate = sdf1.parse(dateStr);
+                        } catch (Exception e1) {
+                            java.text.SimpleDateFormat sdf2 = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            try {
+                                planExecutionDate = sdf2.parse(dateStr);
+                            } catch (Exception e2) {
+                                return Result.error("计划执行日期格式错误，支持格式：yyyy-MM-dd 或 yyyy-MM-dd HH:mm:ss");
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                return Result.error("计划执行日期解析失败：" + e.getMessage());
+            }
+        }
+
+        // 至少需要提供一个参数
+        if (!StringUtils.hasText(planExecutorId) && planExecutionDate == null) {
+            return Result.error("至少需要提供planExecutorId或planExecutionDate参数");
+        }
+
+        try {
+            boolean success = executionService.batchUpdatePlanExecution(usecaseExecutionIds, planExecutorId, planExecutionDate);
+            if (success) {
+                return Result.success("批量更新计划执行信息成功");
+            } else {
+                return Result.error("批量更新计划执行信息失败");
+            }
+        } catch (Exception e) {
+            return Result.error("批量更新计划执行信息失败：" + e.getMessage());
         }
     }
 

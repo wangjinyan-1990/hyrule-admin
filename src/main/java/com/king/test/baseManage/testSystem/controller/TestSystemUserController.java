@@ -5,11 +5,13 @@ import com.king.test.baseManage.testSystem.dto.UserSystemUpdateDTO;
 import com.king.test.baseManage.testSystem.dto.UserBugRolePermissionDTO;
 import com.king.test.baseManage.testSystem.service.ITestSystemUserService;
 import com.king.test.bugManage.service.ITfBugRolePermissionService;
+import com.king.test.bugManage.service.ITfBugService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +28,10 @@ public class TestSystemUserController {
     @Autowired
     @Qualifier("tfBugRolePermissionServiceImpl")
     private ITfBugRolePermissionService bugRolePermissionService;
+    
+    @Autowired
+    @Qualifier("tfBugServiceImpl")
+    private ITfBugService bugService;
     
     /**
      * 开发人员页签、测试人员页签，根据角色ID获取用户列表，用于系统成员维护（在职状态）
@@ -109,6 +115,63 @@ public class TestSystemUserController {
             }
         } catch (Exception e) {
             return Result.error("更新用户缺陷角色权限失败：" + e.getMessage());
+        }
+    }
+    
+    /**
+     * 根据系统ID获取开发组长列表
+     * @param systemId 系统ID
+     * @return 开发组长列表
+     */
+    @GetMapping("/devLeaders")
+    public Result<List<com.king.sys.user.entity.TSysUser>> getDevLeadersBySystemId(
+            @RequestParam("systemId") String systemId) {
+        if (systemId == null || systemId.trim().isEmpty()) {
+            return Result.error("系统ID不能为空");
+        }
+        try {
+            List<com.king.sys.user.entity.TSysUser> devLeaders = bugService.getDevLeadersBySystemId(systemId);
+            return Result.success(devLeaders);
+        } catch (Exception e) {
+            return Result.error("获取开发组长列表失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据系统ID获取开发人员列表
+     * @param systemId 系统ID
+     * @return 开发人员列表
+     */
+    @GetMapping("/developers")
+    public Result<List<com.king.sys.user.entity.TSysUser>> getDevelopersBySystemId(
+            @RequestParam("systemId") String systemId) {
+        if (systemId == null || systemId.trim().isEmpty()) {
+            return Result.error("系统ID不能为空");
+        }
+        try {
+            List<com.king.sys.user.entity.TSysUser> developers = bugService.getDevelopersBySystemId(systemId);
+            return Result.success(developers);
+        } catch (Exception e) {
+            return Result.error("获取开发人员列表失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据系统ID获取测试人员列表
+     * @param systemId 系统ID
+     * @return 测试人员列表
+     */
+    @GetMapping("/testers")
+    public Result<List<com.king.sys.user.entity.TSysUser>> getTestersBySystemId(
+            @RequestParam("systemId") String systemId) {
+        if (systemId == null || systemId.trim().isEmpty()) {
+            return Result.error("系统ID不能为空");
+        }
+        try {
+            List<com.king.sys.user.entity.TSysUser> testers = bugService.getTestersBySystemId(systemId);
+            return Result.success(testers);
+        } catch (Exception e) {
+            return Result.error("获取测试人员列表失败：" + e.getMessage());
         }
     }
 }

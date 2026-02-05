@@ -160,9 +160,9 @@ public interface ITfBugService extends IService<TfBug> {
     List<com.king.sys.user.entity.TSysUser> getDevelopersBySystemId(String systemId);
 
     /**
-     * 根据系统ID获取验证人列表
+     * 根据系统ID获取测试人员列表
      * @param systemId 系统ID
-     * @return 验证人列表
+     * @return 测试人员列表
      */
-    List<com.king.sys.user.entity.TSysUser> getCheckersBySystemId(String systemId);
+    List<com.king.sys.user.entity.TSysUser> getTestersBySystemId(String systemId);
 }

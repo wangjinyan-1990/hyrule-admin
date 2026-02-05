@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.common.utils.SecurityUtils;
 import com.king.framework.dataDictionary.service.IDataDictionaryService;
 import com.king.test.baseManage.testDirectory.service.ITestDirectoryService;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.king.test.bugManage.mapper.TfBugMapper;
 import com.king.test.usecaseManage.usecaseExecution.entity.TfUsecaseExecution;
 import com.king.test.usecaseManage.usecaseExecution.entity.TfUsecaseExecutionHistory;
 import com.king.test.usecaseManage.usecaseExecution.mapper.TfUsecaseExecutionMapper;
@@ -48,6 +50,9 @@ public class TfUsecaseExecutionServiceImpl extends ServiceImpl<TfUsecaseExecutio
 
     @Autowired
     private TfUsecaseExecutionHistoryMapper executionHistoryMapper;
+
+    @Autowired
+    private TfBugMapper bugMapper;
 
     @Override
     public Map<String, Object> getExecutionPage(int pageNo, int pageSize,
@@ -347,5 +352,209 @@ public class TfUsecaseExecutionServiceImpl extends ServiceImpl<TfUsecaseExecutio
         }
 
         return deleted;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean moveExecutions(List<Integer> usecaseExecutionIds, String targetDirectoryId) {
+        Assert.notEmpty(usecaseExecutionIds, "用例执行ID列表不能为空");
+        Assert.hasText(targetDirectoryId, "目标目录ID不能为空");
+
+        logger.info("开始移动用例执行到目标目录: usecaseExecutionIds={}, targetDirectoryId={}", 
+                usecaseExecutionIds, targetDirectoryId);
+
+        // 1. 查询选中的用例执行记录，获取对应的 usecaseId 列表
+        List<TfUsecaseExecution> executions = this.listByIds(usecaseExecutionIds);
+        if (executions == null || executions.isEmpty()) {
+            logger.warn("未找到对应的用例执行记录: usecaseExecutionIds={}", usecaseExecutionIds);
+            throw new IllegalArgumentException("未找到对应的用例执行记录");
+        }
+
+        List<String> usecaseIds = new ArrayList<>();
+        for (TfUsecaseExecution execution : executions) {
+            if (StringUtils.hasText(execution.getUsecaseId())) {
+                usecaseIds.add(execution.getUsecaseId());
+            }
+        }
+
+        if (usecaseIds.isEmpty()) {
+            logger.warn("用例执行记录中没有有效的用例ID: usecaseExecutionIds={}", usecaseExecutionIds);
+            throw new IllegalArgumentException("用例执行记录中没有有效的用例ID");
+        }
+
+        // 2. 更新 tf_usecase_execution 表中选中用例的 DIRECTORY_ID
+        LambdaUpdateWrapper<TfUsecaseExecution> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.in(TfUsecaseExecution::getUsecaseExecutionId, usecaseExecutionIds)
+                     .set(TfUsecaseExecution::getDirectoryId, targetDirectoryId);
+        boolean updatedExecution = this.update(updateWrapper);
+        if (!updatedExecution) {
+            logger.error("更新用例执行表的目录ID失败: usecaseExecutionIds={}, targetDirectoryId={}", 
+                    usecaseExecutionIds, targetDirectoryId);
+            throw new RuntimeException("更新用例执行表的目录ID失败");
+        }
+        logger.info("更新用例执行表的目录ID成功: 更新了 {} 条记录", executions.size());
+
+        // 3. 更新 tf_usecase_execution_history 表中对应用例的 DIRECTORY_ID
+        LambdaUpdateWrapper<TfUsecaseExecutionHistory> historyUpdateWrapper = new LambdaUpdateWrapper<>();
+        historyUpdateWrapper.in(TfUsecaseExecutionHistory::getUsecaseId, usecaseIds)
+                           .set(TfUsecaseExecutionHistory::getDirectoryId, targetDirectoryId);
+        int updatedHistoryCount = executionHistoryMapper.update(null, historyUpdateWrapper);
+        logger.info("更新用例执行历史表的目录ID成功: 更新了 {} 条记录", updatedHistoryCount);
+
+        // 4. 更新 tf_bug 表中关联缺陷的 DIRECTORY_ID
+        LambdaUpdateWrapper<com.king.test.bugManage.entity.TfBug> bugUpdateWrapper = new LambdaUpdateWrapper<>();
+        bugUpdateWrapper.in(com.king.test.bugManage.entity.TfBug::getUsecaseId, usecaseIds)
+                       .set(com.king.test.bugManage.entity.TfBug::getDirectoryId, targetDirectoryId);
+        int updatedBugCount = bugMapper.update(null, bugUpdateWrapper);
+        logger.info("更新缺陷表的目录ID成功: 更新了 {} 条记录", updatedBugCount);
+
+        logger.info("移动用例执行到目标目录成功: usecaseExecutionIds={}, targetDirectoryId={}, " +
+                "更新执行记录={}, 更新历史记录={}, 更新缺陷记录={}", 
+                usecaseExecutionIds, targetDirectoryId, executions.size(), updatedHistoryCount, updatedBugCount);
+
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean batchUpdateRunStatus(List<Integer> usecaseExecutionIds, String runStatus, String remark, String actExecutorId) {
+        Assert.notEmpty(usecaseExecutionIds, "用例执行ID列表不能为空");
+        Assert.hasText(runStatus, "执行状态不能为空");
+
+        logger.info("开始批量更新执行状态: usecaseExecutionIds={}, runStatus={}, remark={}, actExecutorId={}", 
+                usecaseExecutionIds, runStatus, remark, actExecutorId);
+
+        // 获取当前用户ID（如果未提供执行人ID）
+        String executorId = actExecutorId;
+        if (!StringUtils.hasText(executorId)) {
+            executorId = securityUtils.getUserId();
+        }
+
+        // 查询所有需要更新的执行记录
+        List<TfUsecaseExecution> executions = this.listByIds(usecaseExecutionIds);
+        if (executions == null || executions.isEmpty()) {
+            logger.warn("未找到对应的用例执行记录: usecaseExecutionIds={}", usecaseExecutionIds);
+            throw new IllegalArgumentException("未找到对应的用例执行记录");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        int successCount = 0;
+        int failCount = 0;
+
+        // 批量更新每个执行记录
+        for (TfUsecaseExecution execution : executions) {
+            try {
+                // 更新执行记录
+                execution.setRunStatus(runStatus);
+                execution.setActExecutionTime(now);
+                execution.setLastExecutionTime(now);
+                if (StringUtils.hasText(executorId)) {
+                    execution.setActExecutorId(executorId);
+                }
+                if (StringUtils.hasText(remark)) {
+                    execution.setRemark(remark);
+                }
+
+                boolean updated = this.updateById(execution);
+                if (!updated) {
+                    logger.error("更新执行状态失败: usecaseExecutionId={}, runStatus={}", 
+                            execution.getUsecaseExecutionId(), runStatus);
+                    failCount++;
+                    continue;
+                }
+
+                // 保存执行历史记录
+                TfUsecaseExecutionHistory history = new TfUsecaseExecutionHistory();
+                history.setDirectoryId(execution.getDirectoryId());
+                history.setUsecaseId(execution.getUsecaseId());
+                history.setExecutionTime(now);
+                history.setRunStatus(runStatus);
+                history.setExecutorId(executorId);
+                history.setRemark(remark);
+
+                int historyResult = executionHistoryMapper.insert(history);
+                if (historyResult > 0) {
+                    logger.debug("更新执行状态成功并保存历史记录: usecaseExecutionId={}, runStatus={}, executorId={}, historyId={}", 
+                            execution.getUsecaseExecutionId(), runStatus, executorId, history.getUsecaseExecutionHistoryId());
+                    successCount++;
+                } else {
+                    logger.error("保存执行历史记录失败: usecaseExecutionId={}, runStatus={}", 
+                            execution.getUsecaseExecutionId(), runStatus);
+                    failCount++;
+                }
+            } catch (Exception e) {
+                logger.error("批量更新执行状态时发生异常: usecaseExecutionId={}, runStatus={}", 
+                        execution.getUsecaseExecutionId(), runStatus, e);
+                failCount++;
+            }
+        }
+
+        if (failCount > 0) {
+            logger.warn("批量更新执行状态完成，部分失败: 成功={}, 失败={}, usecaseExecutionIds={}", 
+                    successCount, failCount, usecaseExecutionIds);
+            throw new RuntimeException(String.format("批量更新执行状态失败: 成功 %d 条，失败 %d 条", successCount, failCount));
+        }
+
+        logger.info("批量更新执行状态成功: 成功更新 {} 条记录, usecaseExecutionIds={}, runStatus={}", 
+                successCount, usecaseExecutionIds, runStatus);
+
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean batchUpdatePlanExecution(List<Integer> usecaseExecutionIds, String planExecutorId, java.util.Date planExecutionDate) {
+        Assert.notEmpty(usecaseExecutionIds, "用例执行ID列表不能为空");
+
+        logger.info("开始批量更新计划执行信息: usecaseExecutionIds={}, planExecutorId={}, planExecutionDate={}", 
+                usecaseExecutionIds, planExecutorId, planExecutionDate);
+
+        // 查询所有需要更新的执行记录
+        List<TfUsecaseExecution> executions = this.listByIds(usecaseExecutionIds);
+        if (executions == null || executions.isEmpty()) {
+            logger.warn("未找到对应的用例执行记录: usecaseExecutionIds={}", usecaseExecutionIds);
+            throw new IllegalArgumentException("未找到对应的用例执行记录");
+        }
+
+        // 批量更新每个执行记录
+        int successCount = 0;
+        int failCount = 0;
+
+        for (TfUsecaseExecution execution : executions) {
+            try {
+                // 更新计划执行信息
+                if (StringUtils.hasText(planExecutorId)) {
+                    execution.setPlanExecutorId(planExecutorId);
+                }
+                if (planExecutionDate != null) {
+                    execution.setPlanExecutionDate(planExecutionDate);
+                }
+
+                boolean updated = this.updateById(execution);
+                if (updated) {
+                    logger.debug("更新计划执行信息成功: usecaseExecutionId={}, planExecutorId={}, planExecutionDate={}", 
+                            execution.getUsecaseExecutionId(), planExecutorId, planExecutionDate);
+                    successCount++;
+                } else {
+                    logger.error("更新计划执行信息失败: usecaseExecutionId={}", execution.getUsecaseExecutionId());
+                    failCount++;
+                }
+            } catch (Exception e) {
+                logger.error("批量更新计划执行信息时发生异常: usecaseExecutionId={}", 
+                        execution.getUsecaseExecutionId(), e);
+                failCount++;
+            }
+        }
+
+        if (failCount > 0) {
+            logger.warn("批量更新计划执行信息完成，部分失败: 成功={}, 失败={}, usecaseExecutionIds={}", 
+                    successCount, failCount, usecaseExecutionIds);
+            throw new RuntimeException(String.format("批量更新计划执行信息失败: 成功 %d 条，失败 %d 条", successCount, failCount));
+        }
+
+        logger.info("批量更新计划执行信息成功: 成功更新 {} 条记录, usecaseExecutionIds={}", 
+                successCount, usecaseExecutionIds);
+
+        return true;
     }
 }
