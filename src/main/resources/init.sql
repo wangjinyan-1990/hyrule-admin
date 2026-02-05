@@ -1002,12 +1002,12 @@ CREATE TABLE `tf_requirepoint` (
 
 /*Data for the table `tf_requirepoint` */
 
-insert  into `tf_requirepoint`(`REQUIRE_POINT_ID`,`REQUIRE_POINT_DESC`,`SYSTEM_ID`,`DIRECTORY_ID`,`REQUIRE_POINT_TYPE`,`REVIEW_STATUS`,`ANALYSIS_METHOD`,`REQUIRE_STATUS`,`DESIGNER_ID`,`CREATE_TIME`,`MODIFIER_ID`,`MODIFY_TIME`,`REMARK`,`SEND_TEST_ID`,`WORK_PACKAGE_ID`) values 
-('sys-001-req00006','俄方的过分放大','sys-001','253cec943415413ab2c856679e3fa97c','1','1','1','1','admin','2025-09-26 16:13:01','admin','2025-09-28 14:51:00','',NULL,NULL),
-('sys-002-req00001','郭德纲的反腐败','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','1','1','zhangsan','2025-09-21 16:12:07',NULL,NULL,'',NULL,NULL),
-('sys-002-req00002','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','1','jianghe','2025-09-23 12:55:55',NULL,NULL,'',NULL,NULL),
-('sys-002-req00003','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','1','jianghe','2025-09-23 13:00:21',NULL,NULL,'',NULL,NULL),
-('sys-002-req00004','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','1','jianghe','2025-09-23 13:01:54',NULL,NULL,'',NULL,NULL);
+insert  into `tf_requirepoint`(`REQUIRE_POINT_ID`,`REQUIRE_POINT_DESC`,`SYSTEM_ID`,`DIRECTORY_ID`,`REQUIRE_POINT_TYPE`,`REVIEW_STATUS`,`ANALYSIS_METHOD`,`DESIGNER_ID`,`CREATE_TIME`,`MODIFIER_ID`,`MODIFY_TIME`,`REMARK`,`SEND_TEST_ID`,`WORK_PACKAGE_ID`) values 
+('sys-001-req00006','俄方的过分放大','sys-001','253cec943415413ab2c856679e3fa97c','1','1','1','admin','2025-09-26 16:13:01','admin','2025-09-28 14:51:00','',NULL,NULL),
+('sys-002-req00001','郭德纲的反腐败','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','1','zhangsan','2025-09-21 16:12:07',NULL,NULL,'',NULL,NULL),
+('sys-002-req00002','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','jianghe','2025-09-23 12:55:55',NULL,NULL,'',NULL,NULL),
+('sys-002-req00003','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','jianghe','2025-09-23 13:00:21',NULL,NULL,'',NULL,NULL),
+('sys-002-req00004','SIT测试一','sys-002','6a2b553cede94d1c9c8fc59f36b370d8','1','0','2','jianghe','2025-09-23 13:01:54',NULL,NULL,'',NULL,NULL);
 
 /*Table structure for table `tf_requirepoint_history` */
 
