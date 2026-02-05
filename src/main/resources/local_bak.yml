@@ -19,6 +19,19 @@ spring:
         max-wait: -1ms
         max-idle: 8
         min-idle: 0
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: false
+  servlet:
+    multipart:
+      # 单个文件最大大小（50MB）
+      max-file-size: 50MB
+      # 整个请求最大大小（100MB，支持多文件上传）
+      max-request-size: 100MB
+      # 文件写入磁盘的阈值（超过此大小会写入临时文件）
+      file-size-threshold: 10MB
 # JWT配置
 jwt:
   # JWT密钥，建议使用复杂字符串，至少32位
