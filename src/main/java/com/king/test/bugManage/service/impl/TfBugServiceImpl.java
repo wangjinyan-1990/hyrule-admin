@@ -169,12 +169,15 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
                 bug.setSubmittedVolume(existingBug.getSubmittedVolume());
             }
             
+            // 处理状态变更的业务逻辑
+            String oldState = existingBug.getBugState() != null ? existingBug.getBugState() : "无";
+            String newState = bug.getBugState() != null ? bug.getBugState() : "无";
+            handleStateChange(bug, oldState, newState, existingBug);
+            
             // 执行更新
             boolean updated = this.updateById(bug);
             if (updated) {
                 // 记录历史：状态变更
-                String oldState = existingBug.getBugState() != null ? existingBug.getBugState() : "无";
-                String newState = bug.getBugState() != null ? bug.getBugState() : "无";
                 String comment = StringUtils.hasText(bug.getRemark()) ? bug.getRemark() : "更新缺陷";
                 recordBugHistory(bug.getBugId(), oldState, newState, comment, currentUser, bug.getSystemId());
                 logger.info("更新缺陷成功: bugId={}, bugName={}", bug.getBugId(), bug.getBugName());
@@ -197,13 +200,24 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
             if (bug.getSubmittedVolume() == null) {
                 bug.setSubmittedVolume(1);
             }
+            
+            // 处理创建时的状态变更逻辑：从 '无' 到 Submitted 时，提交次数 submittedVolume 加 1
+            String newState = bug.getBugState() != null ? bug.getBugState() : "无";
+            if ("Submitted".equals(newState)) {
+                // 如果状态是 Submitted，提交次数应该是 1（已经在上面初始化了）
+                // 但如果前端传入了 submittedVolume，需要确保至少为 1
+                if (bug.getSubmittedVolume() == null || bug.getSubmittedVolume() < 1) {
+                    bug.setSubmittedVolume(1);
+                }
+                logger.debug("创建缺陷，状态为 Submitted，提交次数设置为: {}", bug.getSubmittedVolume());
+            }
 
             boolean saved = this.save(bug);
             if (saved) {
                 // 记录历史，如果有备注则使用备注，否则使用默认描述
                 // 旧状态设置为'无'，因为这是创建操作
                 String comment = StringUtils.hasText(bug.getRemark()) ? bug.getRemark() : "创建缺陷";
-                recordBugHistory(bug.getBugId(), "无", bug.getBugState(), comment, currentUser, bug.getSystemId());
+                recordBugHistory(bug.getBugId(), "无", newState, comment, currentUser, bug.getSystemId());
                 logger.info("创建缺陷成功: bugId={}, bugName={}", bug.getBugId(), bug.getBugName());
             } else {
                 logger.error("创建缺陷失败: bugName={}", bug.getBugName());
@@ -307,6 +321,9 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
         String oldState = existing.getBugState();
         String newState = bug.getBugState();
         String currentUser = securityUtils.getUserId();
+
+        // 处理状态变更的业务逻辑
+        handleStateChange(bug, oldState, newState, existing);
 
         boolean updated = this.updateById(bug);
         if (updated) {
@@ -544,6 +561,83 @@ public class TfBugServiceImpl extends ServiceImpl<TfBugMapper, TfBug> implements
         if (StringUtils.hasText(bug.getBugType()) && !StringUtils.hasText(bug.getBugTypeName())) {
             String bugTypeName = dataDictionaryService.getDataNameByTypeAndValue("bugType", bug.getBugType());
             bug.setBugTypeName(bugTypeName);
+        }
+    }
+
+    /**
+     * 处理状态变更的业务逻辑
+     * @param bug 要更新的缺陷对象
+     * @param oldState 旧状态
+     * @param newState 新状态
+     * @param existingBug 原有的缺陷对象
+     */
+    private void handleStateChange(TfBug bug, String oldState, String newState, TfBug existingBug) {
+        if (oldState == null) {
+            oldState = "无";
+        }
+        if (newState == null) {
+            newState = "无";
+        }
+        
+        LocalDateTime now = LocalDateTime.now();
+        
+        // 从 Rejected 到 ReSubmitted 时，提交次数 submittedVolume 加 1
+        if ("Rejected".equals(oldState) && "ReSubmitted".equals(newState)) {
+            int submittedVolume = existingBug.getSubmittedVolume() != null ? existingBug.getSubmittedVolume() : 0;
+            bug.setSubmittedVolume(submittedVolume + 1);
+            logger.debug("状态变更: Rejected -> ReSubmitted, 提交次数加1: {}", bug.getSubmittedVolume());
+        }
+        
+        // 从 '无' 到 Submitted 时，提交次数 submittedVolume 加 1
+        if ("无".equals(oldState) && "Submitted".equals(newState)) {
+            int submittedVolume = existingBug.getSubmittedVolume() != null ? existingBug.getSubmittedVolume() : 0;
+            bug.setSubmittedVolume(submittedVolume + 1);
+            logger.debug("状态变更: 无 -> Submitted, 提交次数加1: {}", bug.getSubmittedVolume());
+        }
+        
+        // 从 Submitted 到 Confirmed 时，设置确认时间 confirmedTime
+        if ("Submitted".equals(oldState) && "Confirmed".equals(newState)) {
+            bug.setConfirmedTime(now);
+            logger.debug("状态变更: Submitted -> Confirmed, 设置确认时间: {}", now);
+        }
+        
+        // 从 Confirmed 到 Assigned 时，设置分配时间 assignedTime
+        if ("Confirmed".equals(oldState) && "Assigned".equals(newState)) {
+            bug.setAssignedTime(now);
+            logger.debug("状态变更: Confirmed -> Assigned, 设置分配时间: {}", now);
+        }
+        
+        // 从 Open 到 Resolved 时，设置解决时间 resolvedTime，解决次数 solveVolume 加 1
+        if ("Open".equals(oldState) && "Resolved".equals(newState)) {
+            bug.setResolvedTime(now);
+            int solveVolume = existingBug.getSolveVolume() != null ? existingBug.getSolveVolume() : 0;
+            bug.setSolveVolume(solveVolume + 1);
+            logger.debug("状态变更: Open -> Resolved, 设置解决时间: {}, 解决次数加1: {}", now, bug.getSolveVolume());
+        }
+        
+        // 从 Resolved 到 WaitCheck 时，设置待验证时间 waitCheckTime
+        if ("Resolved".equals(oldState) && "WaitCheck".equals(newState)) {
+            bug.setWaitCheckTime(now);
+            logger.debug("状态变更: Resolved -> WaitCheck, 设置待验证时间: {}", now);
+        }
+        
+        // 保留原有的时间字段（如果新数据中没有提供且状态变更未触发设置）
+        if (bug.getConfirmedTime() == null && existingBug.getConfirmedTime() != null) {
+            bug.setConfirmedTime(existingBug.getConfirmedTime());
+        }
+        if (bug.getAssignedTime() == null && existingBug.getAssignedTime() != null) {
+            bug.setAssignedTime(existingBug.getAssignedTime());
+        }
+        if (bug.getResolvedTime() == null && existingBug.getResolvedTime() != null) {
+            bug.setResolvedTime(existingBug.getResolvedTime());
+        }
+        if (bug.getWaitCheckTime() == null && existingBug.getWaitCheckTime() != null) {
+            bug.setWaitCheckTime(existingBug.getWaitCheckTime());
+        }
+        
+        // 保留原有的解决次数（如果新数据中没有提供且状态变更未触发设置）
+        if (bug.getSolveVolume() == null && existingBug.getSolveVolume() != null) {
+            bug.setSolveVolume(existingBug.getSolveVolume());
         }
     }
 

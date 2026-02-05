@@ -594,7 +594,7 @@ CREATE TABLE `t_test_directory` (
   `SECOND_PATH` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   `THIRD_PATH` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   `IS_USE_TESTCASE` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '1' COMMENT '用例库是否使用:0-不使用;1-使用;',
-  `IS_USE_TESTSET` varchar(1) COLLATE utf8mb4_bin DEFAULT '1' COMMENT '测试集是否使用:0-不使用;1-使用;',
+  `IS_USE_TESTSET` varchar(1) COLLATE utf8mb4_bin DEFAULT '1' COMMENT '执行库是否使用:0-不使用;1-使用;',
   `IS_LEAF_DIRECTORY` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '1' COMMENT '是否为叶子目录:0-不是;1-是;',
   `DIRECTORY_TYPE` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '目录类型',
   `RELATE_ID` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '关联ID',
