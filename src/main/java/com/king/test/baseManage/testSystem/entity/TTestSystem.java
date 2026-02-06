@@ -27,6 +27,12 @@ public class TTestSystem {
     private String systemName;
 
     /**
+     * 系统简称
+     */
+    @TableField("SYS_ABBREVIATION")
+    private String sysAbbreviation;
+
+    /**
      * 负责的机构
      */
     @TableField("ORG_ID")
@@ -156,6 +162,14 @@ public class TTestSystem {
 
     public void setSystemName(String systemName) {
         this.systemName = systemName;
+    }
+
+    public String getSysAbbreviation() {
+        return sysAbbreviation;
+    }
+
+    public void setSysAbbreviation(String sysAbbreviation) {
+        this.sysAbbreviation = sysAbbreviation;
     }
 
     public String getOrgId() {

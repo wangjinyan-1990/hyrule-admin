@@ -6,10 +6,13 @@ import com.king.configuration.merge.entity.TfDeployRecord;
 import com.king.configuration.merge.mapper.MergeRecordMapper;
 import com.king.configuration.merge.service.IDeployApiService;
 import com.king.configuration.merge.service.SaveMergeRecordService;
-import com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration;
-import com.king.configuration.sysConfigInfo.mapper.SysConfigInfoMapper;
+import com.king.test.baseManage.testSystem.entity.TTestSystem;
+import com.king.test.baseManage.testSystem.service.ITestSystemService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -25,8 +28,9 @@ public class DeployApiServiceImpl extends ServiceImpl<MergeRecordMapper, TfDeplo
 
     private static final Logger logger = LoggerFactory.getLogger(DeployApiServiceImpl.class);
 
-    @Resource
-    private SysConfigInfoMapper sysConfigInfoMapper;
+    @Autowired
+    @Qualifier("testSystemServiceImpl")
+    private ITestSystemService testSystemService;
 
     @Resource
     private SaveMergeRecordService saveMergeRecordService;
@@ -38,13 +42,13 @@ public class DeployApiServiceImpl extends ServiceImpl<MergeRecordMapper, TfDeplo
         // 校验必填字段
         Assert.isTrue(StringUtils.hasText(dto.getSysAbbreviation()), "系统简称不能为空");
 
-        // 根据系统简称查询系统配置信息
-        List<TfSystemConfiguration> sysConfigList = sysConfigInfoMapper.selectSysConfigInfoBySysAbbreviation(dto.getSysAbbreviation());
-        Assert.isTrue(sysConfigList != null && !sysConfigList.isEmpty(),
-                "未找到系统简称为 " + dto.getSysAbbreviation() + " 的配置信息");
+        // 根据系统简称查询测试系统信息
+        LambdaQueryWrapper<TTestSystem> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TTestSystem::getSysAbbreviation, dto.getSysAbbreviation());
+        TTestSystem testSystem = testSystemService.getOne(wrapper);
+        Assert.notNull(testSystem, "未找到系统简称为 " + dto.getSysAbbreviation() + " 的测试系统信息");
 
-        TfSystemConfiguration sysConfig = sysConfigList.get(0);
-        String systemId = sysConfig.getSystemId();
+        String systemId = testSystem.getSystemId();
         String testStage = dto.getTestStage();
         Assert.isTrue(StringUtils.hasText(dto.getTestStage()), "测试阶段不能为空");
 

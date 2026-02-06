@@ -15,9 +15,13 @@ import com.king.configuration.merge.service.ParseMergeRequestService;
 import com.king.configuration.merge.service.SaveMergeRecordService;
 import com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration;
 import com.king.configuration.sysConfigInfo.mapper.SysConfigInfoMapper;
+import com.king.test.baseManage.testSystem.entity.TTestSystem;
+import com.king.test.baseManage.testSystem.service.ITestSystemService;
 import org.gitlab4j.api.models.MergeRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -37,6 +41,10 @@ public class ListMergeServiceImpl extends ServiceImpl<MergeRecordMapper, TfDeplo
 
     @Resource
     private SysConfigInfoMapper sysConfigInfoMapper;
+
+    @Autowired
+    @Qualifier("testSystemServiceImpl")
+    private ITestSystemService testSystemService;
 
     @Resource
     GitLabUrlParseService gitLabUrlParseService;
@@ -63,13 +71,17 @@ public class ListMergeServiceImpl extends ServiceImpl<MergeRecordMapper, TfDeplo
                 // 校验必填字段
         Assert.isTrue(StringUtils.hasText(deployRecord.getSystemId()), "系统ID不能为空");
 
-        // 根据systemId获取系统配置信息
+        // 根据systemId获取测试系统信息
+        TTestSystem testSystem = testSystemService.getById(deployRecord.getSystemId());
+        Assert.notNull(testSystem, "未找到系统ID为 " + deployRecord.getSystemId() + " 的测试系统信息");
+
+        String sysAbbreviation = testSystem.getSysAbbreviation();
+        Assert.isTrue(StringUtils.hasText(sysAbbreviation), "系统简称不能为空");
+
+        // 获取系统配置信息（用于获取 privateToken）
         List<TfSystemConfiguration> sysConfigList = sysConfigInfoMapper.selectSysConfigInfoBySystemId(deployRecord.getSystemId());
         Assert.isTrue(sysConfigList != null && !sysConfigList.isEmpty(), "未找到系统ID为 " + deployRecord.getSystemId() + " 的配置信息");
-
         TfSystemConfiguration sysConfig = sysConfigList.get(0);
-        String sysAbbreviation = sysConfig.getSysAbbreviation();
-        Assert.isTrue(StringUtils.hasText(sysAbbreviation), "系统简称不能为空");
 
         // 先判断 gitlabUrl 是否为 "1"，如果是则跳过合并操作
         // 注意：即使 gitlabUrl 为 "1"，componentInfo、sendTestInfo 等其他字段仍会正常登记保存

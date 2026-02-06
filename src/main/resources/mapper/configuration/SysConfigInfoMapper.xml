@@ -9,7 +9,7 @@
             sc.SYSTEM_ID,
             sc.PRIVATE_TOKEN,
             sc.CONFIGURATION_PEOPLEIDS,
-            sc.SYS_ABBREVIATION,
+            ts.SYS_ABBREVIATION AS sysAbbreviation,
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
@@ -29,7 +29,7 @@
             sc.SYSTEM_ID,
             sc.PRIVATE_TOKEN,
             sc.CONFIGURATION_PEOPLEIDS,
-            sc.SYS_ABBREVIATION,
+            ts.SYS_ABBREVIATION AS sysAbbreviation,
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
@@ -64,7 +64,7 @@
             sc.SYSTEM_ID,
             sc.PRIVATE_TOKEN,
             sc.CONFIGURATION_PEOPLEIDS,
-            sc.SYS_ABBREVIATION,
+            ts.SYS_ABBREVIATION AS sysAbbreviation,
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
@@ -85,7 +85,7 @@
             sc.SYSTEM_ID,
             sc.PRIVATE_TOKEN,
             sc.CONFIGURATION_PEOPLEIDS,
-            sc.SYS_ABBREVIATION,
+            ts.SYS_ABBREVIATION AS sysAbbreviation,
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
@@ -105,7 +105,7 @@
             sc.SYSTEM_ID,
             sc.PRIVATE_TOKEN,
             sc.CONFIGURATION_PEOPLEIDS,
-            sc.SYS_ABBREVIATION,
+            ts.SYS_ABBREVIATION AS sysAbbreviation,
             ts.SYSTEM_NAME,
             (SELECT GROUP_CONCAT(u.USER_NAME SEPARATOR ',')
              FROM t_sys_user u
@@ -115,7 +115,7 @@
             ) AS CONFIGURATION_PEOPLE_NAMES
         FROM tf_system_configuration sc
         LEFT JOIN t_test_system ts ON sc.SYSTEM_ID = ts.SYSTEM_ID
-        WHERE sc.SYS_ABBREVIATION = #{sysAbbreviation}
+        WHERE ts.SYS_ABBREVIATION = #{sysAbbreviation}
         ORDER BY sc.CONFIGURATION_ID DESC
     </select>
 

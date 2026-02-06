@@ -39,16 +39,16 @@ public class TfSystemConfiguration {
     private String configurationPeopleIds;
 
     /**
-     * 系统简称
-     */
-    @TableField("SYS_ABBREVIATION")
-    private String sysAbbreviation;
-
-    /**
      * 系统名称（用于前端显示，不在数据库表中）
      */
     @TableField(exist = false)
     private String systemName;
+
+    /**
+     * 系统简称（用于前端显示，不对应数据库表字段）
+     */
+    @TableField(exist = false)
+    private String sysAbbreviation;
 
     /**
      * 配置人员名称（用于前端显示，不在数据库表中）
@@ -142,22 +142,6 @@ public class TfSystemConfiguration {
     }
 
     /**
-     * 获取系统简称
-     * @return 系统简称
-     */
-    public String getSysAbbreviation() {
-        return sysAbbreviation;
-    }
-
-    /**
-     * 设置系统简称
-     * @param sysAbbreviation 系统简称
-     */
-    public void setSysAbbreviation(String sysAbbreviation) {
-        this.sysAbbreviation = sysAbbreviation;
-    }
-
-    /**
      * 获取系统名称
      * @return 系统名称
      */
@@ -171,6 +155,22 @@ public class TfSystemConfiguration {
      */
     public void setSystemName(String systemName) {
         this.systemName = systemName;
+    }
+
+    /**
+     * 获取系统简称
+     * @return 系统简称
+     */
+    public String getSysAbbreviation() {
+        return sysAbbreviation;
+    }
+
+    /**
+     * 设置系统简称
+     * @param sysAbbreviation 系统简称
+     */
+    public void setSysAbbreviation(String sysAbbreviation) {
+        this.sysAbbreviation = sysAbbreviation;
     }
 
     /**

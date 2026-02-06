@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.common.utils.DateUtil;
 import com.king.configuration.merge.entity.TfDeployRecord;
 import com.king.configuration.merge.mapper.MergeRecordMapper;
-import com.king.configuration.sysConfigInfo.entity.TfSystemConfiguration;
-import com.king.configuration.sysConfigInfo.mapper.SysConfigInfoMapper;
+import com.king.test.baseManage.testSystem.entity.TTestSystem;
+import com.king.test.baseManage.testSystem.service.ITestSystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -24,8 +26,9 @@ public class SaveMergeRecordService extends ServiceImpl<MergeRecordMapper, TfDep
 
     private static final Logger logger = LoggerFactory.getLogger(SaveMergeRecordService.class);
 
-    @Resource
-    private SysConfigInfoMapper sysConfigInfoMapper;
+    @Autowired
+    @Qualifier("testSystemServiceImpl")
+    private ITestSystemService testSystemService;
 
     /**
      * 保存合并登记信息
@@ -51,13 +54,11 @@ public class SaveMergeRecordService extends ServiceImpl<MergeRecordMapper, TfDep
         // 确保 testStage 为大写
         testStage = testStage.toUpperCase();
 
-        // 根据systemId获取系统配置信息
-        List<TfSystemConfiguration> sysConfigList = sysConfigInfoMapper.selectSysConfigInfoBySystemId(systemId);
-        Assert.isTrue(sysConfigList != null && !sysConfigList.isEmpty(),
-                "未找到系统ID为 " + systemId + " 的配置信息");
+        // 根据systemId获取测试系统信息
+        TTestSystem testSystem = testSystemService.getById(systemId);
+        Assert.notNull(testSystem, "未找到系统ID为 " + systemId + " 的测试系统信息");
 
-        TfSystemConfiguration sysConfig = sysConfigList.get(0);
-        String sysAbbreviation = sysConfig.getSysAbbreviation();
+        String sysAbbreviation = testSystem.getSysAbbreviation();
         Assert.isTrue(StringUtils.hasText(sysAbbreviation), "系统简称不能为空");
 
         // 获取当前日期（YYYYMMDD格式）

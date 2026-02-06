@@ -6,6 +6,7 @@
         SELECT 
             ts.SYSTEM_ID,
             ts.SYSTEM_NAME,
+            ts.SYS_ABBREVIATION,
             ts.ORG_ID,
             ts.SYSTEM_TYPE,
             ts.SYSTEM_STAGE,
