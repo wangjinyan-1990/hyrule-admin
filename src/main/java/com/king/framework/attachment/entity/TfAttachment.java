@@ -1,5 +1,6 @@
 package com.king.framework.attachment.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -72,7 +73,7 @@ public class TfAttachment {
     /**
      * 关联ID
      */
-    @TableField("RELATE_ID")
+    @TableField(value = "RELATE_ID", insertStrategy = FieldStrategy.IGNORED, updateStrategy = FieldStrategy.IGNORED)
     private String relateId;
 
     // Getter和Setter方法
