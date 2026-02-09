@@ -39,7 +39,15 @@
             ts.SYSTEM_NAME
         FROM tf_deploy_record dr
         LEFT JOIN t_test_system ts ON dr.SYSTEM_ID = ts.SYSTEM_ID
+        <if test="queryCondition != null and queryCondition == 'related'">
+            INNER JOIN tf_system_configuration sc ON dr.SYSTEM_ID = sc.SYSTEM_ID
+        </if>
         <where>
+            <if test="queryCondition != null and queryCondition == 'related' and userId != null and userId != ''">
+                AND sc.CONFIGURATION_PEOPLEIDS IS NOT NULL
+                AND sc.CONFIGURATION_PEOPLEIDS != ''
+                AND FIND_IN_SET(#{userId}, sc.CONFIGURATION_PEOPLEIDS) > 0
+            </if>
             <if test="sendTestInfo != null and sendTestInfo != ''">
                 AND dr.SEND_TEST_INFO LIKE CONCAT('%', #{sendTestInfo}, '%')
             </if>

@@ -14,6 +14,7 @@ public interface IMergeRecordService extends IService<TfDeployRecord> {
      * 分页查询发版登记列表
      * @param pageNo 页码
      * @param pageSize 每页大小
+     * @param queryCondition 查询条件：all-全部，related-和我相关（可选，默认all）
      * @param sendTestInfo 送测单信息（可选，模糊查询）
      * @param systemName 系统名称（可选，模糊查询）
      * @param testStage 测试阶段（可选）
@@ -21,7 +22,7 @@ public interface IMergeRecordService extends IService<TfDeployRecord> {
      * @param endDate 结束日期（可选）
      * @return 分页结果
      */
-    Map<String, Object> getDeployRecordList(Integer pageNo, Integer pageSize, String sendTestInfo, String systemName, String testStage, String startDate, String endDate);
+    Map<String, Object> getDeployRecordList(Integer pageNo, Integer pageSize, String queryCondition, String sendTestInfo, String systemName, String testStage, String startDate, String endDate);
 
     /**
      * 根据部署ID获取发版登记详情

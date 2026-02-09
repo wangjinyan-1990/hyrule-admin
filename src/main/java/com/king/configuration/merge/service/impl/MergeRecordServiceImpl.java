@@ -3,11 +3,14 @@ package com.king.configuration.merge.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.king.common.utils.SecurityUtils;
 import com.king.configuration.merge.entity.TfDeployRecord;
 import com.king.configuration.merge.mapper.MergeRecordMapper;
 import com.king.configuration.merge.service.IMergeRecordService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +21,11 @@ import java.util.Map;
 @Service("mergeRecordServiceImpl")
 public class MergeRecordServiceImpl extends ServiceImpl<MergeRecordMapper, TfDeployRecord> implements IMergeRecordService {
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
     @Override
-    public Map<String, Object> getDeployRecordList(Integer pageNo, Integer pageSize, String sendTestInfo, String systemName, String testStage, String startDate, String endDate) {
+    public Map<String, Object> getDeployRecordList(Integer pageNo, Integer pageSize, String queryCondition, String sendTestInfo, String systemName, String testStage, String startDate, String endDate) {
         // 设置默认分页参数
         if (pageNo == null || pageNo < 1) {
             pageNo = 1;
@@ -29,6 +35,9 @@ public class MergeRecordServiceImpl extends ServiceImpl<MergeRecordMapper, TfDep
         }
 
         // 处理空字符串，视为 null
+        if (queryCondition != null && queryCondition.trim().isEmpty()) {
+            queryCondition = null;
+        }
         if (sendTestInfo != null && sendTestInfo.trim().isEmpty()) {
             sendTestInfo = null;
         }
@@ -45,9 +54,27 @@ public class MergeRecordServiceImpl extends ServiceImpl<MergeRecordMapper, TfDep
             endDate = null;
         }
 
+        // 默认查询条件为 all
+        if (queryCondition == null || !"related".equals(queryCondition)) {
+            queryCondition = "all";
+        }
+
+        // 获取当前用户ID（当查询条件为 related 时需要）
+        String userId = null;
+        if ("related".equals(queryCondition)) {
+            userId = securityUtils.getUserId();
+            if (!StringUtils.hasText(userId)) {
+                // 如果无法获取用户ID，返回空列表
+                Map<String, Object> data = new HashMap<>();
+                data.put("total", 0);
+                data.put("rows", new java.util.ArrayList<>());
+                return data;
+            }
+        }
+
         // 使用自定义查询方法，包含系统名称
         Page<TfDeployRecord> page = new Page<>(pageNo, pageSize);
-        IPage<TfDeployRecord> result = this.baseMapper.selectDeployRecordListWithSystemName(page, sendTestInfo, systemName, testStage, startDate, endDate);
+        IPage<TfDeployRecord> result = this.baseMapper.selectDeployRecordListWithSystemName(page, queryCondition, userId, sendTestInfo, systemName, testStage, startDate, endDate);
 
         // 构建返回结果
         Map<String, Object> data = new HashMap<>();

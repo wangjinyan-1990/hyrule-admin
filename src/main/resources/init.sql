@@ -961,7 +961,7 @@ CREATE TABLE `tf_deploy_record` (
   `IS_RUN_SQL` tinyint(1) NOT NULL COMMENT '是否执行sql',
   `IS_UPDATE_CONFIG` tinyint(1) NOT NULL COMMENT '是否更新配置',
   `DEPLOY_TIME` datetime(6) NOT NULL COMMENT '部署时间点',
-  `SEND_TEST_CODE` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '送测单编号',
+  `SEND_TEST_INFO` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '送测单信息',
   PRIMARY KEY (`DEPLOY_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 

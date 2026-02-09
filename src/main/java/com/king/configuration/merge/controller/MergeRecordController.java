@@ -24,6 +24,7 @@ public class MergeRecordController {
      * 获取合并登记列表
      * @param pageNo 页码（可选，默认1）
      * @param pageSize 每页大小（可选，默认10）
+     * @param queryCondition 查询条件：all-全部，related-和我相关（可选，默认all）
      * @param sendTestInfo 送测单信息（可选，模糊查询）
      * @param systemName 系统名称（可选，模糊查询）
      * @param testStage 测试阶段（可选）
@@ -35,13 +36,14 @@ public class MergeRecordController {
     public Result<Map<String, Object>> getDeployRecordList(
             @RequestParam(value = "pageNo", required = false) Integer pageNo,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "queryCondition", required = false) String queryCondition,
             @RequestParam(value = "sendTestInfo", required = false) String sendTestInfo,
             @RequestParam(value = "systemName", required = false) String systemName,
             @RequestParam(value = "testStage", required = false) String testStage,
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate) {
         try {
-            Map<String, Object> data = deployRecordService.getDeployRecordList(pageNo, pageSize, sendTestInfo, systemName, testStage, startDate, endDate);
+            Map<String, Object> data = deployRecordService.getDeployRecordList(pageNo, pageSize, queryCondition, sendTestInfo, systemName, testStage, startDate, endDate);
             return Result.success(data);
         } catch (IllegalArgumentException e) {
             return Result.error(0, e.getMessage());
